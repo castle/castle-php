@@ -13,7 +13,8 @@ if (!function_exists('json_decode')) {
 class Userbin {
   public static $appId;
   public static $apiSecret;
-  public static $baseUrl = 'https://userbin.com';
+  public static $scriptUrl = '//js.userbin.com';
+  public static $apiUrl = 'https://api.userbin.com';
   public static $apiVer = 'v0';
   const VERSION = '0.0.1';
 
@@ -61,7 +62,7 @@ class Userbin {
   public static function javascript_include_tag($lang = 'en') {
     self::verify_settings();
     $aId = self::$appId;
-    $url = join('/', array(self::$baseUrl, 'js', Userbin::$apiVer));
+    $url = self::$scriptUrl;
     return "<script type=\"text/javascript\" src=\"$url?$aId&lang=$lang\"></script>";
   }
 
@@ -119,19 +120,19 @@ class Userbin {
   }
 
   private static function clear_session() {
-    setcookie('userbin_data', '', time()-3600, '/');
-    setcookie('userbin_signature', '', time()-3600, '/');
-    unset($_COOKIE['userbin_data']);
-    unset($_COOKIE['userbin_signature']);
+    setcookie('_ubd', '', time()-3600, '/');
+    setcookie('_ubs', '', time()-3600, '/');
+    unset($_COOKIE['_ubd']);
+    unset($_COOKIE['_ubs']);
     return true;
   }
 
   private static function get_session() {
-    if (!$_COOKIE['userbin_data']) {
+    if (!$_COOKIE['_ubd']) {
       return false;
     }
-    $raw = $_COOKIE['userbin_data'];
-    $signature = $_COOKIE['userbin_signature'];
+    $raw = $_COOKIE['_ubd'];
+    $signature = $_COOKIE['_ubs'];
     $valid = self::valid_signature($signature, $raw);
     if (!$valid) return false;
     return json_decode($raw, true);
@@ -139,10 +140,10 @@ class Userbin {
 
   private static function set_session($data, $signature) {
     if(self::valid_signature($signature, $data)) {
-      setcookie('userbin_data', $data, 0, '/');
-      setcookie('userbin_signature', $signature, 0, '/');
-      $_COOKIE['userbin_data'] = $data;
-      $_COOKIE['userbin_signature'] = $signature;
+      setcookie('_ubd', $data, 0, '/');
+      setcookie('_ubs', $signature, 0, '/');
+      $_COOKIE['_ubd'] = $data;
+      $_COOKIE['_ubs'] = $signature;
       return true;
     }
     return false;
@@ -156,7 +157,8 @@ class Userbin {
 }
 
 if (in_array($_SERVER['HTTP_HOST'], array('localhost', '127.0.0.1'))) {
-  Userbin::$baseUrl = 'http://userbin.dev:3000';
+  Userbin::$apiUrl = 'http://userbin.dev:3000/api/v0';
+  Userbin::$scriptUrl = 'http://userbin.dev:3000/js/v0';
 }
 
 /**
@@ -167,7 +169,7 @@ class UserbinRequest {
     $this->error = '';
     $this->_request = curl_init();
 
-    $url = join('/', array(Userbin::$baseUrl, 'api', Userbin::$apiVer, $url));
+    $url = join('/', array(Userbin::$apiUrl, $url));
 
     if (is_array($vars)) $vars = http_build_query($vars, '', '&');
 
@@ -176,7 +178,7 @@ class UserbinRequest {
         curl_setopt($this->_request, CURLOPT_POST, true);
         break;
       case 'GET':
-        curl_setopt($this->request, CURLOPT_HTTPGET, true);
+        curl_setopt($this->_request, CURLOPT_HTTPGET, true);
         break;
       default:
         return false;
