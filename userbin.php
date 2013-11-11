@@ -28,17 +28,15 @@ class Userbin {
    */
   public static function authenticate() {
     self::verify_settings();
-    $user = self::user();
+    $session = self::get_session();
     /* Renew session if expired */
-    if($user && self::has_expired()) {
+    if($session && self::has_expired()) {
+      self::clear_session();
       $request = new UserbinRequest();
-      $response = $request->post('users/'.$user['id'].'/sessions');
+      $response = $request->post('sessions/'.$session['id'].'/refresh');
 
       if($response && $response->is_valid()) {
         self::set_session($response->body, $response->signature);
-      }
-      else {
-        self::clear_session();
       }
     }
     return self::authenticated();
