@@ -42,17 +42,16 @@ or
 <a class="ub-signup">Signup</a>
 ```
 
-If you want, you can specify where you want Userbin to direct your users after a successful login or logout. This is done by specifying the URL in a `<link>` tag in the `<head>` section of your document:
+If you want, you can specify where you want Userbin to direct your users after a successful login or logout. This is done by calling  the `Userbin::configure` method with an associative array containing the options:
 
-```html
-<head>
-  ...
-  <!-- After login path //-->
-  <link rel="userbin:login" href="/dashboard.php">
-
-  <!-- After logout path //-->
-  <link rel="userbin:root" href="/">
-</head>
+```php
+<?
+// Additional configuration
+Userbin::configure(array(
+  'root_path' => '/',
+  'protected_path' => '/dashboard'
+));
+?>
 ```
 
 In the documents that you want to protect you can check wether a user is logged
