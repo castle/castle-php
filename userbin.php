@@ -16,7 +16,13 @@ class Userbin {
   public static $scriptUrl = '//js.userbin.com';
   public static $apiUrl = 'https://api.userbin.com';
   public static $apiVer = 'v0';
-  const VERSION = '0.0.1';
+  public static $javascript_settings = array(
+    'locale' => false,
+    'loginRedirectUrl' => false,
+    'logoutRedirectUrl' => false,
+    'reloadOnSuccess' => 'true'
+  );
+  const VERSION = '0.0.2';
 
   /*
    * Public methods
@@ -52,16 +58,42 @@ class Userbin {
   }
 
   /**
+   * Configure the javascript
+   * @param  $options An associative array containing configuration options
+   * @return none
+   */
+
+  public static function configure($options) {
+    if (isset($options['protected_path']))
+      self::$javascript_settings['loginRedirectUrl'] = '"'.$options['protected_path'].'"';
+
+    if (isset($options['root_path']))
+      self::$javascript_settings['logoutRedirectUrl'] = '"'.$options['root_path'].'"';
+  }
+
+  /**
    * Generates a script tag that includes the Userbin javascript
    * with the configured App ID.
-   * @param  string $lang Desired language
-   * @return string       HTML script tag
+   * @param  array  $options Optional array with settings
+   * @return string          HTML script tag
    */
-  public static function javascript_include_tag($lang = 'en') {
+  public static function javascript_include_tag($options = false) {
     self::verify_settings();
+    if(is_array($options))
+      self::configure($options);
     $aId = self::$appId;
     $url = self::$scriptUrl;
-    return "<script type=\"text/javascript\" src=\"$url?$aId&lang=$lang\"></script>";
+    $html = "\n<script type=\"text/javascript\" src=\"$url?$aId&lang=$lang\"></script>\n";
+    $html.= "<script type=\"text/javascript\">\n";
+    $html.= "  Userbin.config({";
+    $opts = array();
+    foreach(self::$javascript_settings as $key => $val) {
+      if(!!$val)
+        $opts[]= "\"$key\": $val";
+    }
+    $opts = join(", ", $opts);
+    $html.= "$opts});\n</script>\n";
+    return $html;
   }
 
   /**
