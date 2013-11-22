@@ -16,8 +16,8 @@ class Userbin {
   public static $scriptUrl = '//js.userbin.com';
   public static $apiUrl = 'https://api.userbin.com';
   public static $apiVer = 'v0';
+  public static $locale = false;
   public static $javascript_settings = array(
-    'locale' => false,
     'loginRedirectUrl' => false,
     'logoutRedirectUrl' => false,
     'reloadOnSuccess' => 'true'
@@ -69,6 +69,9 @@ class Userbin {
 
     if (isset($options['root_path']))
       self::$javascript_settings['logoutRedirectUrl'] = '"'.$options['root_path'].'"';
+
+    if (isset($options['locale']))
+      self::$locale = $options['locale'];
   }
 
   /**
@@ -79,11 +82,13 @@ class Userbin {
    */
   public static function javascript_include_tag($options = false) {
     self::verify_settings();
-    if(is_array($options))
+    if(isset($options))
       self::configure($options);
     $aId = self::$appId;
     $url = self::$scriptUrl;
-    $html = "\n<script type=\"text/javascript\" src=\"$url?$aId&lang=$lang\"></script>\n";
+    if(self::$locale)
+      $lang = "&lang=".self::$locale;
+    $html = "\n<script type=\"text/javascript\" src=\"$url?$aId$lang\"></script>\n";
     $html.= "<script type=\"text/javascript\">\n";
     $html.= "  Userbin.config({";
     $opts = array();
