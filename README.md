@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/userbin/userbin-php.png?branch=master)](https://travis-ci.org/userbin/userbin-php)
+
 Installation
 ------------
 
