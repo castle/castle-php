@@ -101,6 +101,22 @@ class Userbin {
     return $html;
   }
 
+  public static function protect() {
+    if (!self::authenticate()) {
+      header("HTTP/1.0 403 Forbidden");
+      die("<!DOCTYPE html>\n".
+           "<html>\n".
+           "<head>\n".
+           "  <title>Log in</title>\n".
+           "</head>\n".
+           "<body>\n".
+           "<a class='ub-login-form'></a>\n".
+           "</body>\n".
+           self::javascript_include_tag().
+           "</html>\n");
+    }
+  }
+
   /**
    * Set the Userbin App ID. Sign up at https://userbin.com to obtain one.
    * @param int $appId 15 digit App ID
