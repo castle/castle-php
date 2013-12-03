@@ -11,7 +11,7 @@ if (!function_exists('json_decode')) {
 }
 
 class Userbin {
-  public static $appId;
+  public static $appId = "800000000000000";
   public static $apiSecret;
   public static $scriptUrl = '//js.userbin.com';
   public static $apiUrl = 'https://api.userbin.com';
@@ -185,15 +185,16 @@ class Userbin {
   }
 
   private static function verify_settings() {
+    if (getenv(USERBIN_APP_ID)) {
+      self::set_app_id(getenv(USERBIN_APP_ID));
+    }
+    if (getenv(USERBIN_API_SECRET)) {
+      self::set_api_secret(getenv(USERBIN_API_SECRET));
+    }
     if(!(self::$appId || self::$apiSecret)) {
       throw new Exception('Please set Userbin App ID and API secret');
     }
   }
-}
-
-if (in_array($_SERVER['HTTP_HOST'], array('localhost', '127.0.0.1'))) {
-  Userbin::$apiUrl = 'http://userbin.dev:3000/api/v0';
-  Userbin::$scriptUrl = 'http://userbin.dev:3000/js/v0';
 }
 
 /**
