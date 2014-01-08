@@ -22,7 +22,7 @@ class Userbin {
     'logoutRedirectUrl' => false,
     'reloadOnSuccess' => 'true'
   );
-  const VERSION = '0.0.2';
+  const VERSION = '0.1.0';
 
   /*
    * Public methods
@@ -39,10 +39,10 @@ class Userbin {
     if($session && self::has_expired()) {
       self::clear_session();
       $request = new UserbinRequest();
-      $response = $request->post('sessions/'.$session['id'].'/refresh');
+      $response = $request->post('sessions/'.$session['id'].'/refresh.jwt');
 
-      if($response && $response->is_valid()) {
-        self::set_session($response->body, $response->signature);
+      if($response) {
+        self::set_session($response->body);
       }
     }
     return self::authenticated();
@@ -171,30 +171,25 @@ class Userbin {
   }
 
   private static function clear_session() {
-    setcookie('_ubd', '', time()-3600, '/');
-    setcookie('_ubs', '', time()-3600, '/');
-    unset($_COOKIE['_ubd']);
-    unset($_COOKIE['_ubs']);
+    setcookie('_ubt', '', time()-3600, '/');
+    unset($_COOKIE['_ubt']);
     return true;
   }
 
   private static function get_session() {
-    if (!$_COOKIE['_ubd']) {
+    if (!$_COOKIE['_ubt']) {
       return false;
     }
-    $raw = $_COOKIE['_ubd'];
-    $signature = $_COOKIE['_ubs'];
-    $valid = self::valid_signature($signature, $raw);
-    if (!$valid) return false;
-    return json_decode($raw, true);
+    $jwt = new UserbinJWT($_COOKIE['_ubt']);
+    if (!$jwt->is_valid()) return false;
+    return $jwt->payload();
   }
 
-  private static function set_session($data, $signature) {
-    if(self::valid_signature($signature, $data)) {
-      setcookie('_ubd', $data, 0, '/');
-      setcookie('_ubs', $signature, 0, '/');
-      $_COOKIE['_ubd'] = $data;
-      $_COOKIE['_ubs'] = $signature;
+  private static function set_session($data) {
+    $jwt = new UserbinJWT($data);
+    if($jwt->is_valid()) {
+      setcookie('_ubt', $data, 0, '/');
+      $_COOKIE['_ubt'] = $data;
       return true;
     }
     return false;
@@ -294,6 +289,39 @@ class UserbinResponse {
   function is_valid() {
     return Userbin::valid_signature($this->signature, $this->body);
   }
+}
+
+class UserbinJWT {
+  function __construct($token) {
+    list($this->_header, $this->_token, $this->_signature) = explode(".", $token);
+  }
+
+  public function is_valid() {
+    $hmac = hash_hmac('sha256', "$this->_header.$this->_token", Userbin::$apiSecret, true);
+    return self::base64_encode($hmac) == $this->_signature;
+  }
+
+  public function header() {
+    return json_decode(self::base64_decode($this->_header), true);
+  }
+
+  public function payload() {
+    return json_decode(self::base64_decode($this->_token), true);
+  }
+
+  public static function base64_encode($data) {
+    return str_replace('=', '', strtr(base64_encode($data), '+/', '-_'));
+  }
+
+  public static function base64_decode($data) {
+    $rem = strlen($data) % 4;
+    if ($rem) {
+      $pad = 4 - $rem;
+      $data .= str_repeat('=', $pad);
+    }
+    return base64_decode(strtr($data, '-_', '+/'));
+  }
+
 }
 
 ?>
