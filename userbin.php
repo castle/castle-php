@@ -107,7 +107,10 @@ class Userbin {
       die("<!DOCTYPE html>\n".
            "<html>\n".
            "<head>\n".
+           "  <meta charset='utf-8'>\n".
+           "  <meta http-equiv='X-UA-Compatible' content='IE=edge'>\n".
            "  <title>Log in</title>\n".
+           "  <meta name='viewport' content='width=device-width, initial-scale=1'>\n".
            "</head>\n".
            "<body>\n".
            "<a class='ub-login-form'></a>\n".
