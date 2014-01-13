@@ -240,6 +240,8 @@ class UserbinRequest {
     curl_setopt($this->_request, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($this->_request, CURLOPT_USERAGENT, 'Curl/PHP '.PHP_VERSION);
     curl_setopt($this->_request, CURLOPT_TIMEOUT, 10);
+    curl_setopt($this->_request, CURLOPT_HTTPHEADER,
+      array('Content-Length: ' . strlen($vars)));
 
     $response = curl_exec($this->_request);
     if (!$response) {
