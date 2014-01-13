@@ -54,7 +54,7 @@ class Userbin {
    */
   public static function authenticated() {
     self::verify_settings();
-    return !!self::user();
+    return !!self::current_profile();
   }
 
   /**
@@ -101,8 +101,8 @@ class Userbin {
     return $html;
   }
 
-  public static function protect() {
-    if (!self::authenticate()) {
+  public static function authorize() {
+    if (!self::authenticated()) {
       header("HTTP/1.0 403 Forbidden");
       die("<!DOCTYPE html>\n".
            "<html>\n".
@@ -140,7 +140,7 @@ class Userbin {
    * Gets the currently logged in user as an associative array.
    * @return array Associative array if logged in. False otherwise
    */
-  public static function user() {
+  public static function current_profile() {
     self::verify_settings();
     $session = self::get_session();
     if($session) {
