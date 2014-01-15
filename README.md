@@ -36,27 +36,8 @@ Include the [userbin script](https://userbin.com/js/v0) at the bottom of your HT
 
 Usage
 -----
-Place links to login/logout (described more in detail in the [Documentation](https://userbin.com/docs/javascript#markup)).
 
-```html
-<a class="ub-login">Login</a>
-or
-<a class="ub-signup">Signup</a>
-```
-
-If you want, you can specify where you want Userbin to direct your users after a successful login or logout. This is done by calling  the `Userbin::configure` method with an associative array containing the options:
-
-```php
-<?
-// Additional configuration
-Userbin::configure(array(
-  'root_path' => '/',
-  'protected_path' => '/dashboard'
-));
-?>
-```
-
-In the documents that you want to protect you can check wether a user is logged
+In the documents that you want to protect you can check whether a user is logged
 with:
 
 ```php
@@ -69,12 +50,11 @@ if (!Userbin::authenticated()) {
 }
 
 // User is logged in, show a secret page
-$user = Userbin::user();
+profile = Userbin::current_profile();
 ?>
 
-<h1>Welcome <?= $user['email'] ?></h1>
+<h1>Welcome <?= profile['email'] ?></h1>
 <p>This page is for your eyes only</p>
-<a class="ub-logout">Logout</a>
 ```
 
 Alternatively you can use the `authorize` method to halt the execution and render a login page if the user is not logged in:
@@ -86,6 +66,65 @@ Userbin::authorize();
 ?>
 
 <p>If you see this, you're logged in</p>
+```
+
+## Forms
+
+Once you have set up authentication it's time to choose among the different ways of integrating Userbin into your application.
+
+### Ready-made forms
+
+The easiest and fastest way to integrate login and signup forms is to use the Userbin Widget, which provides a set of ready-made views which can be customized to blend in with your current user interface. These views open up in a popup, and on mobile browsers they open up a new window tailored for smaller devices.
+
+`rel` specifies action; possible options are `login` and `logout`.
+
+```html
+<a href="/account" rel="login">Log in</a>
+<a href="/account" rel="signup">Sign up</a>
+```
+
+### Social buttons
+
+Instead of signing up your users with a username and password, you can offer them to connect with a social identity like Facebook or LinkedIn. To use these button you must first configure your social identiy providers from the [dashboard](https://userbin.com/dashboard). It is also possible to connect a social identity to an already logged in user and the two accounts will be automatically linked.
+
+`rel` determines action. If the user didn't exist before, it's created, otherwise it's logged in.
+
+```html
+<a href="/account" rel="connect-facebook">Connect with Facebook</a>
+<a href="/account" rel="connect-linkedin">Connect with LinkedIn</a>
+```
+
+### Custom forms
+
+The ready-made forms are fairly high level, so you might prefer to use Userbin with your own markup to get full control over looks and behavior.
+
+If you create a form with `name` set to `login` or `signup`, the user will be sent to the URL specified by `action` after being successfully processed at Userbin.
+
+Inputs with name `email` and `password` are processed, others are ignored.
+
+If you add an element with the class `error-messages`, it will be automatically set to `display: block` and populated with a an error message when something goes wrong. So make sure to it is `display: hidden` by default.
+
+```html
+<form action="/account" name="signup">
+  <span class="error-messages"></span>
+  <div class="row">
+    <label>E-mail</label>
+    <input name="email" type="text"></input>
+  </div>
+  <div class="row">
+    <label>Password</label>
+    <input name="password" type="password"></input>
+  </div>
+  <button type="submit">Sign up</button>
+</form>
+```
+
+### Log out
+
+Clears the session and redirects the user to the specified URL.
+
+```html
+<a href="/" rel="logout">Log out</a>
 ```
 
 Example
