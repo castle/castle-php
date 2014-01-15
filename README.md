@@ -77,12 +77,12 @@ $user = Userbin::user();
 <a class="ub-logout">Logout</a>
 ```
 
-Alternatively you can use the `protect` method to halt the execution and render a login page if the user is not logged in:
+Alternatively you can use the `authorize` method to halt the execution and render a login page if the user is not logged in:
 
 ```php
 <?php
 // Put this at the top of the file, before any output has been sent.
-Userbin::protect();
+Userbin::authorize();
 ?>
 
 <p>If you see this, you're logged in</p>
