@@ -11,8 +11,6 @@ Userbin::authenticate();
     <meta charset="utf-8">
     <title>Example usage of Userbin PHP</title>
     <link href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css" />
-    <link rel="userbin:login" href ="index.php">
-    <link rel="userbin:root" href ="index.php">
     <style type="text/css">
       body {
         text-align: center;
@@ -39,16 +37,16 @@ Userbin::authenticate();
          <b><?= $user['email'] ?></b>
       </p>
       <p>
-        <a class="ub-logout">Log out</a>
+        <a href="" rel="logout">Log out</a>
       </p>
     <?php else: ?>
       <h1>
         Userbin example page
       </h1>
       <p>
-        <a class="ub-login">Login</a>
+        <a href="" rel="login">Login</a>
         or
-        <a class="ub-signup">Signup</a>
+        <a href="" rel="signup">Signup</a>
       </p>
     <?php endif; ?>
     <?= Userbin::javascript_include_tag(); ?>
