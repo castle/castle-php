@@ -13,7 +13,7 @@ if (!function_exists('json_decode')) {
 class Userbin {
   public static $appId = "800000000000000";
   public static $apiSecret;
-  public static $scriptUrl = '//js.userbin.com';
+  public static $scriptUrl = '//d3paxvrgg3ab3f.cloudfront.net';
   public static $apiUrl = 'https://api.userbin.com';
   public static $apiVer = 'v0';
   public static $locale = false;
@@ -86,11 +86,13 @@ class Userbin {
       self::configure($options);
     $aId = self::$appId;
     $url = self::$scriptUrl;
-    if(self::$locale)
-      $lang = "&lang=".self::$locale;
-    $html = "\n<script type=\"text/javascript\" src=\"$url?$aId$lang\"></script>\n";
-    $html.= "<script type=\"text/javascript\">\n";
-    $html.= "  Userbin.config({";
+    $loc = self::$locale;
+    $ver = self::$apiVer;
+    $html = "<script type=\"text/javascript\">\n";
+    $html.= "(function(w,d,t,s,o,a,b) {";
+    $html.= "  w[o]=function(){(w[o].c=w[o].c||[]).push(arguments)};a=d.createElement(t);a.async=1;a.src=s;b=d.getElementsByTagName(t)[0];b.parentNode.insertBefore(a,b);";
+    $html.= "  }(window,document,'script','$url/js/$ver','ubin'));";
+    $html.= "ubin({appId: $aId, ";
     $opts = array();
     foreach(self::$javascript_settings as $key => $val) {
       if(!!$val)
