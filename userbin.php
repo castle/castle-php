@@ -74,32 +74,51 @@ class Userbin {
       self::$locale = $options['locale'];
   }
 
+  private static function javascript_config($options) {
+    $html.= "ubin({";
+    $opts = array();
+    foreach($options as $key => $val) {
+      if(!!$val)
+        $opts[]= "'$key': '$val'";
+    }
+    $opts = join(", ", $opts);
+    $html.= "$opts});";
+    return $html;
+  }
+
   /**
-   * Generates a script tag that includes the Userbin javascript
+   * Generates a script tag that includes Userbin.js
    * with the configured App ID.
    * @param  array  $options Optional array with settings
    * @return string          HTML script tag
    */
   public static function javascript_include_tag($options = false) {
     self::verify_settings();
-    if(isset($options))
-      self::configure($options);
-    $aId = self::$appId;
+
     $url = self::$scriptUrl;
     $loc = self::$locale;
     $ver = self::$apiVer;
-    $html = "<script type=\"text/javascript\">\n";
-    $html.= "(function(w,d,t,s,o,a,b) {";
-    $html.= "  w[o]=function(){(w[o].c=w[o].c||[]).push(arguments)};a=d.createElement(t);a.async=1;a.src=s;b=d.getElementsByTagName(t)[0];b.parentNode.insertBefore(a,b);";
-    $html.= "  }(window,document,'script','$url/js/$ver','ubin'));";
-    $html.= "ubin({appId: $aId, ";
-    $opts = array();
-    foreach(self::$javascript_settings as $key => $val) {
-      if(!!$val)
-        $opts[]= "\"$key\": $val";
-    }
-    $opts = join(", ", $opts);
-    $html.= "$opts});\n</script>\n";
+
+    $html  = "<script type=\"text/javascript\">\n";
+    $html .= "(function(w,d,t,s,o,a,b) {";
+    $html .= "  w[o]=function(){(w[o].c=w[o].c||[]).push(arguments)};a=d.createElement(t);a.async=1;a.src=s;b=d.getElementsByTagName(t)[0];b.parentNode.insertBefore(a,b);";
+    $html .= "  }(window,document,'script','$url/js/$ver','ubin'));";
+    $options['appId'] = self::$appId;
+    $html .= self::javascript_config($options);
+    $html.= "\n</script>\n";
+
+    return $html;
+  }
+
+  /**
+   * Generates a script tag that configures Userbin.js
+   * @param  array  $options Array with settings
+   * @return string          HTML script tag
+   */
+  public static function javascript_config_tag($options) {
+    $html  = "<script type=\"text/javascript\">\n";
+    $html .= self::javascript_config($options);
+    $html .= "\n</script>\n";
     return $html;
   }
 
