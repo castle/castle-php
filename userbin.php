@@ -58,6 +58,21 @@ class Userbin {
   }
 
   /**
+   * Remove session from Userbin and clear cookie
+   * @return none
+   */
+  public static function deauthenticate() {
+    self::verify_settings();
+    $session = self::get_session();
+
+    if ($session) {
+      $request = new UserbinRequest();
+      $response = $request->delete('sessions/' . $session['id']);
+      self::clear_session();
+    }
+  }
+
+  /**
    * Configure the javascript
    * @param  $options An associative array containing configuration options
    * @return none
@@ -251,6 +266,9 @@ class UserbinRequest {
       case 'GET':
         curl_setopt($this->_request, CURLOPT_HTTPGET, true);
         break;
+      case 'DELETE':
+        curl_setopt($this->_request, CURLOPT_CUSTOMREQUEST, "DELETE");
+        break;
       default:
         return false;
     }
@@ -278,6 +296,10 @@ class UserbinRequest {
 
   function post($url, $vars = array()) {
     return $this->request('POST', $url, $vars);
+  }
+
+  function delete($url, $vars = array()) {
+    return $this->request('DELETE', $url, $vars);
   }
 }
 
