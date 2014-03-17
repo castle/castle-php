@@ -73,6 +73,31 @@ class Userbin {
   }
 
   /**
+   * Remove session from Userbin and clear cookie
+   * @return none
+   */
+  public static function identify($token) {
+    self::verify_settings();
+    $request = new UserbinRequest();
+    $response = $request->get('tokens/' . $token);
+    $json = json_decode($response->body, true);
+    $identity = new UserbinIdentity($json['identity']['id']);
+    return $identity;
+  }
+
+  /**
+   * Create session in Userbin and set cookie
+   * @return none
+   */
+  public static function login($token) {
+    self::verify_settings();
+    $request = new UserbinRequest();
+    $response = $request->post('sessions?identity=' . $token);
+    $json = json_decode($response->body, true);
+    self::set_session($json['cookie']);
+  }
+
+  /**
    * Configure the javascript
    * @param  $options An associative array containing configuration options
    * @return none
@@ -289,6 +314,10 @@ class UserbinRequest {
     return $response;
   }
 
+  function get($url, $vars = array()) {
+    return $this->request('GET', $url, $vars);
+  }
+
   function post($url, $vars = array()) {
     return $this->request('POST', $url, $vars);
   }
@@ -364,7 +393,17 @@ class UserbinJWT {
     }
     return base64_decode(strtr($data, '-_', '+/'));
   }
+}
 
+class UserbinIdentity {
+  function __construct($id) {
+    $this->id = $id;
+  }
+
+  public function activate($local_id) {
+    $request = new UserbinRequest();
+    $request->post('identities/' . $this->id . '/activate?local_id=' . $local_id);
+  }
 }
 
 ?>
