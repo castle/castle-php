@@ -90,14 +90,9 @@ class Userbin {
   }
 
   private static function javascript_config($options) {
-    $html.= "ubin({";
-    $opts = array();
-    foreach($options as $key => $val) {
-      if(!!$val)
-        $opts[]= "'$key': '$val'";
-    }
-    $opts = join(", ", $opts);
-    $html.= "$opts});";
+    $html.= "ubin(";
+    $json = json_encode($options);
+    $html.= "$json);";
     return $html;
   }
 
