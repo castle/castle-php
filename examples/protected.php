@@ -1,7 +1,7 @@
 <?php
 require '../userbin.php';
-Userbin::protect();
-$user = Userbin::user();
+Userbin::authorize();
+$user = Userbin::current_profile();
 ?>
 <html>
   <head>

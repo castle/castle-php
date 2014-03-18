@@ -44,9 +44,9 @@ Userbin::authenticate();
         Userbin example page
       </h1>
       <p>
-        <a href="" rel="login">Login</a>
+        <a href="protected.php" rel="login">Login</a>
         or
-        <a href="" rel="signup">Signup</a>
+        <a href="protected.php" rel="signup">Signup</a>
       </p>
     <?php endif; ?>
     <?= Userbin::javascript_include_tag(); ?>
