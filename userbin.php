@@ -115,7 +115,7 @@ class Userbin {
   }
 
   private static function javascript_config($options) {
-    $html.= "ubin(";
+    $html = "ubin(";
     $json = json_encode($options);
     $html.= "$json);";
     return $html;
