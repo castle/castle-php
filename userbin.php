@@ -236,7 +236,7 @@ class Userbin {
   }
 
   private static function get_session() {
-    if (!$_COOKIE['_ubt']) {
+    if (!isset($_COOKIE['_ubt'])) {
       return false;
     }
     $jwt = new UserbinJWT($_COOKIE['_ubt']);

@@ -9,6 +9,10 @@ class UserbinTest extends \PHPUnit_Framework_TestCase
     Userbin::set_app_id('123456789');
     $this->assertContains('123456789', Userbin::javascript_include_tag());
   }
+
+  public function testEmptyGetSession() {
+    $this->assertEquals(false, Userbin::current_profile());
+  }
 }
 
 ?>
