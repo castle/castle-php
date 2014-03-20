@@ -255,11 +255,11 @@ class Userbin {
   }
 
   private static function verify_settings() {
-    if (getenv(USERBIN_APP_ID)) {
-      self::set_app_id(getenv(USERBIN_APP_ID));
+    if (getenv('USERBIN_APP_ID')) {
+      self::set_app_id(getenv('USERBIN_APP_ID'));
     }
-    if (getenv(USERBIN_API_SECRET)) {
-      self::set_api_secret(getenv(USERBIN_API_SECRET));
+    if (getenv('USERBIN_API_SECRET')) {
+      self::set_api_secret(getenv('USERBIN_API_SECRET'));
     }
     if(!(self::$appId || self::$apiSecret)) {
       throw new Exception('Please set Userbin App ID and API secret');
