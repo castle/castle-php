@@ -365,7 +365,11 @@ class UserbinResponse {
 
 class UserbinJWT {
   function __construct($token) {
-    list($this->_header, $this->_token, $this->_signature) = explode(".", $token);
+    $jwt = Array(null, null, null);
+    if ($token) {
+      $jwt = explode(".", $token);
+    }
+    list($this->_header, $this->_token, $this->_signature) = $jwt;
   }
 
   public function is_valid() {
