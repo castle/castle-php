@@ -26,7 +26,7 @@ Userbin::authenticate();
   </head>
   <body>
     <?php if(Userbin::authenticated()): ?>
-      <?php $user = Userbin::user() ?>
+      <?php $user = Userbin::current_profile() ?>
       <h1>
         <span class="ok">&#x2713;</span>
         Congratulations!
@@ -37,7 +37,7 @@ Userbin::authenticate();
          <b><?= $user['email'] ?></b>
       </p>
       <p>
-        <a href="" rel="logout">Log out</a>
+        <a href="/" rel="logout">Log out</a>
       </p>
     <?php else: ?>
       <h1>
