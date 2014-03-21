@@ -297,10 +297,12 @@ class UserbinRequest {
     curl_setopt($this->_request, CURLOPT_USERPWD, Userbin::$appId . ":" . Userbin::$apiSecret);
     curl_setopt($this->_request, CURLOPT_HEADER, true);
     curl_setopt($this->_request, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($this->_request, CURLOPT_USERAGENT, 'Curl/PHP '.PHP_VERSION);
+    curl_setopt($this->_request, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']);
     curl_setopt($this->_request, CURLOPT_TIMEOUT, 10);
     curl_setopt($this->_request, CURLOPT_HTTPHEADER,
-      array('Content-Length: ' . strlen($vars)));
+      array('Content-Length: ' . strlen($vars),
+            'X-Userbin-Agent: ' . 'Curl/PHP '.PHP_VERSION,
+            'X-Forwarded-For: ' . $_SERVER['REMOTE_ADDR']));
 
     $response = curl_exec($this->_request);
     if (!$response) {
