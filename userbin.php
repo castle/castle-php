@@ -308,7 +308,8 @@ class UserbinRequest {
     if (!$response) {
       $this->error = curl_errno($this->_request).' - '.curl_error($this->_request);
     } else {
-      $response = new UserbinResponse($response);
+      $code = curl_getinfo($this->_request, CURLINFO_HTTP_CODE);
+      $response = new UserbinResponse($response, $code);
     }
 
     curl_close($this->_request);
@@ -333,7 +334,8 @@ class UserbinRequest {
  * Wrapper for HTTP response
  */
 class UserbinResponse {
-  function __construct($response) {
+  function __construct($response, $code) {
+    $this->code = $code;
     $pattern = '#HTTP/\d\.\d.*?$.*?\r\n\r\n#ims';
 
     preg_match_all($pattern, $response, $matches);
