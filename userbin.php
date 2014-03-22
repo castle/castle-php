@@ -98,6 +98,17 @@ class Userbin {
   }
 
   /**
+   * Check that the current credentials are valid on Userbin
+   * @return none
+   */
+  public static function validate_credentials() {
+    self::verify_settings();
+    $request = new UserbinRequest();
+    $response = $request->get('/settings');
+    return $response->code == '200';
+  }
+
+  /**
    * Configure the javascript
    * @param  $options An associative array containing configuration options
    * @return none
