@@ -433,9 +433,12 @@ class UserbinIdentity {
     $this->id = $id;
   }
 
-  public function activate($local_id) {
+  public function activate($local_id = null, $attrs = array()) {
     $request = new UserbinRequest();
-    return $request->post('identities/' . $this->id . '/activate?local_id=' . $local_id);
+    if (isset($local_id)) {
+      $attrs = array_merge($attrs, array('local_id' => $local_id));
+    }
+    return $request->post('identities/' . $this->id . '/activate', $attrs);
   }
 
   public function update($attrs) {
