@@ -73,7 +73,7 @@ class Userbin {
   }
 
   /**
-   * Remove session from Userbin and clear cookie
+   * Resolve token into an identity
    * @return none
    */
   public static function identify($token) {
