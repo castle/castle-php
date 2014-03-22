@@ -288,11 +288,9 @@ class UserbinRequest {
 
     $url = join('/', array(Userbin::$apiUrl, $url));
 
-    if (is_array($vars)) $vars = http_build_query($vars, '', '&');
-
     switch(strtoupper($method)) {
       case 'POST':
-        curl_setopt($this->_request, CURLOPT_POST, true);
+        curl_setopt($this->_request, CURLOPT_CUSTOMREQUEST, "POST");
         break;
       case 'GET':
         curl_setopt($this->_request, CURLOPT_HTTPGET, true);
@@ -306,15 +304,20 @@ class UserbinRequest {
       default:
         return false;
     }
+
     curl_setopt($this->_request, CURLOPT_URL, $url);
-    if (!empty($vars)) curl_setopt($this->_request, CURLOPT_POSTFIELDS, $vars);
+    if (!empty($vars)) {
+      $data_string = json_encode($vars);
+      curl_setopt($this->_request, CURLOPT_POSTFIELDS, $data_string);
+    }
     curl_setopt($this->_request, CURLOPT_USERPWD, Userbin::$appId . ":" . Userbin::$apiSecret);
     curl_setopt($this->_request, CURLOPT_HEADER, true);
     curl_setopt($this->_request, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($this->_request, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']);
     curl_setopt($this->_request, CURLOPT_TIMEOUT, 10);
     curl_setopt($this->_request, CURLOPT_HTTPHEADER,
-      array('Content-Length: ' . strlen($vars),
+      array('Content-Length: ' . strlen($data_string),
+            'Content-Type:application/json',
             'X-Userbin-Agent: ' . 'Curl/PHP '.PHP_VERSION,
             'X-Forwarded-For: ' . $_SERVER['REMOTE_ADDR']));
 
