@@ -297,6 +297,9 @@ class UserbinRequest {
       case 'GET':
         curl_setopt($this->_request, CURLOPT_HTTPGET, true);
         break;
+      case 'PUT':
+        curl_setopt($this->_request, CURLOPT_CUSTOMREQUEST, "PUT");
+        break;
       case 'DELETE':
         curl_setopt($this->_request, CURLOPT_CUSTOMREQUEST, "DELETE");
         break;
@@ -334,6 +337,10 @@ class UserbinRequest {
 
   function post($url, $vars = array()) {
     return $this->request('POST', $url, $vars);
+  }
+
+  function put($url, $vars = array()) {
+    return $this->request('PUT', $url, $vars);
   }
 
   function delete($url, $vars = array()) {
@@ -421,17 +428,27 @@ class UserbinIdentity {
 
   public function activate($local_id) {
     $request = new UserbinRequest();
-    $request->post('identities/' . $this->id . '/activate?local_id=' . $local_id);
+    return $request->post('identities/' . $this->id . '/activate?local_id=' . $local_id);
+  }
+
+  public function update($attrs) {
+    $request = new UserbinRequest();
+    return $request->put('identities/' . $this->id, $attrs);
+  }
+
+  public function destroy() {
+    $request = new UserbinRequest();
+    return $request->delete('identities/' . $this->id);
   }
 
   public static function import($attrs) {
     $request = new UserbinRequest();
-    $request->post('identities/import', $attrs);
+    return $request->post('identities/import', $attrs);
   }
 
   public static function destroy_all() {
     $request = new UserbinRequest();
-    $request->delete('identities');
+    return $request->delete('identities');
   }
 }
 
