@@ -417,6 +417,11 @@ class UserbinIdentity {
     $request = new UserbinRequest();
     $request->post('identities/import', $attrs);
   }
+
+  public static function destroy_all() {
+    $request = new UserbinRequest();
+    $request->delete('identities');
+  }
 }
 
 ?>
