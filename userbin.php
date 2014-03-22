@@ -412,6 +412,11 @@ class UserbinIdentity {
     $request = new UserbinRequest();
     $request->post('identities/' . $this->id . '/activate?local_id=' . $local_id);
   }
+
+  public static function import($attrs) {
+    $request = new UserbinRequest();
+    $request->post('identities/import', $attrs);
+  }
 }
 
 ?>
