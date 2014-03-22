@@ -444,6 +444,7 @@ class UserbinIdentity {
   }
 
   public function destroy() {
+    if (empty($this->id)) return false;
     $request = new UserbinRequest();
     return $request->delete('identities/' . $this->id);
   }
@@ -462,14 +463,12 @@ class UserbinIdentity {
 class Userbin_Settings {
   public static function fetch() {
     $request = new UserbinRequest();
-    $response = $request->get('account/settings');
-    return ($response->successful() ? $response->as_json() : false);
+    return $request->get('account/settings');
   }
 
   public static function update($attrs) {
     $request = new UserbinRequest();
-    $response = $request->post('account/settings', $attrs);
-    return ($response->successful() ? $response->as_json() : false);
+    return $request->post('account/settings', $attrs);
   }
 }
 
