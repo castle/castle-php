@@ -383,6 +383,10 @@ class UserbinResponse {
   function is_valid() {
     return Userbin::valid_signature($this->signature, $this->body);
   }
+
+  function successful() {
+    return ($this->code >= 200 && $this->code < 300);
+  }
 }
 
 class UserbinJWT {
@@ -449,6 +453,20 @@ class UserbinIdentity {
   public static function destroy_all() {
     $request = new UserbinRequest();
     return $request->delete('identities');
+  }
+}
+
+class Userbin_Settings {
+  public static function fetch() {
+    $request = new UserbinRequest();
+    $response = $request->get('account/settings');
+    return ($response->successful() ? $response->as_json() : false);
+  }
+
+  public static function update($attrs) {
+    $request = new UserbinRequest();
+    $response = $request->post('account/settings', $attrs);
+    return ($response->successful() ? $response->as_json() : false);
   }
 }
 
