@@ -86,13 +86,25 @@ class Userbin {
   }
 
   /**
-   * Create session in Userbin and set cookie
+   * Create session in Userbin from token and set cookie
    * @return none
    */
   public static function login($token) {
     self::verify_settings();
     $request = new UserbinRequest();
     $response = $request->post('sessions?identity=' . $token);
+    $json = json_decode($response->body, true);
+    self::set_session($json['cookie']);
+  }
+
+  /**
+   * Create session in Userbin from identity and set cookie
+   * @return none
+   */
+  public static function loginIdentity($identityId) {
+    self::verify_settings();
+    $identity = new UserbinIdentity($identityId);
+    $response = $identity->sessions_create();
     $json = json_decode($response->body, true);
     self::set_session($json['cookie']);
   }
@@ -450,6 +462,12 @@ class UserbinIdentity {
     if (empty($this->id)) return false;
     $request = new UserbinRequest();
     return $request->delete('identities/' . $this->id);
+  }
+
+  public function sessions_create() {
+    if (empty($this->id)) return false;
+    $request = new UserbinRequest();
+    return $request->post('identities/' . $this->id . '/sessions');
   }
 
   public static function import($attrs) {
