@@ -1,9 +1,8 @@
 <?php
-require_once('../userbin.php');
+require_once('../lib/userbin.php');
 // Configure with your app id and api secret
 // Sign up and get them at https://userbin.com
-//Userbin::set_app_id();
-//Userbin::set_api_secret();
+//Userbin::setApiKey();
 Userbin::authenticate();
 ?>
 <!DOCTYPE html>

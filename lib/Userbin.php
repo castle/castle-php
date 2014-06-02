@@ -1,0 +1,19 @@
+<?php
+
+if (!function_exists('curl_init')) {
+  throw new Exception('Userbin needs the CURL PHP extension.');
+}
+if (!function_exists('json_decode')) {
+  throw new Exception('Userbin needs the JSON PHP extension.');
+}
+
+require(dirname(__FILE__) . '/Userbin/Userbin.php');
+require(dirname(__FILE__) . '/Userbin/Errors.php');
+require(dirname(__FILE__) . '/Userbin/Models/Model.php');
+require(dirname(__FILE__) . '/Userbin/Models/Session.php');
+require(dirname(__FILE__) . '/Userbin/Models/User.php');
+require(dirname(__FILE__) . '/Userbin/JWT.php');
+require(dirname(__FILE__) . '/Userbin/CurlTransport.php');
+require(dirname(__FILE__) . '/Userbin/Request.php');
+
+?>

@@ -1,12 +1,9 @@
 <?php
 
-require_once 'userbin.php';
-
 class UserbinJWTTest extends \PHPUnit_Framework_TestCase
 {
   public static function setUpBeforeClass() {
-    Userbin::set_app_id('123456789');
-    Userbin::set_api_secret('SECRET');
+    Userbin::setApiKey('secretkey');
   }
 
   public function invalidJWTs() {
@@ -18,32 +15,33 @@ class UserbinJWTTest extends \PHPUnit_Framework_TestCase
 
   public function validJWTs() {
     return [
-      ['eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiSm9obiBEb2UifQ.N2njxOAsbphq8_Aiv4YKaGu1x3EuMyt7JuIM2RLLmnA', 'name', 'John Doe']
+      ['eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImlhdCI6MTM5ODIzOTIwMywiZXhwIjoxMzk4MjQyODAzfQ.eyJ1c2VyX2lkIjoiZUF3djVIdGRiU2s4Yk1OWVpvanNZdW13UXlLcFhxS3IifQ.Apa7EmT5T1sOYz4Af0ERTDzcnUvSalailNJbejZ2ddQ', 'user_id', 'eAwv5HtdbSk8bMNYZojsYumwQyKpXqKr']
     ];
   }
 
   /**
    * @dataProvider invalidJWTs
+   * @expectedException Userbin_SecurityError
    */
   public function testInvalidJWT($data) {
-    $jwt = new UserbinJWT($data);
-    $this->assertFalse($jwt->is_valid());
+    $jwt = new Userbin_JWT($data);
+    $jwt->isValid();
   }
 
   /**
    * @dataProvider validJWTs
    */
   public function testValidJWT($data) {
-    $jwt = new UserbinJWT($data);
-    $this->assertTrue($jwt->is_valid());
+    $jwt = new Userbin_JWT($data);
+    $this->assertTrue($jwt->isValid());
   }
 
   /**
    * @dataProvider validJWTs
    */
   public function testValidJWTPayload($data, $key, $value) {
-    $jwt = new UserbinJWT($data);
-    $payload = $jwt->payload();
+    $jwt = new Userbin_JWT($data);
+    $payload = $jwt->getBody();
     $this->assertEquals($payload[$key], $value);
   }
 }

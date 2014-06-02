@@ -1,137 +1,124 @@
-[![Build Status](https://travis-ci.org/userbin/userbin-php.png?branch=master)](https://travis-ci.org/userbin/userbin-php)
+[![Build Status](https://travis-ci.org/userbin/userbin-php.png)](https://travis-ci.org/userbin/userbin-php)
 
-Installation
-------------
+# PHP SDK for Userbin
 
-Begin with signing up at [https://userbin.com](https://userbin.com) to obtain
-your App ID and API secret.
+This library's purpose is to provide an additional security layer to your application by adding multi-factor authentication, user activity monitoring, and real-time threat protection in a white-label package. Your users **do not** need to be signed up or registered for Userbin before using the service.
 
-Download `userbin.php` directly from here into your project
+Your users can now easily activate two-factor authentication, configure the level of security in terms of monitoring and notifications and take action on suspicious behaviour. These settings are available as a per-user security settings page which is easily customized to fit your current layout.
+
+## Getting started
+
+Obtain the latest version of the Userbin PHP bindings with:
 
 ```bash
-curl -O https://raw.github.com/userbin/userbin-php/master/userbin.php
+git clone https://github.com/userbin/userbin-php
 ```
 
-Include `userbin.php` in your PHP script. If you're not using [output buffering](http://php.net/manual/en/book.outcontrol.php) this needs to be done before any output has been written since Userbin will modify headers.
-```php
-<?php
-require_once('userbin.php');
-// Configuration
-Userbin::set_app_id('<15 digit app ID>');
-Userbin::set_api_secret('<32 byte API secret>');
-
-// Do the Userbin authentication process
-Userbin::authenticate();
-?>
-```
-
-Include the [userbin script](https://userbin.com/js/v0) at the bottom of your HTML
+To get started, add the following to your PHP script:
 
 ```php
-      ...
-      <?= Userbin::javascript_include_tag(); ?>
-  </body>
-</html>
+require_once("/path/to/userbin-php/lib/Userbin.php");
 ```
 
-Usage
------
+Configure the library with your Userbin API secret.
 
-In the documents that you want to protect you can check whether a user is logged
-with:
+```php
+Userbin::setApiKey('YOUR_API_SECRET');
+```
+
+## Authenticate
+
+`authenticate` is the key component of the Userbin API. It lets you tie a user to their actions and record properties about them. Whenever any suspious behaviour is detected or a user gets locked out, a call to `authenticate` may throw an exception which needs to be handled by your application.
+
+You’ll want to `authenticate` a user with any relevant information as soon as the current user object is assigned in your application.
 
 ```php
 <?php
-// Put this at the top of your file
-if (!Userbin::authenticated()) {
-  // Some code to handle unauthorized access...
-  http_response_code(401);
-  die('You need to be logged in');
-}
-
-// User is logged in, show a secret page
-profile = Userbin::current_profile();
+  Userbin::authenticate($sessionToken, $user->id, array(
+    "email" => $user->email
+    "name"  => $user->name
+  ));
 ?>
-
-<h1>Welcome <?= profile['email'] ?></h1>
-<p>This page is for your eyes only</p>
 ```
 
-Alternatively you can use the `authorize` method to halt the execution and render a login page if the user is not logged in:
+#### Arguments
+
+The first argument is the session token for the currently logged in user. It can be omitted to create a new session (eg. when a user logs in).
+
+The second argument is a locally unique identifier for the logged in user, commonly the `id` field. This is the identifier you'll use further on when querying the user.
+
+The third argument is an array of properties you know about the user. See the User reference documentation for available fields and their meaning.
+
+> Note that every call to `authenticate` **does not** result in an HTTP request. Only the very first call, as well as expired session tokens result in a request. Session tokens expire every 5 minutes.
+
+## Two-factor authentication
+
+Two-factor authentication is available to your users out-of-the-box. By browsing to their Security Page, they're able to configure Google Authenticator and SMS settings, set up a backup phone number, and download their recovery codes.
+
+The session token returned from `authenticate` indicates if two-factor authentication is required from the user once your application asks for it. You can do this immediately after you've called `authenticate`, or you can wait until later. You have complete control over what actions you when you want to require two-factor authentication, e.g. when logging in, changing account information, making a purchase etc.
+
+### Step 1: Prompt the user
+
+`Userbin::twoFactorAuthenticate()` acts as a gateway in your application. If the user has enabled two-factor authentication, this method will return the second factor that is used to authenticate. If SMS is used, this call will also send out an SMS to the user's registered phone number.
+
+When `Userbin::twoFactorAuthenticate()` returns non-falsy value, you should display the appropriate form to the user, requesting their authentication code.
 
 ```php
 <?php
-// Put this at the top of the file, before any output has been sent.
-Userbin::authorize();
+  $factor = Userbin::twoFactorAuthenticate();
+
+  switch ($factor) {
+    case "authenticator":
+      // show form for Google Authenticator
+      break;
+    case "sms":
+      // show form for SMS
+      break;
+  }
 ?>
-
-<p>If you see this, you're logged in</p>
 ```
 
-## Forms
+> Note that this call may return a factor more than once per session since Userbin continously scans for behaviour that would require another round of two-factor authentication, such as the user switching to another IP address or web browser.
 
-Once you have set up authentication it's time to choose among the different ways of integrating Userbin into your application.
+### Step 2: Verify the code
 
-### Ready-made forms
+The user enters the authentication code in the form and posts it to your handler. The last step is for your application to verify the code with Userbin by calling `verify_code`. The session token will get updated on a successful verification, so you'll need to update it in your local session or cookie.
 
-The easiest and fastest way to integrate login and signup forms is to use the Userbin Widget, which provides a set of ready-made views which can be customized to blend in with your current user interface. These views open up in a popup, and on mobile browsers they open up a new window tailored for smaller devices.
+`code` can be either a code from the Google Authenticator app, an SMS, or one of the user's recovery codes.
 
-`rel` specifies action; possible options are `login` and `logout`.
-
-```html
-<a href="/account" rel="login">Log in</a>
-<a href="/account" rel="signup">Sign up</a>
+```php
+<?php
+  try {
+    Userbin::verifyCode($_POST["code"]);
+  } catch (Userbin_UserUnauthorizedError $e) {
+    // invalid code, show the form again
+  } catch (Userbin_ForbiddenError $e) {
+    // no tries remaining, log out
+    Userbin::deauthenticate();
+  } catch (Userbin_ApiError $e) {
+    // other error, log out
+    Userbin::deauthenticate();
+  }
+?>
 ```
 
-### Social buttons
+## Security settings page
 
-Instead of signing up your users with a username and password, you can offer them to connect with a social identity like Facebook or LinkedIn. To use these button you must first configure your social identiy providers from the [dashboard](https://userbin.com/dashboard). It is also possible to connect a social identity to an already logged in user and the two accounts will be automatically linked.
+Every user has access to their security settings, which is a hosted page on Userbin. Here users can configure two-factor authentication, revoke suspicious sessions and set up notifications. The security page can be customized to fit your current layout by going to the appearance settings in your Userbin dashboard.
 
-`rel` determines action. If the user didn't exist before, it's created, otherwise it's logged in.
+**Important:** Since the generated URL contains a Userbin session token that needs to be up-to-date, it's crucial that you don't use this helper directly in your HTML, but instead create a new route where you redirect to the security page.
 
-```html
-<a href="/account" rel="connect-facebook">Connect with Facebook</a>
-<a href="/account" rel="connect-linkedin">Connect with LinkedIn</a>
+```php
+<?php
+  $securityURL = Userbin::securitySettingsUrl();
+  header('Location: ' . $securityURL);
+?>
 ```
 
-### Custom forms
+## De-authenticate
 
-The ready-made forms are fairly high level, so you might prefer to use Userbin with your own markup to get full control over looks and behavior.
+Whenever a user is logged out from your application, you should inform Userbin about this so that the active session is properly terminated. This prevents the session from being used further on.
 
-If you create a form with `name` set to `login` or `signup`, the user will be sent to the URL specified by `action` after being successfully processed at Userbin.
-
-Inputs with name `email` and `password` are processed, others are ignored.
-
-If you add an element with the class `error-messages`, it will be automatically set to `display: block` and populated with a an error message when something goes wrong. So make sure to it is `display: hidden` by default.
-
-```html
-<form action="/account" name="signup">
-  <span class="error-messages"></span>
-  <div class="row">
-    <label>E-mail</label>
-    <input name="email" type="text"></input>
-  </div>
-  <div class="row">
-    <label>Password</label>
-    <input name="password" type="password"></input>
-  </div>
-  <button type="submit">Sign up</button>
-</form>
+```php
+Userbin::deauthenticate($sessionToken);
 ```
-
-### Log out
-
-Clears the session and redirects the user to the specified URL.
-
-```html
-<a href="/" rel="logout">Log out</a>
-```
-
-Example
--------
-Check out the `examples` directory or the [documentation](https://userbin.com/docs/php#example) for a complete example
-
-
-Documentation
--------------
-For complete documentation go to [userbin.com/docs](https://userbin.com/docs)
