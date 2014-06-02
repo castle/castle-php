@@ -27,15 +27,14 @@ class Userbin_RequestTransport
         throw new Userbin_RequestError();
     }
     $curlOptions = array();
-    if (!empty($vars)) {
-      $data_string = json_encode($vars);
+    if (!empty($params)) {
+      $data_string = json_encode($params);
       $curlOptions[CURLOPT_POSTFIELDS] = $data_string;
       $headers[]= 'Content-Length: ' . strlen($data_string);
     }
 
     $curlOptions[CURLOPT_URL] = $url;
     $curlOptions[CURLOPT_USERPWD] = ":" . Userbin::getApiKey();
-    $curlOptions[CURLOPT_HEADER] = true;
     $curlOptions[CURLOPT_RETURNTRANSFER] = true;
     $curlOptions[CURLOPT_USERAGENT] = "Userbin/v1 PHPBindings/".Userbin::VERSION;
     $curlOptions[CURLOPT_TIMEOUT] = 10;
