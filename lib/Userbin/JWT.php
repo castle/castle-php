@@ -15,7 +15,7 @@ class Userbin_JWT
   {
     $headers = $this->getHeader();
     date_default_timezone_set('UTC');
-    return time() > strtotime($headers['exp']);
+    return time() > intval($headers['exp']);
   }
 
   public function isValid()
