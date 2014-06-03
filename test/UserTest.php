@@ -2,6 +2,12 @@
 
 class UserbinUserTest extends Userbin_TestCase
 {
+  public static function setUpBeforeClass()
+  {
+    $_SERVER['HTTP_USER_AGENT'] = 'TestAgent';
+    $_SERVER['REMOTE_ADDR'] = '8.8.8.8';
+  }
+
   public function tearDown()
   {
     Userbin_RequestTransport::reset();
@@ -17,62 +23,27 @@ class UserbinUserTest extends Userbin_TestCase
     ];
   }
 
-  public function testGetName()
-  {
-    $user = new Userbin_User();
-    $this->assertEquals($user->getResourceName(), 'users');
-  }
-
-  public function testGetRequestPathWithoutId()
-  {
-    $user = new Userbin_User();
-    $this->assertEquals($user->getRequestPath(), '/users');
-  }
-
-  public function testGetRequestPathWithId()
-  {
-    $user = new Userbin_User(array('id' => 1));
-    $this->assertEquals($user->getRequestPath(), '/users/1');
-  }
-
   /**
    * @dataProvider exampleUser
+   * @expectedException Userbin_Error
    */
-  public function testCreateSession($user)
+  public function testCreateSessionInvalidResponse($user)
   {
+    Userbin_RequestTransport::setResponse(200, '');
     $user = new Userbin_User($user);
     $user->createSession();
-    $this->assertRequest('post', '/users/'.$user->id.'/sessions');
   }
 
   /**
    * @dataProvider exampleUser
    */
-  public function testCreate($user)
+  public function testCreateSessionSendsUserdata($userData)
   {
-    Userbin_RequestTransport::setResponse(200, $user);
-    $user = Userbin_User::create($user);
-    $this->assertRequest('post', '/users');
-  }
-
-  /**
-   * @dataProvider exampleUser
-   */
-  public function testDestroy($user) {
-    Userbin_RequestTransport::setResponse(204);
-    Userbin_User::destroy($user['id']);
-    $this->assertRequest('delete', '/users/'.$user['id']);
-  }
-
-  /**
-   * @dataProvider exampleUser
-   */
-  public function testFind($user)
-  {
-    Userbin_RequestTransport::setResponse(201, $user);
-    $found_user = Userbin_User::find($user['id']);
-    $this->assertRequest('get', '/users/'.$user['id']);
-    $this->assertEquals($found_user->email, $user['email']);
+    Userbin_RequestTransport::setResponse(200, array());
+    $user = new Userbin_User($userData);
+    $user->createSession();
+    $request = Userbin_RequestTransport::getLastRequest();
+    $this->assertEquals($request['params']['user'], $userData);
   }
 }
 

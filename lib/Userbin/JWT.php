@@ -51,7 +51,7 @@ class Userbin_JWT
       }
       $header[$key] = $value;
     }
-    $this->_header = self::base64Encode(json_encode($header, true));
+    $this->_header = self::base64Encode(json_encode($header));
     return $this;
   }
 
