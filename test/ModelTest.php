@@ -98,6 +98,16 @@ class UserbinModelTest extends Userbin_TestCase
   /**
    * @dataProvider exampleUser
    */
+  public function testCreateSendsParams($user)
+  {
+    Userbin_User::create($user);
+    $request = Userbin_RequestTransport::getLastRequest();
+    $this->assertEquals($user, $request['params']);
+  }
+
+  /**
+   * @dataProvider exampleUser
+   */
   public function testDestroy($user) {
     Userbin_RequestTransport::setResponse(204);
     Userbin_User::destroy($user['id']);

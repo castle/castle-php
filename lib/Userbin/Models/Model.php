@@ -144,7 +144,7 @@ class Userbin_Model
   public static function create($attributes)
   {
     $instance = new static;
-    $response = $instance->makeRequest('post');
+    $response = $instance->makeRequest('post', null, $attributes);
     $instance->setAttributes($response);
     return $instance;
   }
