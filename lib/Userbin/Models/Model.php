@@ -6,13 +6,15 @@ class Userbin_Model
 
   protected $resourceName = null;
 
-  protected $primaryKey   = 'id';
+  protected $parent       = null;
+
+  protected $idAttribute  = 'id';
 
   protected $perPage      = 30;
 
   protected $stripPrefix  = 'userbin_';
 
-  public function __construct(array $attributes = array())
+  public function __construct($attributes = array())
   {
     $this->setAttributes($attributes);
   }
@@ -29,7 +31,7 @@ class Userbin_Model
 
   protected function makeRequest($method, $extraPath=null, $params=null)
   {
-    $url = $this->getRequestPath($extraPath);
+    $url = $this->getResourcePath($extraPath);
     $request = new Userbin_Request();
     list($response, $request) = $request->send($method, $url, $params);
     return $response;
@@ -48,6 +50,16 @@ class Userbin_Model
     $this->attributes[$key] = $value;
   }
 
+  public function getId()
+  {
+    return $this->getAttribute($this->idAttribute);
+  }
+
+  public function setId($id)
+  {
+    $this->setAttribute($this->idAttribute, $id);
+  }
+
   public function setAttributes($attributes)
   {
     if (!isset($attributes)) return;
@@ -56,6 +68,10 @@ class Userbin_Model
     }
   }
 
+  public function setParent(Userbin_Model $parent)
+  {
+    $this->parent = $parent;
+  }
 
   public function getPerPage()
   {
@@ -74,10 +90,14 @@ class Userbin_Model
     return str_replace($this->stripPrefix, '', self::snakeCase(get_class($this)).'s');
   }
 
-  public function getRequestPath($extraPath = null)
+  public function getResourcePath($extraPath = null)
   {
-    $path = '/'.$this->getResourceName();
-    $key = $this->getAttribute($this->primaryKey);
+    $path = '';
+    if (isset($this->parent)) {
+      $path .= $this->parent->getResourcePath();
+    }
+    $path .= '/'.$this->getResourceName();
+    $key = $this->getId();
     if (isset($key)) {
       $path .= '/'.$key;
     }
@@ -85,6 +105,11 @@ class Userbin_Model
       $path .= $extraPath;
     }
     return $path;
+  }
+
+  public function hasResource($model)
+  {
+    return new Userbin_Resource($model, $this);
   }
 
   /*
@@ -104,7 +129,12 @@ class Userbin_Model
 
   public function save()
   {
-    $this->makeRequest('put', null, $this->attributes);
+    $method = array_key_exists($this->idAttribute, $this->attributes) ? 'put' : 'post';
+    $response = $this->makeRequest($method, null, $this->attributes);
+    if (!is_array($response)) {
+      throw new Userbin_Error('Invalid response');
+    }
+    $this->setAttributes($response);
     return $this;
   }
 
@@ -138,30 +168,27 @@ class Userbin_Model
 
   public static function all()
   {
-    # code...
+    $instance = new Userbin_Resource(get_called_class());
+    return $instance->all();
   }
 
-  public static function create($attributes)
+  public static function create($attributes=null)
   {
-    $instance = new static;
-    $response = $instance->makeRequest('post', null, $attributes);
-    $instance->setAttributes($response);
-    return $instance;
+    $instance = new Userbin_Resource(get_called_class());
+    return $instance->create($attributes);
   }
 
 
   public static function destroy($id)
   {
-    $instance = new static;
-    $instance->setAttribute($instance->primaryKey, $id);
-    $instance->delete();
+    $instance = new Userbin_Resource(get_called_class());
+    return $instance->destroy($id);
   }
 
   public static function find($id)
   {
-    $instance = new static;
-    $instance->setAttribute($instance->primaryKey, $id);
-    return $instance->fetch();
+    $instance = new Userbin_Resource(get_called_class());
+    return $instance->find($id);
   }
 }
 

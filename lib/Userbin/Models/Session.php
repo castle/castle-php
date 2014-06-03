@@ -3,7 +3,7 @@
 class Userbin_Session extends Userbin_Model
 {
 
-  protected $primaryKey = 'token';
+  protected $idAttribute = 'token';
 
   public function hasExpired()
   {

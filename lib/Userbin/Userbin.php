@@ -44,7 +44,7 @@ abstract class Userbin
     else {
       $user = new Userbin_User($userData);
       $user->id = $userId;
-      $session = $user->createSession();
+      $session = $user->sessions()->create();
     }
 
     return $session->token;

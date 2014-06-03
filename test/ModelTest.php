@@ -63,16 +63,16 @@ class UserbinModelTest extends Userbin_TestCase
     $this->assertEquals($user->getResourceName(), 'users');
   }
 
-  public function testGetRequestPathWithoutId()
+  public function testGetResourcePathWithoutId()
   {
     $user = new Userbin_User();
-    $this->assertEquals($user->getRequestPath(), '/users');
+    $this->assertEquals($user->getResourcePath(), '/users');
   }
 
-  public function testGetRequestPathWithId()
+  public function testGetResourcePathWithId()
   {
     $user = new Userbin_User(array('id' => 1));
-    $this->assertEquals($user->getRequestPath(), '/users/1');
+    $this->assertEquals($user->getResourcePath(), '/users/1');
   }
 
   /**
@@ -81,7 +81,7 @@ class UserbinModelTest extends Userbin_TestCase
   public function testCreateSession($user)
   {
     $user = new Userbin_User($user);
-    $user->createSession();
+    $user->sessions()->create();
     $this->assertRequest('post', '/users/'.$user->id.'/sessions');
   }
 
@@ -91,7 +91,7 @@ class UserbinModelTest extends Userbin_TestCase
   public function testCreate($user)
   {
     Userbin_RequestTransport::setResponse(200, $user);
-    $user = Userbin_User::create($user);
+    $user = Userbin_User::create(array('email' => 'hello@example.com'));
     $this->assertRequest('post', '/users');
   }
 

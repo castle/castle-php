@@ -31,7 +31,7 @@ class UserbinUserTest extends Userbin_TestCase
   {
     Userbin_RequestTransport::setResponse(200, '');
     $user = new Userbin_User($user);
-    $user->createSession();
+    $user->sessions()->create();
   }
 
   /**
@@ -41,8 +41,9 @@ class UserbinUserTest extends Userbin_TestCase
   {
     Userbin_RequestTransport::setResponse(200, array());
     $user = new Userbin_User($userData);
-    $user->createSession();
+    $user->sessions()->create(array('user' => $userData));
     $request = Userbin_RequestTransport::getLastRequest();
+    $this->assertRequest('post', '/users/'.$user->id.'/sessions');
     $this->assertEquals($request['params']['user'], $userData);
   }
 }
