@@ -2,13 +2,18 @@
 
 class Userbin_JWT
 {
-  function __construct($token)
+  function __construct($token=null)
   {
     $jwt = Array(null, null, null);
-    if ($token) {
+    if (isset($token)) {
       $jwt = explode(".", $token);
     }
     list($this->_header, $this->_token, $this->_signature) = $jwt;
+  }
+
+  protected function getHmac()
+  {
+    return hash_hmac('sha256', "$this->_header.$this->_token", Userbin::getApiKey(), true);
   }
 
   public function hasExpired()
@@ -20,7 +25,7 @@ class Userbin_JWT
 
   public function isValid()
   {
-    $hmac = hash_hmac('sha256', "$this->_header.$this->_token", Userbin::getApiKey(), true);
+    $hmac = $this->getHmac();
     if (self::base64Encode($hmac) == $this->_signature) {
       return true;
     }
@@ -34,9 +39,31 @@ class Userbin_JWT
     return json_decode(self::base64Decode($this->_header), true);
   }
 
+  public function setHeader($key, $value=null)
+  {
+    $header = $this->getHeader();
+    if (is_array($key)) {
+      $header = $key;
+    }
+    else if (isset($value)) {
+      if (!isset($header)) {
+        $header = array();
+      }
+      $header[$key] = $value;
+    }
+    $this->_header = self::base64Encode(json_encode($header, true));
+    return $this;
+  }
+
   public function getBody()
   {
     return json_decode(self::base64Decode($this->_token), true);
+  }
+
+  public function toString()
+  {
+    $signature = $this->getHmac();
+    return join('.', array($this->_header, $this->_body, $signature));
   }
 
   public static function base64Encode($data)

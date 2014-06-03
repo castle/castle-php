@@ -44,6 +44,22 @@ class UserbinJWTTest extends \PHPUnit_Framework_TestCase
     $payload = $jwt->getBody();
     $this->assertEquals($payload[$key], $value);
   }
+
+  public function testSetHeader()
+  {
+    $jwt = new Userbin_JWT();
+    $now = time();
+    $jwt->setHeader('exp', $now);
+    $header = $jwt->getHeader();
+    $this->assertEquals($header['exp'], $now);
+  }
+
+  public function testHasExpired()
+  {
+    $jwt = new Userbin_JWT();
+    $jwt->setHeader(array('exp' => time() + 60));
+    $this->assertFalse($jwt->hasExpired());
+  }
 }
 
 ?>
