@@ -1,5 +1,4 @@
 <?php
-
 class UserbinModelTest extends Userbin_TestCase
 {
   public static function setUpBeforeClass()
@@ -78,21 +77,22 @@ class UserbinModelTest extends Userbin_TestCase
   /**
    * @dataProvider exampleUser
    */
-  public function testCreateSession($user)
-  {
-    $user = new Userbin_User($user);
-    $user->sessions()->create();
-    $this->assertRequest('post', '/users/'.$user->id.'/sessions');
-  }
-
-  /**
-   * @dataProvider exampleUser
-   */
   public function testCreate($user)
   {
     Userbin_RequestTransport::setResponse(200, $user);
     $user = Userbin_User::create(array('email' => 'hello@example.com'));
     $this->assertRequest('post', '/users');
+  }
+
+  /**
+   * @dataProvider exampleUser
+   */
+  public function testAll($user)
+  {
+    Userbin_RequestTransport::setResponse(200, array($user, $user));
+    $users = Userbin_User::all();
+    $this->assertRequest('get', '/users');
+    $this->assertEquals($users[0]->id, $user['id']);
   }
 
   /**
@@ -123,6 +123,18 @@ class UserbinModelTest extends Userbin_TestCase
     $found_user = Userbin_User::find($user['id']);
     $this->assertRequest('get', '/users/'.$user['id']);
     $this->assertEquals($found_user->email, $user['email']);
+  }
+
+  public function testHasOne()
+  {
+    $userData = array(
+      'id' => 1,
+      'session' => array('token' => 1)
+    );
+    $user = new Userbin_User($userData);
+    $session = $user->hasOne('Userbin_Session', $user->session);
+    $session->save();
+    $this->assertRequest('put', '/users/1/session');
   }
 }
 

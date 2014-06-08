@@ -2,10 +2,16 @@
 
 class Userbin_Resource
 {
-  public function __construct($model, $parent=null)
+  protected $parent = null;
+
+  protected $items  = null;
+
+  public function __construct($model, $items=null)
   {
-    $this->model  = $model;
-    $this->parent = $parent;
+    $this->model = $model;
+    if (is_array($items)) {
+      $this->items = $this->oadItems($items);
+    }
   }
 
   protected function createModel($attributes=null)
@@ -17,9 +23,28 @@ class Userbin_Resource
     return $instance;
   }
 
-  public function all()
+  protected function loadItems(array $items=array())
   {
-    // TODO
+    $this->items = array();
+    foreach ($items as $attributes) {
+      $this->items[] = $this->createModel($attributes);
+    }
+  }
+
+  public function setParent($parent)
+  {
+    $this->parent = $parent;
+  }
+
+  public function all($params=null)
+  {
+    if (is_array($this->items)) {
+      return $this->items;
+    }
+    $instance = $this->createModel();
+    $items = $instance->get();
+    $this->loadItems($items);
+    return $this->items;
   }
 
   public function create($attributes=null)

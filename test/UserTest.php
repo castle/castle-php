@@ -25,6 +25,16 @@ class UserbinUserTest extends Userbin_TestCase
 
   /**
    * @dataProvider exampleUser
+   */
+  public function testCreateSession($user)
+  {
+    $user = new Userbin_User($user);
+    $user->sessions()->create();
+    $this->assertRequest('post', '/users/'.$user->id.'/sessions');
+  }
+
+  /**
+   * @dataProvider exampleUser
    * @expectedException Userbin_Error
    */
   public function testCreateSessionInvalidResponse($user)
