@@ -16,9 +16,15 @@ class Userbin_Model
 
   protected $stripPrefix  = 'userbin_';
 
-  public function __construct($attributes = array())
+  public function __construct($attributes=null)
   {
-    $this->setAttributes($attributes);
+    //$this->setAttributes($attributes);
+    if (is_array($attributes)) {
+      $this->attributes = $attributes;
+    }
+    else if (isset($attributes)) {
+      $this->setId($attributes);
+    }
   }
 
   public function __get($key)

@@ -2,6 +2,10 @@
 
 class UserbinSessionTest extends Userbin_TestCase
 {
+  public static function setUpBeforeClass() {
+    Userbin::setApiKey('secretkey');
+  }
+
   public function tearDown()
   {
     Userbin_RequestTransport::reset();
@@ -17,7 +21,6 @@ class UserbinSessionTest extends Userbin_TestCase
           'id' => 1,
           'email' => 'hello@example.com'
         )
-
       )]
     ];
   }
@@ -25,10 +28,10 @@ class UserbinSessionTest extends Userbin_TestCase
   /**
    * @dataProvider exampleSession
    */
-  public function testRefresh($session)
+  public function testRefresh($sessionData)
   {
-    Userbin_RequestTransport::setResponse(201, $session);
-    $session = new Userbin_Session($session);
+    Userbin_RequestTransport::setResponse(201, $sessionData);
+    $session = new Userbin_Session($sessionData);
     $session->refresh();
     $this->assertRequest('post', '/sessions/'.$session->token.'/refresh');
   }
@@ -52,6 +55,25 @@ class UserbinSessionTest extends Userbin_TestCase
     Userbin_RequestTransport::setResponse(201, $session);
     $newSession->refresh($session['user']);
     $this->assertEquals($newSession->user['email'], 'new_email@example.com');
+  }
+
+  /**
+   * @dataProvider exampleSession
+   */
+  public function testSerialize($sessionData)
+  {
+    $session = new Userbin_Session($sessionData);
+    $token = $session->serialize();
+  }
+
+  /**
+   * @dataProvider exampleSession
+   */
+  public function testLoad($sessionData)
+  {
+    $session = Userbin_Session::load($sessionData['token']);
+    $user = $session->user();
+    $this->assertTrue($user instanceof Userbin_User);
   }
 }
 ?>

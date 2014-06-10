@@ -13,6 +13,7 @@ require(dirname(__FILE__) . '/../lib/Userbin/Userbin.php');
 require(dirname(__FILE__) . '/../lib/Userbin/Errors.php');
 require(dirname(__FILE__) . '/../lib/Userbin/Models/Resource.php');
 require(dirname(__FILE__) . '/../lib/Userbin/Models/Model.php');
+require(dirname(__FILE__) . '/../lib/Userbin/Models/Challenge.php');
 require(dirname(__FILE__) . '/../lib/Userbin/Models/Session.php');
 require(dirname(__FILE__) . '/../lib/Userbin/Models/User.php');
 require(dirname(__FILE__) . '/../lib/Userbin/JWT.php');

@@ -11,6 +11,7 @@ require(dirname(__FILE__) . '/Userbin/Userbin.php');
 require(dirname(__FILE__) . '/Userbin/Errors.php');
 require(dirname(__FILE__) . '/Userbin/Models/Resource.php');
 require(dirname(__FILE__) . '/Userbin/Models/Model.php');
+require(dirname(__FILE__) . '/Userbin/Models/Challenge.php');
 require(dirname(__FILE__) . '/Userbin/Models/Session.php');
 require(dirname(__FILE__) . '/Userbin/Models/User.php');
 require(dirname(__FILE__) . '/Userbin/JWT.php');

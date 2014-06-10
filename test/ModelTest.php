@@ -70,9 +70,18 @@ class UserbinModelTest extends Userbin_TestCase
 
   public function testGetResourcePathWithId()
   {
-    $user = new Userbin_User(array('id' => 1));
+    $userData = array('id' => 1);
+    $user = new Userbin_User($userData);
     $this->assertEquals($user->getResourcePath(), '/users/1');
   }
+
+  // public function testConstructorSetsReference()
+  // {
+  //   $attributes = array('id' => 1);
+  //   $model = new Userbin_Model($attributes);
+  //   $attributes['id'] = 2;
+  //   $this->assertEquals($model->id, $attributes['id']);
+  // }
 
   /**
    * @dataProvider exampleUser
