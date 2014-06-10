@@ -33,6 +33,16 @@ abstract class Userbin
   /*
    * Helpers
    */
+  public static function getSession()
+  {
+    if (array_key_exists('userbin', $_SESSION)) {
+      $session = new Userbin_Session();
+      $session->setId($_SESSION['userbin']);
+      return $session;
+    }
+    return null;
+  }
+
   public static function startSession($userId, array $userData=array())
   {
     $session = new Userbin_Session();
@@ -58,22 +68,13 @@ abstract class Userbin
 
   }
 
-  public static function securitySettingsUrl($sessionToken)
+  public static function securitySettingsUrl()
   {
-    if (!isset($sessionToken)) return '';
-    $jwt = new Userbin_JWT($sessionToken);
+    $session = self::getSession();
 
-    try {
-      $jwt->isValid();
+    if (empty($session)) {
+      throw new Userbin_Error();
     }
-    catch (Exception $e) {
-      return '';
-    }
-
-    $body = $jwt->getBody();
-    if (array_key_exists('app_id', $body)) {
-      return 'https://security.userbin.com/?session_token='.$body['app_ip'];
-    }
-    return '';
+    return 'https://security.userbin.com/?session_token='.$session->getId();
   }
 }

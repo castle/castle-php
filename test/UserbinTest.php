@@ -63,7 +63,18 @@ class UserbinTest extends Userbin_TestCase
    */
   public function testSecuritySettingsUrl($token)
   {
-    $url = Userbin::securitySettingsUrl($token);
+    $_SESSION['userbin'] = $token;
+    $url = Userbin::securitySettingsUrl();
+    $this->assertContains($token, $url);
+  }
+
+  /**
+   * @expectedException Userbin_Error
+   */
+  public function testSecuritySettingsUrlWithoutSession()
+  {
+    $url = Userbin::securitySettingsUrl();
+    $this->assertEmpty($url);
   }
 }
 
