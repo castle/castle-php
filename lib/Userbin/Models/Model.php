@@ -51,6 +51,7 @@ class Userbin_Model
     {
       return $this->attributes[$key];
     }
+    return null;
   }
 
   public function setAttribute($key, $value)
@@ -68,6 +69,10 @@ class Userbin_Model
     $this->setAttribute($this->idAttribute, $id);
   }
 
+  public function getAttributes()
+  {
+    return $this->attributes;
+  }
   public function setAttributes($attributes)
   {
     if (!isset($attributes)) return;

@@ -33,27 +33,24 @@ abstract class Userbin
   /*
    * Helpers
    */
-  public static function authenticate($sessionToken, $userId, array $userData=array())
+  public static function startSession($userId, array $userData=array())
   {
-    $session = new Userbin_Session(array('token' => $sessionToken));
-    if ($session->token) {
-      if ($session->hasExpired()) {
-        $session->refresh();
-      }
-    }
-    else {
-      $user = new Userbin_User($userData);
-      $user->id = $userId;
-      $session = $user->sessions()->create();
+    $session = new Userbin_Session();
+    if (array_key_exists('userbin', $_SESSION)) {
+      $session->setId($_SESSION['userbin']);
     }
 
-    return $session->token;
+    $session->sync($userId, $userData);
+    $_SESSION['userbin'] = $session->serialize();
+    return $session;
   }
 
-  public static function deauthenticate($sessionToken)
+  public static function destroySession()
   {
-    if (!isset($sessionToken)) return;
-    Userbin_Session::destroy($sessionToken);
+    if (array_key_exists('userbin', $_SESSION)) {
+      Userbin_Session::destroy($_SESSION['userbin']);
+      unset($_SESSION['userbin']);
+    }
   }
 
   public static function twoFactorAuthenticate()

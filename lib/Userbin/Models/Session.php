@@ -31,6 +31,22 @@ class Userbin_Session extends Userbin_Model
     return $this->token;
   }
 
+  public function sync($userId, $userData)
+  {
+    if ($this->token) {
+      if ($this->hasExpired()) {
+        $this->refresh($userData);
+      }
+    }
+    else {
+      $user = new Userbin_User($userData);
+      $user->setId($userId);
+      $session = $user->sessions()->create();
+      $this->setAttributes($session->getAttributes());
+    }
+    return $this;
+  }
+
   public function user()
   {
     $userId = $this->getJWT()->getHeader('iss');

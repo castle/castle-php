@@ -4,6 +4,7 @@ class UserbinTest extends Userbin_TestCase
 {
   public static function setUpBeforeClass() {
     Userbin::setApiKey('secretkey');
+    $_SESSION = array();
   }
 
   public function testSetApiKey()
@@ -26,29 +27,35 @@ class UserbinTest extends Userbin_TestCase
   /**
    * @dataProvider exampleUser
    */
-  public function testAuthenticateWithoutToken($user)
+  public function testStartSessionWithoutExistingSession($user)
   {
     Userbin_RequestTransport::setResponse(201, array('token' => '1234'));
-    $token = Userbin::authenticate(null, $user['id'], $user);
-    $this->assertEquals($token, '1234');
+    $session = Userbin::startSession($user['id'], $user);
+    $this->assertEquals($session->token, '1234');
     $this->assertRequest('post', '/users/'.$user['id'].'/sessions');
   }
 
   /**
    * @dataProvider exampleSessionToken
    */
-  public function testAuthenticatioWithToken($token)
+  public function testStartSessionWithExistingSession($token)
   {
     Userbin_RequestTransport::setResponse(201, array('token' => $token));
-    $newToken = Userbin::authenticate($token, 1);
-    $this->assertEquals($newToken, $token);
+    $_SESSION['userbin'] = $token;
+    $session = Userbin::startSession(1);
+    $this->assertEquals($session->token, $token);
     $this->assertRequest('post', '/sessions/'.$token.'/refresh');
   }
 
-  public function testDeauthenticate()
+  /**
+   * @dataProvider exampleSessionToken
+   */
+  public function testDestroySession($token)
   {
-    Userbin::deauthenticate('1234');
-    $this->assertRequest('delete', '/sessions/1234');
+    $_SESSION['userbin'] = $token;
+    Userbin::destroySession();
+    $this->assertFalse(array_key_exists('userbin', $_SESSION));
+    $this->assertRequest('delete', '/sessions/'.$token);
   }
 
   /**
