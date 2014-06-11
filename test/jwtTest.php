@@ -54,6 +54,15 @@ class UserbinJWTTest extends \PHPUnit_Framework_TestCase
     $this->assertEquals($header['exp'], $now);
   }
 
+  /**
+   * @dataProvider validJWTs
+   */
+  public function testGetheaderWithKey($data)
+  {
+    $jwt = new Userbin_JWT($data);
+    $this->assertEquals($jwt->getHeader('typ'), 'JWT');
+  }
+
   public function testHasExpired()
   {
     $jwt = new Userbin_JWT();

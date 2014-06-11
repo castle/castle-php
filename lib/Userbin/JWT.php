@@ -34,9 +34,18 @@ class Userbin_JWT
     }
   }
 
-  public function getHeader()
+  public function getHeader($key=null)
   {
-    return json_decode(self::base64Decode($this->_header), true);
+    $headers = json_decode(self::base64Decode($this->_header), true);
+    if (is_string($key)) {
+      if (array_key_exists($key, $headers)) {
+        return $headers[$key];
+      }
+      else {
+        return null;
+      }
+    }
+    return $headers;
   }
 
   public function setHeader($key, $value=null)
