@@ -44,7 +44,7 @@ class Userbin_Request
 
   public function handleRequestError($request)
   {
-    throw new Userbin_RequestError("$request->error: $reqeust->message");
+    throw new Userbin_RequestError("$request->rError: $request->rMessage");
   }
 
   public function send($method, $url, $params=null)

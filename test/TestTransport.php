@@ -3,6 +3,7 @@
 class Userbin_RequestTransport
 {
   public $rBody;
+  public $rHeaders;
   public $rStatus;
   public $rError;
   public $rMessage;
@@ -23,6 +24,7 @@ class Userbin_RequestTransport
     );
     $this->rBody = self::$params['body'];
     $this->rStatus = self::$params['code'];
+    $this->rHeaders = self::$params['headers'];
   }
 
   public static function getLastRequest()
@@ -36,13 +38,14 @@ class Userbin_RequestTransport
     self::$params = null;
   }
 
-  public static function setResponse($code=200, $body='') {
+  public static function setResponse($code=200, $body='', $headers=array()) {
     if (is_array($body)) {
       $body = json_encode($body, true);
     }
     self::$params = array(
       'body' => $body,
-      'code' => $code
+      'code' => $code,
+      'headers' => $headers
     );
   }
 }
