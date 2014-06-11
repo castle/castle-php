@@ -29,6 +29,14 @@ class UserbinJWTTest extends \PHPUnit_Framework_TestCase
   }
 
   /**
+   * @expectedException Userbin_SecurityError
+   */
+  public function testInvalidConstructorArgument()
+  {
+    $jwt = new Userbin_JWT('1234');
+  }
+
+  /**
    * @dataProvider validJWTs
    */
   public function testValidJWT($data) {

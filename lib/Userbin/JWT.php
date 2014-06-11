@@ -8,6 +8,9 @@ class Userbin_JWT
     if (isset($token)) {
       $jwt = explode(".", $token);
     }
+    if (count($jwt) != 3) {
+      throw new Userbin_SecurityError('Invalid JWT');
+    }
     list($this->_header, $this->_token, $this->_signature) = $jwt;
   }
 
