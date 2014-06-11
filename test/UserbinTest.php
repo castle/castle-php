@@ -4,6 +4,10 @@ class UserbinTest extends Userbin_TestCase
 {
   public static function setUpBeforeClass() {
     Userbin::setApiKey('secretkey');
+  }
+
+  protected function setUp()
+  {
     $_SESSION = array();
   }
 

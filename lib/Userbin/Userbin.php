@@ -8,6 +8,8 @@ abstract class Userbin
 
   public static $apiVersion = 'v1';
 
+  public static $sessionSerializer = 'Userbin_SessionSerializer';
+
   const VERSION = '1.0.0';
 
   public static function getApiKey()
@@ -30,36 +32,46 @@ abstract class Userbin
     self::$apiVersion = $apiVersion;
   }
 
+  public function getSerializer()
+  {
+    return new self::$sessionSerializer;
+  }
+
+  public function setSerializer($serializerClass)
+  {
+    self::$sessionSerializer = $serializerClass;
+  }
+
   /*
    * Helpers
    */
   public static function getSession()
   {
-    if (array_key_exists('userbin', $_SESSION)) {
-      $session = new Userbin_Session();
-      $session->setId($_SESSION['userbin']);
-      return $session;
+    $sessionData = self::getSerializer()->read();
+    if ($sessionData) {
+      return Userbin_Session::load($sessionData);
     }
     return null;
   }
 
   public static function startSession($userId, array $userData=array())
   {
-    $session = new Userbin_Session();
-    if (array_key_exists('userbin', $_SESSION)) {
-      $session->setId($_SESSION['userbin']);
+    $session = self::getSession();
+    if (empty($session)) {
+      $session = new Userbin_Session();
     }
-
     $session->sync($userId, $userData);
-    $_SESSION['userbin'] = $session->serialize();
+
+    self::getSerializer()->write($session->serialize());
     return $session;
   }
 
   public static function destroySession()
   {
-    if (array_key_exists('userbin', $_SESSION)) {
-      Userbin_Session::destroy($_SESSION['userbin']);
-      unset($_SESSION['userbin']);
+    $session = self::getSession();
+    if (isset($session)) {
+      $session->delete();
+      self::getSerializer()->destroy();
     }
   }
 

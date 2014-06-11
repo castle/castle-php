@@ -62,7 +62,7 @@ class Userbin_Session extends Userbin_Model
   {
     $instance = new static;
     $instance->setId($jwtString);
-    $jwt = $instance->getJWT();
+    $jwt = $instance->getJWT(); // Implicit validate
     return $instance;
   }
 }
