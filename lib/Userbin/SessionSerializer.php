@@ -9,7 +9,7 @@ class Userbin_SessionSerializer
 
   public function read()
   {
-    if (array_key_exists('userbin', $_SESSION)) {
+    if (isset($_SESSION) && array_key_exists('userbin', $_SESSION)) {
       return $_SESSION['userbin'];
     }
     return null;
@@ -17,6 +17,8 @@ class Userbin_SessionSerializer
 
   public function write($value)
   {
-    $_SESSION['userbin'] = $value;
+    if ($_SESSION) {
+      $_SESSION['userbin'] = $value;
+    }
   }
 }
