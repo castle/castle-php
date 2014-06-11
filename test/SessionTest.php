@@ -28,12 +28,12 @@ class UserbinSessionTest extends Userbin_TestCase
   /**
    * @dataProvider exampleSession
    */
-  public function testRefresh($sessionData)
+  public function testSync($sessionData)
   {
     Userbin_RequestTransport::setResponse(201, $sessionData);
     $session = new Userbin_Session($sessionData);
-    $session->refresh();
-    $this->assertRequest('post', '/sessions/'.$session->token.'/refresh');
+    $session->sync(1);
+    $this->assertRequest('post', '/sync');
   }
 
   /**
@@ -43,18 +43,6 @@ class UserbinSessionTest extends Userbin_TestCase
   {
     $session = new Userbin_Session($session);
     $this->assertTrue($session->hasExpired());
-  }
-
-  /**
-   * @dataProvider exampleSession
-   */
-  public function testUpdateUserInfo($session)
-  {
-    $newSession = new Userbin_Session($session);
-    $session['user']['email'] = 'new_email@example.com';
-    Userbin_RequestTransport::setResponse(201, $session);
-    $newSession->refresh($session['user']);
-    $this->assertEquals($newSession->user['email'], 'new_email@example.com');
   }
 
   /**

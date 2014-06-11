@@ -53,7 +53,7 @@ class UserbinTest extends Userbin_TestCase
     $_SESSION['userbin'] = $token;
     $user = Userbin::authorize('user-2412');
     $this->assertEquals($user->id, 'user-2412');
-    $this->assertRequest('post', '/sessions/'.$token.'/refresh');
+    $this->assertRequest('post', '/sync', array('X-Userbin-Session-Token' => $token));
   }
 
   /**

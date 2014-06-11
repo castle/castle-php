@@ -18,8 +18,7 @@ class UserbinRequestTest extends \PHPUnit_Framework_TestCase
   {
     $request = Userbin_RequestTransport::getLastRequest();
     if (!empty($request)) {
-      $str = join($request['headers'], '');
-      return strpos($str, $keyword) !== false;
+      return array_key_exists($keyword, $request['headers']);
     }
     return false;
   }

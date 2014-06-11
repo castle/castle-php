@@ -16,9 +16,16 @@ class Userbin_RequestTransport
     if (!self::$params) {
       self::setResponse(200, '{}');
     }
+    $headers_array = array();
+    foreach ($headers as $header) {
+      preg_match('#(.*?)\:\s(.*)#', $header, $matches);
+      if (!empty($matches[1])) {
+        $headers_array[$matches[1]] = $matches[2];
+      }
+    }
     self::$lastRequest = array(
       'method'  => $method,
-      'headers' => $headers,
+      'headers' => $headers_array,
       'params'  => $params,
       'url'     => $url
     );

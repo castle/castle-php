@@ -19,23 +19,16 @@ class Userbin_Session extends Userbin_Model
     return $jwt->hasExpired();
   }
 
-  public function refresh($attributes=null)
-  {
-    $response = $this->post('/refresh', array('user' => $attributes));
-    $this->setAttributes($response);
-    return $this;
-  }
-
   public function serialize()
   {
     return $this->token;
   }
 
-  public function sync($userId, $userData)
+  public function sync($userId, $userData=null)
   {
     if ($this->token) {
       if ($this->hasExpired()) {
-        $this->refresh($userData);
+        $this->post('/sync', array('user' => $userData));
       }
     }
     else {

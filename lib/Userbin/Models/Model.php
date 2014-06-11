@@ -39,7 +39,12 @@ class Userbin_Model
 
   protected function request($method, $path=null, $params=null)
   {
-    $url = $this->getResourcePath($path);
+    if (isset($path) && substr($path, 0, 1) == '/') {
+      $url = $path;
+    }
+    else {
+      $url = $this->getResourcePath($path);
+    }
     $request = new Userbin_Request();
     list($response, $request) = $request->send($method, $url, $params);
     return $response;
