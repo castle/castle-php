@@ -54,7 +54,7 @@ abstract class Userbin
     return null;
   }
 
-  public static function startSession($userId, array $userData=array())
+  public static function authorize($userId, array $userData=array())
   {
     $session = self::getSession();
     if (empty($session)) {
@@ -66,7 +66,7 @@ abstract class Userbin
     return $session;
   }
 
-  public static function destroySession()
+  public static function logout()
   {
     $session = self::getSession();
     if (isset($session)) {

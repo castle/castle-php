@@ -31,10 +31,10 @@ class UserbinTest extends Userbin_TestCase
   /**
    * @dataProvider exampleUser
    */
-  public function testStartSessionWithoutExistingSession($user)
+  public function testAuthorizeWithoutExistingSession($user)
   {
     Userbin_RequestTransport::setResponse(201, array('token' => '1234'));
-    $session = Userbin::startSession($user['id'], $user);
+    $session = Userbin::authorize($user['id'], $user);
     $this->assertEquals($session->token, '1234');
     $this->assertRequest('post', '/users/'.$user['id'].'/sessions');
   }
@@ -42,11 +42,11 @@ class UserbinTest extends Userbin_TestCase
   /**
    * @dataProvider exampleSessionToken
    */
-  public function testStartSessionWithExistingSession($token)
+  public function testAuthorizeWithExistingSession($token)
   {
     Userbin_RequestTransport::setResponse(201, array('token' => $token));
     $_SESSION['userbin'] = $token;
-    $session = Userbin::startSession(1);
+    $session = Userbin::authorize(1);
     $this->assertEquals($session->token, $token);
     $this->assertRequest('post', '/sessions/'.$token.'/refresh');
   }
@@ -54,10 +54,10 @@ class UserbinTest extends Userbin_TestCase
   /**
    * @dataProvider exampleSessionToken
    */
-  public function testDestroySession($token)
+  public function testLogout($token)
   {
     $_SESSION['userbin'] = $token;
-    Userbin::destroySession();
+    Userbin::logout();
     $this->assertFalse(array_key_exists('userbin', $_SESSION));
     $this->assertRequest('delete', '/sessions/'.$token);
   }
