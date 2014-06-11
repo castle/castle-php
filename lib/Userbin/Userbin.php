@@ -61,9 +61,8 @@ abstract class Userbin
       $session = new Userbin_Session();
     }
     $session->sync($userId, $userData);
-
-    self::getSerializer()->write($session->serialize());
-    return $session;
+#    self::getSerializer()->write($session->serialize());
+    return $session->user();
   }
 
   public static function logout()

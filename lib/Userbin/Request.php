@@ -57,6 +57,12 @@ class Userbin_Request
       'Content-Type: application/json'
     );
 
+    // Check if there is a current session and pass it along
+    $session = Userbin::getSerializer()->read();
+    if (isset($session)) {
+      $headers[]= 'X-Userbin-Session-Token: '.$session;
+    }
+
     $request = new Userbin_RequestTransport();
     $request->send($method, self::apiUrl($url), $params, $headers);
 
@@ -72,6 +78,11 @@ class Userbin_Request
 
     if ($request->rStatus < 200 || $request->rStatus >= 300) {
       $this->handleApiError($response, $request->rStatus);
+    }
+
+    // Update the local session if it was updated by Userbin
+    if (array_key_exists('X-Userbin-Session-Token', $request->rHeaders)) {
+      Userbin::getSerializer()->write($request->rHeaders['X-Userbin-Session-Token']);
     }
 
     return array($response, $request);

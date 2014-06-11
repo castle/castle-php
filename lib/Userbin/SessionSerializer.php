@@ -17,7 +17,7 @@ class Userbin_SessionSerializer
 
   public function write($value)
   {
-    if ($_SESSION) {
+    if (isset($_SESSION)) {
       $_SESSION['userbin'] = $value;
     }
   }

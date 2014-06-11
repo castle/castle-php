@@ -52,8 +52,9 @@ class Userbin_Session extends Userbin_Model
     $userId = $this->getJWT()->getHeader('iss');
     $instance = null;
     if ($userId) {
-      $instance = new Userbin_User();
+      $instance = new Userbin_User($this->user);
       $instance->setId($userId);
+      $instance->mfa_enabled = !!$this->getJWT()->getHeader('mfa');
     }
     return $instance;
   }
