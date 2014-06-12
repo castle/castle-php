@@ -3,41 +3,20 @@
 class Userbin_Session extends Userbin_Model
 {
 
-  protected $idAttribute = 'token';
-
   private function getJWT() {
-    $jwt = new Userbin_JWT($this->getId());
-    if (!$jwt->isValid()) {
-      throw new Userbin_Error("JWT signature error");
-    }
+    $jwt = new Userbin_JWT($this->token);
+    $valid = $jwt->isValid();
     return $jwt;
   }
 
   public function hasExpired()
   {
-    $jwt = new Userbin_JWT($this->token);
-    return $jwt->hasExpired();
+    return $this->getJWT()->hasExpired();
   }
 
   public function serialize()
   {
     return $this->token;
-  }
-
-  public function sync($userId, $userData=null)
-  {
-    if ($this->token) {
-      if ($this->hasExpired()) {
-        $this->post('/sync', array('user' => $userData));
-      }
-    }
-    else {
-      $user = new Userbin_User($userData);
-      $user->setId($userId);
-      $session = $user->sessions()->create();
-      $this->setAttributes($session->getAttributes());
-    }
-    return $this;
   }
 
   public function user()
@@ -55,8 +34,9 @@ class Userbin_Session extends Userbin_Model
   public static function load($jwtString)
   {
     $instance = new static;
-    $instance->setId($jwtString);
-    $jwt = $instance->getJWT(); // Implicit validate
+    $instance->token = $jwtString;
+    $jwt = $instance->getJWT();
+    $instance->setId($jwt->getHeader('sub'));
     return $instance;
   }
 }

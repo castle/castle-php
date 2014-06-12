@@ -57,11 +57,19 @@ abstract class Userbin
   public static function authorize($userId, array $userData=array())
   {
     $session = self::getSession();
+
     if (empty($session)) {
-      $session = new Userbin_Session();
+      $user = new Userbin_User($userData);
+      $user->setId($userId);
+      $session = $user->sessions()->create();
+      self::getSerializer()->write($session->serialize());
     }
-    $session->sync($userId, $userData);
-#    self::getSerializer()->write($session->serialize());
+    else {
+      if ($session->hasExpired()) {
+        $session->post('/synchronize', array('user' => $userData));
+      }
+    }
+
     return $session->user();
   }
 
@@ -81,11 +89,11 @@ abstract class Userbin
 
   public static function securitySettingsUrl()
   {
-    $session = self::getSession();
+    $session = self::getSerializer()->read();
 
     if (empty($session)) {
       throw new Userbin_Error();
     }
-    return 'https://security.userbin.com/?session_token='.$session->getId();
+    return 'https://security.userbin.com/?session_token='.$session;
   }
 }

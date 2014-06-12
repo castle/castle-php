@@ -18,65 +18,52 @@ class UserbinSessionTest extends Userbin_TestCase
 
   public function exampleSession()
   {
+    $sessionToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImlzcyI6InVzZXItMjQxMiIsInN1YiI6IlMyb2R4UmVabkdxaHF4UGFRN1Y3a05rTG9Ya0daUEZ6IiwiYXVkIjoiODAwMDAwMDAwMDAwMDAwIiwiZXhwIjoxMzk5NDc5Njc1LCJpYXQiOjEzOTk0Nzk2NjUsImp0aSI6MH0.eyJjaGFsbGVuZ2UiOnsiaWQiOiJUVENqd3VyM3lwbTRUR1ZwWU43cENzTXFxOW9mWEVBSCIsInR5cGUiOiJvdHBfYXV0aGVudGljYXRvciJ9fQ.LT9mUzJEbsizbFxcpMo3zbms0aCDBzfgMbveMGSi1-s';
     return [
       [array(
         'id' => 1,
-        'token' => 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImlzcyI6InVzZXItMjQxMiIsInN1YiI6IlMyb2R4UmVabkdxaHF4UGFRN1Y3a05rTG9Ya0daUEZ6IiwiYXVkIjoiODAwMDAwMDAwMDAwMDAwIiwiZXhwIjoxMzk5NDc5Njc1LCJpYXQiOjEzOTk0Nzk2NjUsImp0aSI6MH0.eyJjaGFsbGVuZ2UiOnsiaWQiOiJUVENqd3VyM3lwbTRUR1ZwWU43cENzTXFxOW9mWEVBSCIsInR5cGUiOiJvdHBfYXV0aGVudGljYXRvciJ9fQ.LT9mUzJEbsizbFxcpMo3zbms0aCDBzfgMbveMGSi1-s',
+        'token' => $sessionToken,
         'user' => array(
           'id' => 1,
           'email' => 'hello@example.com'
         )
-      )]
+      ), $sessionToken]
     ];
   }
 
   /**
    * @dataProvider exampleSession
    */
-  public function testSync($sessionData)
+  public function testHasExpired($sessionData, $sessionToken)
   {
-    Userbin_RequestTransport::setResponse(201, $sessionData);
-    $session = new Userbin_Session($sessionData);
-    $session->sync(1);
-    $this->assertRequest('post', '/sync');
-  }
-
-  /**
-   * @dataProvider exampleSession
-   */
-  public function testSyncWithoutPrevious($sessionData)
-  {
-    Userbin_RequestTransport::setResponse(201, $sessionData, array('X-Userbin-Session-Token' => $sessionData['token']));
-    $session = new Userbin_Session();
-    $session->sync(1);
-    $this->assertRequest('post', '/users/1/sessions');
-    $this->assertEquals($sessionData['token'], $_SESSION['userbin']);
-  }
-
-  /**
-   * @dataProvider exampleSession
-   */
-  public function testHasExpired($session)
-  {
-    $session = new Userbin_Session($session);
+    $session = Userbin_Session::load($sessionToken);
     $this->assertTrue($session->hasExpired());
   }
 
   /**
    * @dataProvider exampleSession
    */
-  public function testSerialize($sessionData)
+  public function testUser($sessionData, $sessionToken)
   {
-    $session = new Userbin_Session($sessionData);
-    $token = $session->serialize();
+    $session = Userbin_Session::load($sessionToken);
+    $this->assertTrue($session->user() instanceof Userbin_User);
   }
 
   /**
    * @dataProvider exampleSession
    */
-  public function testLoad($sessionData)
+  public function testUserId($sessionData, $sessionToken)
   {
-    $session = Userbin_Session::load($sessionData['token']);
+    $session = Userbin_Session::load($sessionToken);
+    $this->assertEquals($session->user()->getId(), 'user-2412');
+  }
+
+  /**
+   * @dataProvider exampleSession
+   */
+  public function testLoad($sessionData, $sessionToken)
+  {
+    $session = Userbin_Session::load($sessionToken);
     $user = $session->user();
     $this->assertTrue($user instanceof Userbin_User);
   }

@@ -138,7 +138,7 @@ class UserbinModelTest extends Userbin_TestCase
   {
     $userData = array(
       'id' => 1,
-      'session' => array('token' => 1)
+      'session' => array('id' => 1)
     );
     $user = new Userbin_User($userData);
     $session = $user->hasOne('Userbin_Session', $user->session);
