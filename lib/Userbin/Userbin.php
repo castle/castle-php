@@ -37,7 +37,7 @@ abstract class Userbin
     return new self::$sessionSerializer;
   }
 
-  public function setSerializer($serializerClass)
+  public static function setSerializer($serializerClass)
   {
     self::$sessionSerializer = $serializerClass;
   }
