@@ -6,6 +6,11 @@ class UserbinSessionTest extends Userbin_TestCase
     Userbin::setApiKey('secretkey');
   }
 
+  public function setUp()
+  {
+    $_SESSION = array();
+  }
+
   public function tearDown()
   {
     Userbin_RequestTransport::reset();
@@ -34,6 +39,18 @@ class UserbinSessionTest extends Userbin_TestCase
     $session = new Userbin_Session($sessionData);
     $session->sync(1);
     $this->assertRequest('post', '/sync');
+  }
+
+  /**
+   * @dataProvider exampleSession
+   */
+  public function testSyncWithoutPrevious($sessionData)
+  {
+    Userbin_RequestTransport::setResponse(201, $sessionData, array('X-Userbin-Session-Token' => $sessionData['token']));
+    $session = new Userbin_Session();
+    $session->sync(1);
+    $this->assertRequest('post', '/users/1/sessions');
+    $this->assertEquals($sessionData['token'], $_SESSION['userbin']);
   }
 
   /**
