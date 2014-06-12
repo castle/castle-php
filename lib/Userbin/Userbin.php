@@ -65,6 +65,10 @@ abstract class Userbin
       self::getSerializer()->write($session->serialize());
     }
     else {
+      if ($session->user()->getId() != $userId) {
+        self::logout();
+        throw new Userbin_Error('Session scopes not supported yet');
+      }
       if ($session->hasExpired()) {
         $session->post('/synchronize', array('user' => $userData));
       }

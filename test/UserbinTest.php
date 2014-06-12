@@ -58,6 +58,16 @@ class UserbinTest extends Userbin_TestCase
 
   /**
    * @dataProvider exampleSessionToken
+   * @expectedException Userbin_Error
+   */
+  public function testAuthorizeWithExistingSessionAndWrongUser($token)
+  {
+    $_SESSION['userbin'] = $token;
+    $user = Userbin::authorize('wrong-user-id');
+  }
+
+  /**
+   * @dataProvider exampleSessionToken
    */
   public function testLogout($token)
   {
