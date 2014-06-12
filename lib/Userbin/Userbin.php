@@ -32,7 +32,7 @@ abstract class Userbin
     self::$apiVersion = $apiVersion;
   }
 
-  public function getSerializer()
+  public static function getSerializer()
   {
     return new self::$sessionSerializer;
   }
