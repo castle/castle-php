@@ -8,7 +8,7 @@ abstract class Userbin_TestCase extends \PHPUnit_Framework_TestCase
     $this->assertTrue($request['method'] == $method && $request['url'] == Userbin_Request::apiUrl($url));
     if (is_array($headers)) {
       foreach ($headers as $key => $value) {
-        $this->assertTrue(array_key_exists($key, $request['headers']));
+        $this->assertArrayHasKey($key, $request['headers']);
         $this->assertEquals($request['headers'][$key], $value);
       }
     }
