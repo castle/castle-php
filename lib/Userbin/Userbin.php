@@ -88,7 +88,25 @@ abstract class Userbin
 
   public static function twoFactorAuthenticate()
   {
+    $session = self::getSession();
+    $challenge = $session->user()->challenges()->create();
+    $session->setChallenge($challenge);
+    self::getSessionAdapter()->write($session->serialize());
+  }
 
+  public static function twoFactorVerify($response)
+  {
+    $session = self::getSession();
+    if (empty($session)) {
+      return false;
+    }
+    $challenge = $session->getChallenge();
+    $result = $challenge->verify($response);
+    if ($result) {
+      $session->clearChallenge();
+      self::getSessionAdapter()->write($session->serialize());
+    }
+    return $result;
   }
 
   public static function securitySettingsUrl()

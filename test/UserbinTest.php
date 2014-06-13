@@ -31,6 +31,21 @@ class UserbinTest extends Userbin_TestCase
     return[['eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImlzcyI6InVzZXItMjQxMiIsInN1YiI6IlMyb2R4UmVabkdxaHF4UGFRN1Y3a05rTG9Ya0daUEZ6IiwiYXVkIjoiODAwMDAwMDAwMDAwMDAwIiwiZXhwIjoxMzk5NDc5Njc1LCJpYXQiOjEzOTk0Nzk2NjUsImp0aSI6MH0.eyJjaGFsbGVuZ2UiOnsiaWQiOiJUVENqd3VyM3lwbTRUR1ZwWU43cENzTXFxOW9mWEVBSCIsInR5cGUiOiJvdHBfYXV0aGVudGljYXRvciJ9fQ.LT9mUzJEbsizbFxcpMo3zbms0aCDBzfgMbveMGSi1-s']];
   }
 
+  public function exampleSessionTokenWithMFA()
+  {
+    $jwt = new Userbin_JWT();
+    $jwt->setHeader(array('vfy' => '1', 'iss' => '1'));
+    return [[$jwt->toString()]];
+  }
+
+  public function exampleSessionTokenWithChallenge()
+  {
+    $jwt = new Userbin_JWT();
+    $jwt->setHeader(array('vfy' => '1', 'iss' => '1'));
+    $jwt->setBody('chg', '1');
+    return [[$jwt->toString()]];
+  }
+
   /**
    * @dataProvider exampleUser
    */
@@ -71,12 +86,38 @@ class UserbinTest extends Userbin_TestCase
    */
   public function testLogout($token)
   {
-    $_SESSION['userbin'] = $token;
+    Userbin::getSessionAdapter()->write($token);
     $session = Userbin::getSession();
     Userbin::logout();
     $this->assertRequest('delete', '/sessions/'.$session->getId());
     $this->assertFalse(array_key_exists('userbin', $_SESSION));
   }
+
+  /**
+   * @dataProvider exampleSessionTokenWithMFA
+   */
+  public function testTwoFactorAuthenticate($sessionToken)
+  {
+    Userbin_RequestTransport::setResponse(201, array('id' => '1'));
+    Userbin::getSessionAdapter()->write($sessionToken);
+    Userbin::twoFactorAuthenticate();
+    $session = Userbin::getSession();
+    $this->assertInstanceOf('Userbin_Challenge', $session->getChallenge());
+  }
+
+  /**
+   * @dataProvider exampleSessionTokenWithChallenge
+   */
+  public function testTwoFactorVerify($sessionToken)
+  {
+    Userbin_RequestTransport::setResponse(200);
+    Userbin::getSessionAdapter()->write($sessionToken);
+    $this->assertTrue(Userbin::twoFactorVerify('1234'));
+    $session = Userbin::getSession();
+    $this->assertNull($session->getChallenge());
+  }
+
+
 
   /**
    * @dataProvider exampleSessionToken

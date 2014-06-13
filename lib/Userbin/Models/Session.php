@@ -31,6 +31,17 @@ class Userbin_Session extends Userbin_Model
     return $instance;
   }
 
+  public function clearChallenge()
+  {
+    $jwt = $this->getJWT();
+    $body = $jwt->getBody();
+    if (array_key_exists('chg', $body)) {
+      unset($body['chg']);
+      $jwt->setBody($body);
+      $this->token = $jwt->toString();
+    }
+  }
+
   public function getChallenge()
   {
     $challengeId = $this->getJWT()->getBody('chg');
