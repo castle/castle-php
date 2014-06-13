@@ -38,6 +38,7 @@ class Userbin_RequestTransport
     $curlOptions[CURLOPT_USERPWD] = ":" . Userbin::getApiKey();
     $curlOptions[CURLOPT_RETURNTRANSFER] = true;
     $curlOptions[CURLOPT_USERAGENT] = "Userbin/v1 PHPBindings/".Userbin::VERSION;
+    $curlOptions[CURLOPT_CONNECTTIMEOUT] = 3;
     $curlOptions[CURLOPT_TIMEOUT] = 10;
     $curlOptions[CURLOPT_HTTPHEADER] = $headers;
     $curlOptions[CURLOPT_HEADER] = true;
