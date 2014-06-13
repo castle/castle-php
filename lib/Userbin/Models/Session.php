@@ -42,9 +42,14 @@ class Userbin_Session extends Userbin_Model
     return null;
   }
 
-  public function setChallenge(string $challengeId)
+  public function setChallenge(Userbin_Challenge $challenge)
   {
-    # code...
+    $cId = $challenge->getId();
+    if (isset($cId)) {
+      $jwt = $this->getJWT();
+      $jwt->setBody('chg', $cId);
+      $this->token = $jwt->toString();
+    }
   }
 
   public static function load($jwtString)

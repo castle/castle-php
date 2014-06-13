@@ -83,6 +83,19 @@ class UserbinSessionTest extends Userbin_TestCase
   /**
    * @dataProvider exampleSession
    */
+  public function testSetChallenge($sessionData, $sessionToken)
+  {
+    Userbin_RequestTransport::setResponse(201, array('id' => 1));
+    $session = Userbin_Session::load($sessionToken);
+    $challenge = $session->user()->challenges()->create();
+    $session->setChallenge($challenge);
+    $gotChallenge = $session->getChallenge();
+    $this->assertEquals($challenge->getId(), $gotChallenge->getId());
+  }
+
+  /**
+   * @dataProvider exampleSession
+   */
   public function testUserId($sessionData, $sessionToken)
   {
     $session = Userbin_Session::load($sessionToken);
