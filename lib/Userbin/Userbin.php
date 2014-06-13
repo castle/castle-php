@@ -8,7 +8,7 @@ abstract class Userbin
 
   public static $apiVersion = 'v1';
 
-  public static $sessionSerializer = 'Userbin_SessionSerializer';
+  public static $sessionAdapter = 'Userbin_SessionAdapter';
 
   const VERSION = '1.0.0';
 
@@ -32,14 +32,14 @@ abstract class Userbin
     self::$apiVersion = $apiVersion;
   }
 
-  public static function getSerializer()
+  public static function getSessionAdapter()
   {
-    return new self::$sessionSerializer;
+    return new self::$sessionAdapter;
   }
 
-  public static function setSerializer($serializerClass)
+  public static function setSessionAdapter($serializerClass)
   {
-    self::$sessionSerializer = $serializerClass;
+    self::$sessionAdapter = $serializerClass;
   }
 
   /*
@@ -47,7 +47,7 @@ abstract class Userbin
    */
   public static function getSession()
   {
-    $sessionData = self::getSerializer()->read();
+    $sessionData = self::getSessionAdapter()->read();
     if ($sessionData) {
       return Userbin_Session::load($sessionData);
     }
@@ -62,7 +62,7 @@ abstract class Userbin
       $user = new Userbin_User($userData);
       $user->setId($userId);
       $session = $user->sessions()->create();
-      self::getSerializer()->write($session->serialize());
+      self::getSessionAdapter()->write($session->serialize());
     }
     else {
       if ($session->user()->getId() != $userId) {
@@ -82,7 +82,7 @@ abstract class Userbin
     $session = self::getSession();
     if (isset($session)) {
       $session->delete();
-      self::getSerializer()->destroy();
+      self::getSessionAdapter()->destroy();
     }
   }
 
@@ -93,7 +93,7 @@ abstract class Userbin
 
   public static function securitySettingsUrl()
   {
-    $session = self::getSerializer()->read();
+    $session = self::getSessionAdapter()->read();
 
     if (empty($session)) {
       throw new Userbin_Error();
