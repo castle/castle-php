@@ -76,8 +76,8 @@ class UserbinSessionTest extends Userbin_TestCase
   public function testGetChallengeWithChallenge($sessionToken)
   {
     $session = Userbin_Session::load($sessionToken);
-    #$this->assertNotNull($session->getChallenge());
-    #$this->assertInstanceOf($session->getChallenge(), new Userbin_Challenge);
+    $this->assertInstanceOf('Userbin_Challenge', $session->getChallenge());
+    $this->assertEquals($session->getChallenge()->getId(), '1');
   }
 
   /**

@@ -33,6 +33,12 @@ class Userbin_Session extends Userbin_Model
 
   public function getChallenge()
   {
+    $challengeId = $this->getJWT()->getBody('chg');
+    if ($challengeId) {
+      $instance = new Userbin_Challenge();
+      $instance->setId($challengeId);
+      return $instance;
+    }
     return null;
   }
 
