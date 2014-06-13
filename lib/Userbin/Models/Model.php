@@ -43,6 +43,7 @@ class Userbin_Model
       $url = $path;
     }
     else {
+      $path = isset($path) ? '/'.$path : $path;
       $url = $this->getResourcePath($path);
     }
     $request = new Userbin_Request();
