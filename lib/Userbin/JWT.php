@@ -4,19 +4,48 @@ class Userbin_JWT
 {
   function __construct($token=null)
   {
-    $jwt = Array(null, null, null);
-    if (isset($token)) {
+    $jwt = Array('', '', '');
+    list($this->_header, $this->_body, $this->_signature) = $jwt;
+    if (is_string($token)) {
       $jwt = explode(".", $token);
+      if (count($jwt) != 3) {
+        throw new Userbin_SecurityError('Invalid JWT');
+      }
+      list($this->_header, $this->_body, $this->_signature) = $jwt;
+      $this->isValid();
     }
-    if (count($jwt) != 3) {
-      throw new Userbin_SecurityError('Invalid JWT');
-    }
-    list($this->_header, $this->_token, $this->_signature) = $jwt;
   }
 
   protected function getHmac()
   {
-    return hash_hmac('sha256', "$this->_header.$this->_token", Userbin::getApiKey(), true);
+    return hash_hmac('sha256', "$this->_header.$this->_body", Userbin::getApiKey(), true);
+  }
+
+  public function getArrayKey($array, $key=null)
+  {
+    if (is_string($key)) {
+      if (array_key_exists($key, $array)) {
+        return $array[$key];
+      }
+      else {
+        return null;
+      }
+    }
+    return $array;
+  }
+
+  public function setArrayKey($array, $key, $value=null)
+  {
+    if (is_array($key)) {
+      $array = $key;
+    }
+    else if (isset($value)) {
+      if (!is_array($array)) {
+        $array = array();
+      }
+      $array[$key] = $value;
+    }
+    return $array;
   }
 
   public function hasExpired()
@@ -28,8 +57,8 @@ class Userbin_JWT
 
   public function isValid()
   {
-    $hmac = $this->getHmac();
-    if (self::base64Encode($hmac) == $this->_signature) {
+    $hmac = $this->calculateSignature();
+    if ($hmac == $this->getSignature()) {
       return true;
     }
     else {
@@ -40,42 +69,53 @@ class Userbin_JWT
   public function getHeader($key=null)
   {
     $headers = json_decode(self::base64Decode($this->_header), true);
-    if (is_string($key)) {
-      if (array_key_exists($key, $headers)) {
-        return $headers[$key];
-      }
-      else {
-        return null;
-      }
-    }
-    return $headers;
+    return $this->getArrayKey($headers, $key);
   }
 
   public function setHeader($key, $value=null)
   {
-    $header = $this->getHeader();
-    if (is_array($key)) {
-      $header = $key;
-    }
-    else if (isset($value)) {
-      if (!isset($header)) {
-        $header = array();
-      }
-      $header[$key] = $value;
-    }
-    $this->_header = self::base64Encode(json_encode($header));
+    $headers = $this->setArrayKey($this->getHeader(), $key, $value);
+    $this->_header = self::base64Encode(json_encode($headers));
+    $this->calculateSignature(true);
     return $this;
   }
 
-  public function getBody()
+  public function getBody($key=null)
   {
-    return json_decode(self::base64Decode($this->_token), true);
+    $body = json_decode(self::base64Decode($this->_body), true);
+    return $this->getArrayKey($body, $key);
+  }
+
+  public function setBody($key, $value=null)
+  {
+    $body = $this->setArrayKey($this->getBody(), $key, $value);
+    $this->_body = self::base64Encode(json_encode($body));
+    $this->calculateSignature(true);
+    return $this;
+  }
+
+  public function calculateSignature($update=false)
+  {
+    $signature = self::base64Encode($this->getHmac());
+    if ($update) {
+      $this->setSignature($signature);
+    }
+    return $signature;
+  }
+
+  public function getSignature()
+  {
+    return $this->_signature;
+  }
+
+  public function setSignature($signature)
+  {
+    $this->_signature = $signature;
   }
 
   public function toString()
   {
-    $signature = $this->getHmac();
-    return join('.', array($this->_header, $this->_body, $signature));
+    return join('.', array($this->_header, $this->_body, $this->_signature));
   }
 
   public static function base64Encode($data)

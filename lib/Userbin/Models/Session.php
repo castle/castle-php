@@ -31,6 +31,16 @@ class Userbin_Session extends Userbin_Model
     return $instance;
   }
 
+  public function getChallenge()
+  {
+    return null;
+  }
+
+  public function setChallenge(string $challengeId)
+  {
+    # code...
+  }
+
   public static function load($jwtString)
   {
     $instance = new static;

@@ -62,6 +62,14 @@ class UserbinJWTTest extends \PHPUnit_Framework_TestCase
     $this->assertEquals($header['exp'], $now);
   }
 
+  public function testGetSetBody()
+  {
+    $jwt = new Userbin_JWT();
+    $jwt->setBody('chg', '1234');
+    $this->assertEquals($jwt->getBody('chg'), '1234');
+    $this->assertTrue($jwt->isValid());
+  }
+
   /**
    * @dataProvider validJWTs
    */
