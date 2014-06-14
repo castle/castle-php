@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/userbin/userbin-php.png)](https://travis-ci.org/userbin/userbin-php)
+[![Code Climate](https://codeclimate.com/github/userbin/userbin-php.png)](https://codeclimate.com/github/userbin/userbin-php)
 
 # PHP SDK for Userbin
 
@@ -26,15 +27,15 @@ Configure the library with your Userbin API secret.
 Userbin::setApiKey('YOUR_API_SECRET');
 ```
 
-## Authenticate
+## Authorize
 
-`authenticate` is the key component of the Userbin API. It lets you tie a user to their actions and record properties about them. Whenever any suspious behaviour is detected or a user gets locked out, a call to `authenticate` may throw an exception which needs to be handled by your application.
+`authorize` is the key component of the Userbin API. It lets you tie a user to their actions and record properties about them. Whenever any suspious behaviour is detected or a user gets locked out, a call to `authorize` may throw an exception which needs to be handled by your application.
 
-You’ll want to `authenticate` a user with any relevant information as soon as the current user object is assigned in your application.
+You’ll want to `authorize` a user with any relevant information as soon as the current user object is assigned in your application.
 
 ```php
 <?php
-  Userbin::authenticate($sessionToken, $user->id, array(
+  Userbin::authorize($user->id, array(
     "email" => $user->email
     "name"  => $user->name
   ));
@@ -43,19 +44,17 @@ You’ll want to `authenticate` a user with any relevant information as soon as 
 
 #### Arguments
 
-The first argument is the session token for the currently logged in user. It can be omitted to create a new session (eg. when a user logs in).
+The first argument is a locally unique identifier for the logged in user, commonly the `id` field. This is the identifier you'll use further on when querying the user.
 
-The second argument is a locally unique identifier for the logged in user, commonly the `id` field. This is the identifier you'll use further on when querying the user.
+The second argument is an array of properties you know about the user. See the User reference documentation for available fields and their meaning.
 
-The third argument is an array of properties you know about the user. See the User reference documentation for available fields and their meaning.
-
-> Note that every call to `authenticate` **does not** result in an HTTP request. Only the very first call, as well as expired session tokens result in a request. Session tokens expire every 5 minutes.
+> Note that every call to `authorize` **does not** result in an HTTP request. Only the very first call, as well as expired session tokens result in a request. Session tokens expire every 5 minutes.
 
 ## Two-factor authentication
 
 Two-factor authentication is available to your users out-of-the-box. By browsing to their Security Page, they're able to configure Google Authenticator and SMS settings, set up a backup phone number, and download their recovery codes.
 
-The session token returned from `authenticate` indicates if two-factor authentication is required from the user once your application asks for it. You can do this immediately after you've called `authenticate`, or you can wait until later. You have complete control over what actions you when you want to require two-factor authentication, e.g. when logging in, changing account information, making a purchase etc.
+The session token returned from `authorize` indicates if two-factor authentication is required from the user once your application asks for it. You can do this immediately after you've called `authorize`, or you can wait until later. You have complete control over what actions you when you want to require two-factor authentication, e.g. when logging in, changing account information, making a purchase etc.
 
 ### Step 1: Prompt the user
 
@@ -82,22 +81,22 @@ When `Userbin::twoFactorAuthenticate()` returns non-falsy value, you should disp
 
 ### Step 2: Verify the code
 
-The user enters the authentication code in the form and posts it to your handler. The last step is for your application to verify the code with Userbin by calling `verify_code`. The session token will get updated on a successful verification, so you'll need to update it in your local session or cookie.
+The user enters the authentication code in the form and posts it to your handler. The last step is for your application to verify the code with Userbin by calling `twoFactorVerify`. The session token will get updated on a successful verification, so you'll need to update it in your local session or cookie.
 
 `code` can be either a code from the Google Authenticator app, an SMS, or one of the user's recovery codes.
 
 ```php
 <?php
   try {
-    Userbin::verifyCode($_POST["code"]);
+    Userbin::twoFactorVerify($_POST["code"]);
   } catch (Userbin_UserUnauthorizedError $e) {
     // invalid code, show the form again
   } catch (Userbin_ForbiddenError $e) {
     // no tries remaining, log out
-    Userbin::deauthenticate();
+    Userbin::logout();
   } catch (Userbin_ApiError $e) {
     // other error, log out
-    Userbin::deauthenticate();
+    Userbin::logout();
   }
 ?>
 ```
@@ -115,10 +114,10 @@ Every user has access to their security settings, which is a hosted page on User
 ?>
 ```
 
-## De-authenticate
+## Logging out
 
 Whenever a user is logged out from your application, you should inform Userbin about this so that the active session is properly terminated. This prevents the session from being used further on.
 
 ```php
-Userbin::deauthenticate($sessionToken);
+Userbin::logout();
 ```
