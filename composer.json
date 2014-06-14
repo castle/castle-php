@@ -1,8 +1,8 @@
 {
     "name": "userbin/userbin-php",
-    "description": "PHP library for Userbin",
-    "version": "0.1.0",
-    "keywords": ["authentication", "login", "signup"],
+    "description": "PHP bindings for Userbin",
+    "version": "1.0.0",
+    "keywords": ["account monitoring", "two factor authentication", "authorization"],
     "homepage": "https://github.com/userbin/userbin-php",
     "require-dev": {
         "phpunit/phpunit": "4.1.*"
