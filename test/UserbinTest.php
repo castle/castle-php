@@ -21,9 +21,9 @@ class UserbinTest extends Userbin_TestCase
 
   public function exampleUser()
   {
-    return [
+    return array(
       array(array('id' => 'user-2412', 'email' => 'hello@example.com'))
-    ];
+    );
   }
 
   public function exampleSessionToken()
