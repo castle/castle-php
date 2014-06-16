@@ -22,7 +22,7 @@ class UserbinTest extends Userbin_TestCase
   public function exampleUser()
   {
     return [
-      [array('id' => 'user-2412', 'email' => 'hello@example.com')]
+      array(array('id' => 'user-2412', 'email' => 'hello@example.com'))
     ];
   }
 
