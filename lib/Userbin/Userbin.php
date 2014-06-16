@@ -96,8 +96,8 @@ abstract class Userbin
   {
     $session = self::getSession();
     if (isset($session)) {
-      $session->delete();
       self::getSessionStore()->destroy();
+      $session->delete();
     }
   }
 
