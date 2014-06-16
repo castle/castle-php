@@ -34,7 +34,7 @@ class UserbinTest extends Userbin_TestCase
   public function exampleSessionTokenWithMFA()
   {
     $jwt = new Userbin_JWT();
-    $jwt->setHeader(array('vfy' => '1', 'iss' => '1'));
+    $jwt->setHeader(array('vfy' => '1', 'iss' => '1', 'mfa' => '1'));
     return array(array($jwt->toString()));
   }
 
