@@ -18,5 +18,3 @@ require(dirname(__FILE__) . '/Userbin/Models/User.php');
 require(dirname(__FILE__) . '/Userbin/JWT.php');
 require(dirname(__FILE__) . '/Userbin/CurlTransport.php');
 require(dirname(__FILE__) . '/Userbin/Request.php');
-
-?>

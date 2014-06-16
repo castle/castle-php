@@ -27,5 +27,3 @@ require(dirname(__FILE__) . '/../lib/Userbin/Models/User.php');
 require(dirname(__FILE__) . '/../lib/Userbin/JWT.php');
 require(dirname(__FILE__) . '/TestTransport.php');
 require(dirname(__FILE__) . '/../lib/Userbin/Request.php');
-
-?>

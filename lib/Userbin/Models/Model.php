@@ -234,5 +234,3 @@ class Userbin_Model
     return $instance->find($id);
   }
 }
-
-?>

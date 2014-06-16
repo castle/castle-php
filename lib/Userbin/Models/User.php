@@ -12,5 +12,3 @@ class Userbin_User extends Userbin_Model
     return $this->hasMany('Userbin_Session', $this->sessions);
   }
 }
-
-?>

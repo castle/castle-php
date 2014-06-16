@@ -138,5 +138,3 @@ class UserbinTest extends Userbin_TestCase
     $this->assertEmpty($url);
   }
 }
-
-?>

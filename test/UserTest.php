@@ -67,7 +67,3 @@ class UserbinUserTest extends Userbin_TestCase
     $this->assertEquals($request['params']['user'], $userData);
   }
 }
-
-?>
-
-

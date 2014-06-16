@@ -72,5 +72,3 @@ class UserbinRequestTest extends \PHPUnit_Framework_TestCase
     $this->assertTrue($this->headersContains('X-Userbin-User-Agent'));
   }
 }
-
-?>

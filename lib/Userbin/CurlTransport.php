@@ -73,5 +73,3 @@ class Userbin_RequestTransport
     curl_close($curl);
   }
 }
-
-?>

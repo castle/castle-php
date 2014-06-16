@@ -86,5 +86,3 @@ class UserbinJWTTest extends \PHPUnit_Framework_TestCase
     $this->assertFalse($jwt->hasExpired());
   }
 }
-
-?>

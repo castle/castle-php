@@ -112,4 +112,3 @@ class UserbinSessionTest extends Userbin_TestCase
     $this->assertTrue($user instanceof Userbin_User);
   }
 }
-?>

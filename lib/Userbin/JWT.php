@@ -139,5 +139,3 @@ class Userbin_JWT
     return base64_decode(strtr($data, '-_', '+/'));
   }
 }
-
-?>

@@ -52,4 +52,3 @@ class Userbin_ConfigurationError extends Userbin_Error
 {
 
 }
-?>

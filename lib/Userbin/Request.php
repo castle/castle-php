@@ -88,5 +88,3 @@ class Userbin_Request
     return array($response, $request);
   }
 }
-
-?>

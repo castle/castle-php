@@ -146,5 +146,3 @@ class UserbinModelTest extends Userbin_TestCase
     $this->assertRequest('put', '/users/1/session');
   }
 }
-
-?>
