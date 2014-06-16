@@ -27,7 +27,7 @@ Configure the library with your Userbin API secret.
 Userbin::setApiKey('YOUR_API_SECRET');
 ```
 
-## Adding monitoring
+## Installing user monitoring
 
 To activate user monitoring you only need to **insert code at two places**: when the user is **fetched from the database and logged in** and when the user **logs out**:
 
@@ -84,7 +84,7 @@ Userbin::logout();
 
 This method doesn't take any arguments.
 
-## Adding Two-factor authentication
+## Installing Two-factor authentication
 
 Two-factor authentication is available to your users out-of-the-box. By browsing to their Security Page, they're able to configure Google Authenticator and SMS settings, set up a backup phone number, and download their recovery codes.
 
@@ -144,12 +144,63 @@ Every user has access to their security settings, which is a hosted page on User
 ?>
 ```
 
+## Errors
+Whenever something unexpected happens, an exception is thrown to indicate what went wrong.
+
+| Name                             | Description     |
+|:---------------------------------|:----------------|
+| `Userbin_Error`                  | A generic error |
+| `Userbin_RequestError`           | A request failed. Probably due to a network error |
+| `Userbin_ApiError`               | An unexpected error for the Userbin API |
+| `Userbin_SecurityError`          | The session signature doesn't match, either it has been tampered with or the Userbin API key has been changed. |
+| `Userbin_ConfigurationError`     | The Userbin secret API key has not been set |
+| `Userbin_UnauthorizedError`      | Wrong Userbin API secret key |
+| `Userbin_UserUnauthorizedError`  | The user is locked or has entered the wrong credentials |
+| `Userbin_ForbiddenError`         | The user has entered the wrong code too many times and a new challenge has to be requested. |
+| `Userbin_InvalidParametersError` | One or more of the supplied parameters are incorrect. Check the response for more information. |
+
+## REST Bindings
+
+To facilitate working with the [Userbin REST API](https://secure.userbin.com) the library provides a set of models.
+
+Examples:
+
+```php
+// List all users
+$users = Userbin_User::all();
+
+// find by ID
+$user = Userbin_User::find(1);
+$user->name = "Napoleon Dynamite";
+$user->save();
+
+// Create new
+$user = new Userbin_User(array(
+  name => "Napoleon Dynamite"
+));
+$user->save();
+echo $user->id;
+
+// List sessions
+$sessions = $user->sessions()->fetch();
+
+// Create a session for a user with local id 1
+$user = new Userbin_User(1);
+$session = $user->sessions()->create();
+
+// Delete session
+$session->delete();
+
+// Delete existing session with id 1
+Userbin_Session::destroy(1);
+```
+
 ## Session store
 
 By default Userbin stores its session data in the super global `$_SESSION` variable. If you for some reason need to change this, it can be done by implementing the `Userbin_iSessionStore` interface:
 
 ```php
-class MyCustomStore implements Userbin_SessionStore
+class MyCustomStore implements iUserbin_SessionStore
 {
   public function destroy()
   {
