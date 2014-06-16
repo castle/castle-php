@@ -58,7 +58,7 @@ class UserbinSessionTest extends Userbin_TestCase
   public function testUser($sessionData, $sessionToken)
   {
     $session = Userbin_Session::load($sessionToken);
-    $this->assertTrue($session->user() instanceof Userbin_User);
+    $this->assertTrue($session->getUser() instanceof Userbin_User);
   }
 
   /**
@@ -87,7 +87,7 @@ class UserbinSessionTest extends Userbin_TestCase
   {
     Userbin_RequestTransport::setResponse(201, array('id' => 1));
     $session = Userbin_Session::load($sessionToken);
-    $challenge = $session->user()->challenges()->create();
+    $challenge = $session->getUser()->challenges()->create();
     $session->setChallenge($challenge);
     $gotChallenge = $session->getChallenge();
     $this->assertEquals($challenge->getId(), $gotChallenge->getId());
@@ -99,7 +99,7 @@ class UserbinSessionTest extends Userbin_TestCase
   public function testUserId($sessionData, $sessionToken)
   {
     $session = Userbin_Session::load($sessionToken);
-    $this->assertEquals($session->user()->getId(), 'user-2412');
+    $this->assertEquals($session->getUser()->getId(), 'user-2412');
   }
 
   /**
@@ -108,7 +108,7 @@ class UserbinSessionTest extends Userbin_TestCase
   public function testLoad($sessionData, $sessionToken)
   {
     $session = Userbin_Session::load($sessionToken);
-    $user = $session->user();
+    $user = $session->getUser();
     $this->assertTrue($user instanceof Userbin_User);
   }
 }

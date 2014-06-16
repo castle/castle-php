@@ -19,7 +19,7 @@ class Userbin_Session extends Userbin_Model
     return $this->token;
   }
 
-  public function user()
+  public function getUser()
   {
     $userId = $this->getJWT()->getHeader('iss');
     $instance = null;

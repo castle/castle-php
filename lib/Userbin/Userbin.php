@@ -65,7 +65,7 @@ abstract class Userbin
       self::getSessionAdapter()->write($session->serialize());
     }
     else {
-      if ($session->user()->getId() != $userId) {
+      if ($session->getUser()->getId() != $userId) {
         self::logout();
         throw new Userbin_Error('Session scopes not supported yet');
       }
@@ -74,7 +74,7 @@ abstract class Userbin
       }
     }
 
-    return $session->user();
+    return $session->getUser();
   }
 
   public static function logout()
@@ -89,7 +89,7 @@ abstract class Userbin
   public static function twoFactorAuthenticate()
   {
     $session = self::getSession();
-    $challenge = $session->user()->challenges()->create();
+    $challenge = $session->getUser()->challenges()->create();
     $session->setChallenge($challenge);
     self::getSessionAdapter()->write($session->serialize());
   }
