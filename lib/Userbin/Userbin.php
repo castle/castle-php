@@ -42,9 +42,6 @@ abstract class Userbin
     self::$sessionStore = $serializerClass;
   }
 
-  /*
-   * Helpers
-   */
   public static function getSession()
   {
     $sessionData = self::getSessionStore()->read();
@@ -54,6 +51,18 @@ abstract class Userbin
     return null;
   }
 
+  /**
+   * Authorize connects you local user to Userbin and starts monitoring
+   * the login session. If the user does not exist it will be created before
+   * the monitoring session is started. This method should be called whenever
+   * the user logs in or is loaded from the database. Note that every call to
+   * this method does not result in a HTTP request. Only when there is no prior
+   * session or if the session has expired.
+   *
+   * @param  $userId          The local id of your currently logged in  user
+   * @param  array  $userData An array of additional user data (for display purposes). At least email is recommended.
+   * @return Userbin_User     The user object returned from Userbin
+   */
   public static function authorize($userId, array $userData=array())
   {
     $session = self::getSession();
@@ -70,13 +79,19 @@ abstract class Userbin
         throw new Userbin_Error('Session scopes not supported yet');
       }
       if ($session->hasExpired()) {
-        $session->post('/synchronize', array('user' => $userData));
+        $session->post('/heartbeat');
       }
     }
 
     return $session->getUser();
   }
 
+  /**
+   * This method ends the current monitoring session. It should be called
+   * whenever the user logs out from your system.
+   *
+   * @return none
+   */
   public static function logout()
   {
     $session = self::getSession();
@@ -86,14 +101,29 @@ abstract class Userbin
     }
   }
 
+  /**
+   * This method creates a two factor challenge for the current user, if the
+   * user has enabled a device for authentication.
+   *
+   * @return Userbin_Challenge The challenge object. It will tell you what type
+   * factor the user is using to authenticate (SMS, Google Authenticator etc.).
+   */
   public static function twoFactorAuthenticate()
   {
     $session = self::getSession();
     $challenge = $session->getUser()->challenges()->create();
     $session->setChallenge($challenge);
     self::getSessionStore()->write($session->serialize());
+    return $challenge;
   }
 
+  /**
+   * Once a two factor challenge has been created using the twoFactorAuthenticate,
+   * the response code from the user is verified using this method.
+   *
+   * @param  $response A string containing the response from the user
+   * @return bool      True if the verification was successful. False otherwise.
+   */
   public static function twoFactorVerify($response)
   {
     $session = self::getSession();
@@ -109,6 +139,13 @@ abstract class Userbin
     return $result;
   }
 
+  /**
+   * This method will generate a link to the hosted Userbin security settings
+   * page. On this page the user can see active sessions and enable two step
+   * verification.
+   *
+   * @return string The URL to the security settings page.
+   */
   public static function securitySettingsUrl()
   {
     $session = self::getSessionStore()->read();
