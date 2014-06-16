@@ -7,16 +7,16 @@ class UserbinJWTTest extends \PHPUnit_Framework_TestCase
   }
 
   public function invalidJWTs() {
-    return [
-      ['1234.123.432'],
-      [null]
-    ];
+    return array(
+      array('1234.123.432'),
+      array(null)
+    );
   }
 
   public function validJWTs() {
-    return [
-      ['eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImlhdCI6MTM5ODIzOTIwMywiZXhwIjoxMzk4MjQyODAzfQ.eyJ1c2VyX2lkIjoiZUF3djVIdGRiU2s4Yk1OWVpvanNZdW13UXlLcFhxS3IifQ.Apa7EmT5T1sOYz4Af0ERTDzcnUvSalailNJbejZ2ddQ', 'user_id', 'eAwv5HtdbSk8bMNYZojsYumwQyKpXqKr']
-    ];
+    return array(
+      array('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImlhdCI6MTM5ODIzOTIwMywiZXhwIjoxMzk4MjQyODAzfQ.eyJ1c2VyX2lkIjoiZUF3djVIdGRiU2s4Yk1OWVpvanNZdW13UXlLcFhxS3IifQ.Apa7EmT5T1sOYz4Af0ERTDzcnUvSalailNJbejZ2ddQ', 'user_id', 'eAwv5HtdbSk8bMNYZojsYumwQyKpXqKr')
+    );
   }
 
   /**

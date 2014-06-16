@@ -14,25 +14,25 @@ class UserbinModelTest extends Userbin_TestCase
 
   public function exampleUser()
   {
-    return [
-      [array(
+    return array(
+      array(array(
         'id' => 1,
         'email' => 'hello@example.com'
-      )]
-    ];
+      ))
+    );
   }
 
   public function snakeCases() {
     return array(
-      ['simpleTest', 'simple_test'],
-      ['easy', 'easy'],
-      ['HTML', 'html'],
-      ['simpleXML', 'simple_xml'],
-      ['PDFLoad', 'pdf_load'],
-      ['startMIDDLELast', 'start_middle_last'],
-      ['AString', 'a_string'],
-      ['Some4Numbers234', 'some4_numbers234'],
-      ['TEST123String', 'test123_string']
+      array('simpleTest', 'simple_test'),
+      array('easy', 'easy'),
+      array('HTML', 'html'),
+      array('simpleXML', 'simple_xml'),
+      array('PDFLoad', 'pdf_load'),
+      array('startMIDDLELast', 'start_middle_last'),
+      array('AString', 'a_string'),
+      array('Some4Numbers234', 'some4_numbers234'),
+      array('TEST123String', 'test123_string')
     );
   }
 

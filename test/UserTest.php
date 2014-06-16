@@ -15,12 +15,12 @@ class UserbinUserTest extends Userbin_TestCase
 
   public function exampleUser()
   {
-    return [
-      [array(
+    return array(
+      array(array(
         'id' => 1,
         'email' => 'hello@example.com'
-      )]
-    ];
+      ))
+    );
   }
 
   /**

@@ -25,22 +25,22 @@ class UserbinSessionTest extends Userbin_TestCase
       'vfy' => 1
     ));
     $jwt->setBody('chg', '1');
-    return [[$jwt->toString()]];
+    return array(array($jwt->toString()));
   }
 
   public function exampleSession()
   {
     $sessionToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImlzcyI6InVzZXItMjQxMiIsInN1YiI6IlMyb2R4UmVabkdxaHF4UGFRN1Y3a05rTG9Ya0daUEZ6IiwiYXVkIjoiODAwMDAwMDAwMDAwMDAwIiwiZXhwIjoxMzk5NDc5Njc1LCJpYXQiOjEzOTk0Nzk2NjUsImp0aSI6MH0.eyJjaGFsbGVuZ2UiOnsiaWQiOiJUVENqd3VyM3lwbTRUR1ZwWU43cENzTXFxOW9mWEVBSCIsInR5cGUiOiJvdHBfYXV0aGVudGljYXRvciJ9fQ.LT9mUzJEbsizbFxcpMo3zbms0aCDBzfgMbveMGSi1-s';
-    return [
-      [array(
+    return array(
+      array(array(
         'id' => 1,
         'token' => $sessionToken,
         'user' => array(
           'id' => 1,
           'email' => 'hello@example.com'
         )
-      ), $sessionToken]
-    ];
+      ), $sessionToken)
+    );
   }
 
   /**
