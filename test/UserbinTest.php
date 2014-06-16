@@ -86,7 +86,7 @@ class UserbinTest extends Userbin_TestCase
    */
   public function testLogout($token)
   {
-    Userbin::getSessionAdapter()->write($token);
+    Userbin::getSessionStore()->write($token);
     $session = Userbin::getSession();
     Userbin::logout();
     $this->assertRequest('delete', '/sessions/'.$session->getId());
@@ -99,7 +99,7 @@ class UserbinTest extends Userbin_TestCase
   public function testTwoFactorAuthenticate($sessionToken)
   {
     Userbin_RequestTransport::setResponse(201, array('id' => '1'));
-    Userbin::getSessionAdapter()->write($sessionToken);
+    Userbin::getSessionStore()->write($sessionToken);
     Userbin::twoFactorAuthenticate();
     $session = Userbin::getSession();
     $this->assertInstanceOf('Userbin_Challenge', $session->getChallenge());
@@ -111,7 +111,7 @@ class UserbinTest extends Userbin_TestCase
   public function testTwoFactorVerify($sessionToken)
   {
     Userbin_RequestTransport::setResponse(200);
-    Userbin::getSessionAdapter()->write($sessionToken);
+    Userbin::getSessionStore()->write($sessionToken);
     $this->assertTrue(Userbin::twoFactorVerify('1234'));
     $session = Userbin::getSession();
     $this->assertNull($session->getChallenge());

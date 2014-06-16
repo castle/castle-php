@@ -58,7 +58,7 @@ class Userbin_Request
     );
 
     // Check if there is a current session and pass it along
-    $session = Userbin::getSessionAdapter()->read();
+    $session = Userbin::getSessionStore()->read();
     if (isset($session)) {
       $headers[]= 'X-Userbin-Session-Token: '.$session;
     }
@@ -82,7 +82,7 @@ class Userbin_Request
 
     // Update the local session if it was updated by Userbin
     if (array_key_exists('X-Userbin-Session-Token', $request->rHeaders)) {
-      Userbin::getSessionAdapter()->write($request->rHeaders['X-Userbin-Session-Token']);
+      Userbin::getSessionStore()->write($request->rHeaders['X-Userbin-Session-Token']);
     }
 
     return array($response, $request);

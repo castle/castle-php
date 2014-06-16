@@ -8,7 +8,7 @@ abstract class Userbin
 
   public static $apiVersion = 'v1';
 
-  public static $sessionAdapter = 'Userbin_SessionAdapter';
+  public static $sessionStore = 'Userbin_SessionStore';
 
   const VERSION = '1.0.0';
 
@@ -32,14 +32,14 @@ abstract class Userbin
     self::$apiVersion = $apiVersion;
   }
 
-  public static function getSessionAdapter()
+  public static function getSessionStore()
   {
-    return new self::$sessionAdapter;
+    return new self::$sessionStore;
   }
 
-  public static function setSessionAdapter($serializerClass)
+  public static function setSessionStore($serializerClass)
   {
-    self::$sessionAdapter = $serializerClass;
+    self::$sessionStore = $serializerClass;
   }
 
   /*
@@ -47,7 +47,7 @@ abstract class Userbin
    */
   public static function getSession()
   {
-    $sessionData = self::getSessionAdapter()->read();
+    $sessionData = self::getSessionStore()->read();
     if ($sessionData) {
       return Userbin_Session::load($sessionData);
     }
@@ -62,7 +62,7 @@ abstract class Userbin
       $user = new Userbin_User($userData);
       $user->setId($userId);
       $session = $user->sessions()->create();
-      self::getSessionAdapter()->write($session->serialize());
+      self::getSessionStore()->write($session->serialize());
     }
     else {
       if ($session->getUser()->getId() != $userId) {
@@ -82,7 +82,7 @@ abstract class Userbin
     $session = self::getSession();
     if (isset($session)) {
       $session->delete();
-      self::getSessionAdapter()->destroy();
+      self::getSessionStore()->destroy();
     }
   }
 
@@ -91,7 +91,7 @@ abstract class Userbin
     $session = self::getSession();
     $challenge = $session->getUser()->challenges()->create();
     $session->setChallenge($challenge);
-    self::getSessionAdapter()->write($session->serialize());
+    self::getSessionStore()->write($session->serialize());
   }
 
   public static function twoFactorVerify($response)
@@ -104,14 +104,14 @@ abstract class Userbin
     $result = $challenge->verify($response);
     if ($result) {
       $session->clearChallenge();
-      self::getSessionAdapter()->write($session->serialize());
+      self::getSessionStore()->write($session->serialize());
     }
     return $result;
   }
 
   public static function securitySettingsUrl()
   {
-    $session = self::getSessionAdapter()->read();
+    $session = self::getSessionStore()->read();
 
     if (empty($session)) {
       throw new Userbin_Error();

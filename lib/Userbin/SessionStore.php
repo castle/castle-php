@@ -1,6 +1,13 @@
 <?php
+interface Userbin_iSessionStore
+{
+  public function destroy();
+  public function read();
+  public function write($data);
+}
 
-class Userbin_SessionAdapter
+
+class Userbin_SessionStore implements Userbin_iSessionStore
 {
   protected $key = 'userbin';
 
@@ -19,10 +26,10 @@ class Userbin_SessionAdapter
     return null;
   }
 
-  public function write($value)
+  public function write($data)
   {
     if (isset($_SESSION)) {
-      $_SESSION[$this->key] = $value;
+      $_SESSION[$this->key] = $data;
     }
   }
 }
