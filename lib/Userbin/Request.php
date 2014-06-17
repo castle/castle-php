@@ -51,8 +51,18 @@ class Userbin_Request
     throw new Userbin_RequestError("$request->rError: $request->rMessage");
   }
 
+  public function preFlightCheck()
+  {
+    $key = Userbin::getApiKey();
+    if (empty($key)) {
+      throw new Userbin_ConfigurationError();
+    }
+  }
+
   public function send($method, $url, $params=null)
   {
+    $this->preFlightCheck();
+
     $client = Userbin_Request::clientUserAgent();
     $headers = array(
       'X-Userbin-User-Agent: ' . $_SERVER['HTTP_USER_AGENT'],

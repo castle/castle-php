@@ -2,6 +2,11 @@
 
 abstract class Userbin_TestCase extends \PHPUnit_Framework_TestCase
 {
+  public function setUp()
+  {
+    Userbin::setApiKey('secret');
+  }
+
   public function assertRequest($method, $url, $headers=null)
   {
     $request = Userbin_RequestTransport::getLastRequest();
