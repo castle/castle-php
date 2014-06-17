@@ -155,8 +155,11 @@ Whenever something unexpected happens, an exception is thrown to indicate what w
 | `Userbin_SecurityError`          | The session signature doesn't match, either it has been tampered with or the Userbin API key has been changed. |
 | `Userbin_ConfigurationError`     | The Userbin secret API key has not been set |
 | `Userbin_UnauthorizedError`      | Wrong Userbin API secret key |
-| `Userbin_UserUnauthorizedError`  | The user is locked or has entered the wrong credentials |
+| `Userbin_UnauthorizedError`      | Wrong Userbin API secret key |
+| `Userbin_BadRequest`             | The request was invalid. For example if a challenge is created without the user having MFA enabled. |
 | `Userbin_ForbiddenError`         | The user has entered the wrong code too many times and a new challenge has to be requested. |
+| `Userbin_NotFoundError`          | The resource requestd was not found. For example if a session has been revoked. |
+| `Userbin_UserUnauthorizedError`  | The user is locked or has entered the wrong credentials |
 | `Userbin_InvalidParametersError` | One or more of the supplied parameters are incorrect. Check the response for more information. |
 
 ## REST Bindings

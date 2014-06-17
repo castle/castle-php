@@ -29,6 +29,8 @@ class Userbin_Request
     $type = $response['type'];
     $msg  = $response['message'];
     switch ($status) {
+      case 400:
+        throw new Userbin_BadRequest($type, $msg, $status);
       case 401:
         throw new Userbin_UnauthorizedError($type, $msg, $status);
       case 403:

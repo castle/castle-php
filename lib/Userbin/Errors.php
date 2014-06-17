@@ -28,6 +28,12 @@ class Userbin_ApiError extends Userbin_Error
   }
 }
 
+class Userbin_BadRequest extends Userbin_ApiError
+{
+
+}
+
+
 class Userbin_UnauthorizedError extends Userbin_ApiError
 {
 
