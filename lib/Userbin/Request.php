@@ -33,6 +33,8 @@ class Userbin_Request
         throw new Userbin_UnauthorizedError($type, $msg, $status);
       case 403:
         throw new Userbin_ForbiddenError($type, $msg, $status);
+      case 404:
+        throw new Userbin_NotFoundError($type, $msg, $status);
       case 419:
         throw new Userbin_UserUnauthorizedError($type, $msg, $status);
       case 422:

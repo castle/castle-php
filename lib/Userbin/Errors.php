@@ -10,6 +10,16 @@ class Userbin_RequestError extends Userbin_Error
 
 }
 
+class Userbin_SecurityError extends Userbin_Error
+{
+
+}
+
+class Userbin_ConfigurationError extends Userbin_Error
+{
+
+}
+
 class Userbin_ApiError extends Userbin_Error
 {
   public function __construct($type, $msg, $status)
@@ -39,16 +49,6 @@ class Userbin_UserUnauthorizedError extends Userbin_ApiError
 }
 
 class Userbin_InvalidParametersError extends Userbin_ApiError
-{
-
-}
-
-class Userbin_SecurityError extends Userbin_Error
-{
-
-}
-
-class Userbin_ConfigurationError extends Userbin_Error
 {
 
 }
