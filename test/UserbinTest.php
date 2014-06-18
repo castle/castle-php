@@ -56,7 +56,7 @@ class UserbinTest extends Userbin_TestCase
     $user = Userbin::authorize($userData['id'], $userData);
     $this->assertEquals($user->id, $userData['id']);
     $this->assertRequest('post', '/users/'.$userData['id'].'/sessions');
-    $this->assertTrue(Userbin::getSession() instanceof Userbin_Session);
+    $this->assertInstanceOf('Userbin_SessionToken', Userbin::getSession());
   }
 
   /**

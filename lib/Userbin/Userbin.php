@@ -46,7 +46,7 @@ abstract class Userbin
   {
     $sessionData = self::getSessionStore()->read();
     if ($sessionData) {
-      return Userbin_Session::load($sessionData);
+      return new Userbin_SessionToken($sessionData);
     }
     return null;
   }
@@ -70,7 +70,8 @@ abstract class Userbin
     if (empty($session)) {
       $user = new Userbin_User($userData);
       $user->setId($userId);
-      $session = $user->sessions()->create();
+      $newSession = $user->sessions()->create();
+      $session = new Userbin_SessionToken($newSession->token);
       self::getSessionStore()->write($session->serialize());
     }
     else {
@@ -79,7 +80,8 @@ abstract class Userbin
         throw new Userbin_Error('Session scopes not supported yet');
       }
       if ($session->hasExpired()) {
-        $session->post('/heartbeat');
+        $request = new Userbin_Request();
+        $request->send('post', '/heartbeat');
       }
     }
 
@@ -97,7 +99,7 @@ abstract class Userbin
     $session = self::getSession();
     if (isset($session)) {
       self::getSessionStore()->destroy();
-      $session->delete();
+      Userbin_Session::destroy($session->getId());
     }
   }
 

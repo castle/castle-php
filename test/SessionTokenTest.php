@@ -48,7 +48,7 @@ class UserbinSessionTest extends Userbin_TestCase
    */
   public function testHasExpired($sessionData, $sessionToken)
   {
-    $session = Userbin_Session::load($sessionToken);
+    $session = new Userbin_SessionToken($sessionToken);
     $this->assertTrue($session->hasExpired());
   }
 
@@ -57,7 +57,7 @@ class UserbinSessionTest extends Userbin_TestCase
    */
   public function testUser($sessionData, $sessionToken)
   {
-    $session = Userbin_Session::load($sessionToken);
+    $session = new Userbin_SessionToken($sessionToken);
     $this->assertTrue($session->getUser() instanceof Userbin_User);
   }
 
@@ -66,7 +66,7 @@ class UserbinSessionTest extends Userbin_TestCase
    */
   public function testGetChallengeWithoutChallenge($sessionData, $sessionToken)
   {
-    $session = Userbin_Session::load($sessionToken);
+    $session = new Userbin_SessionToken($sessionToken);
     $this->assertNull($session->getChallenge());
   }
 
@@ -75,7 +75,7 @@ class UserbinSessionTest extends Userbin_TestCase
    */
   public function testGetChallengeWithChallenge($sessionToken)
   {
-    $session = Userbin_Session::load($sessionToken);
+    $session = new Userbin_SessionToken($sessionToken);
     $this->assertInstanceOf('Userbin_Challenge', $session->getChallenge());
     $this->assertEquals($session->getChallenge()->getId(), '1');
   }
@@ -86,7 +86,7 @@ class UserbinSessionTest extends Userbin_TestCase
   public function testSetChallenge($sessionData, $sessionToken)
   {
     Userbin_RequestTransport::setResponse(201, array('id' => 1));
-    $session = Userbin_Session::load($sessionToken);
+    $session = new Userbin_SessionToken($sessionToken);
     $challenge = $session->getUser()->challenges()->create();
     $session->setChallenge($challenge);
     $gotChallenge = $session->getChallenge();
@@ -98,7 +98,7 @@ class UserbinSessionTest extends Userbin_TestCase
    */
   public function testUserId($sessionData, $sessionToken)
   {
-    $session = Userbin_Session::load($sessionToken);
+    $session = new Userbin_SessionToken($sessionToken);
     $this->assertEquals($session->getUser()->getId(), 'user-2412');
   }
 
@@ -107,7 +107,7 @@ class UserbinSessionTest extends Userbin_TestCase
    */
   public function testLoad($sessionData, $sessionToken)
   {
-    $session = Userbin_Session::load($sessionToken);
+    $session = new Userbin_SessionToken($sessionToken);
     $user = $session->getUser();
     $this->assertTrue($user instanceof Userbin_User);
   }
