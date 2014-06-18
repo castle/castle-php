@@ -127,7 +127,7 @@ class Userbin_Model
     $path .= '/'.$this->getResourceName();
     $key = $this->getId();
     if (!$this->isSingular && isset($key)) {
-      $path .= '/'.$key;
+      $path .= '/'.rawurlencode($key);
     }
     if (isset($extraPath)) {
       $path .= $extraPath;

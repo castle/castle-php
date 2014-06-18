@@ -145,4 +145,13 @@ class UserbinModelTest extends Userbin_TestCase
     $session->save();
     $this->assertRequest('put', '/users/1/session');
   }
+
+
+  public function testEscapeUrl()
+  {
+    $user = new Userbin_User('Hofbräuhaus / München');
+    $user->fetch();
+    $request = Userbin_RequestTransport::getLastRequest();
+    $this->assertStringEndsWith('Hofbr%C3%A4uhaus%20%2F%20M%C3%BCnchen', $request['url']);
+  }
 }

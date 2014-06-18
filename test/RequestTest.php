@@ -63,8 +63,6 @@ class UserbinRequestTest extends \Userbin_TestCase
     $req->send('GET', '/users');
   }
 
-  /**
-   */
   public function testRequestHeaders() {
     $req = new Userbin_Request();
     $raw = $req->send('GET', '/users');
