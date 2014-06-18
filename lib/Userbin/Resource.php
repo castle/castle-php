@@ -53,9 +53,9 @@ class Userbin_Resource
     return $instance->save();
   }
 
-  public function destroy($id)
+  public function destroy($id=null)
   {
-    $instance = new $this->model;
+    $instance = $this->createModel();
     $instance->setId($id);
     return $instance->delete();
   }
