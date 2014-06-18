@@ -8,6 +8,35 @@ class Userbin_RequestTransport
   public $rError;
   public $rMessage;
 
+  private function setResponse($curl)
+  {
+    $response = curl_exec($curl);
+
+    $this->rError = null;
+    $this->rMessage = null;
+    $this->rBody = null;
+    $this->rStatus = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+    $this->rHeaders = array();
+
+    if ($response == false) {
+      $this->rError   = curl_errno($curl);
+      $this->rMessage = curl_error($curl);
+    }
+    else {
+      $header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
+      $this->rBody = substr($response, $header_size);
+      $headers_string = substr($response, 0, $header_size);
+      $headers_array = explode("\r\n", str_replace("\r\n\r\n", '', $headers_string));
+      # Convert headers into an associative array
+      foreach ($headers_array as $header) {
+        preg_match('#(.*?)\:\s(.*)#', $header, $matches);
+        if (!empty($matches[1])) {
+          $this->rHeaders[$matches[1]] = $matches[2];
+        }
+      }
+    }
+  }
+
   public function send($method, $url, $params=null, $headers=array()) {
     $curl = curl_init();
     $method = strtolower($method);
@@ -44,31 +73,8 @@ class Userbin_RequestTransport
     $curlOptions[CURLOPT_HEADER] = true;
 
     curl_setopt_array($curl, $curlOptions);
-    $response = curl_exec($curl);
 
-    $this->rStatus = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-    $this->rHeaders = array();
-
-    if ($response == false) {
-      $this->rError   = curl_errno($curl);
-      $this->rMessage = curl_error($curl);
-      $this->rBody = false;
-    }
-    else {
-      $this->rError = null;
-      $this->rMessage = null;
-      $header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
-      $this->rBody = substr($response, $header_size);
-      $headers_string = substr($response, 0, $header_size);
-      $headers_array = explode("\r\n", str_replace("\r\n\r\n", '', $headers_string));
-      # Convert headers into an associative array
-      foreach ($headers_array as $header) {
-        preg_match('#(.*?)\:\s(.*)#', $header, $matches);
-        if (!empty($matches[1])) {
-          $this->rHeaders[$matches[1]] = $matches[2];
-        }
-      }
-    }
+    $this->setResponse($curl);
 
     curl_close($curl);
   }
