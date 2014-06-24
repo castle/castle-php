@@ -117,7 +117,14 @@ class UserbinTest extends Userbin_TestCase
     $this->assertNull($session->getChallenge());
   }
 
-
+  /**
+   * @dataProvider exampleSessionToken
+   */
+  public function testTwoFactorVerifyWithoutChallenge($token)
+  {
+    $_SESSION['userbin'] = $token;
+    Userbin::twoFactorVerify('1234');
+  }
 
   /**
    * @dataProvider exampleSessionToken

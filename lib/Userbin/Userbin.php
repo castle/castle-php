@@ -136,6 +136,9 @@ abstract class Userbin
       return false;
     }
     $challenge = $session->getChallenge();
+    if (empty($challenge)) {
+      return false;
+    }
     $result = $challenge->verify($response);
     if ($result) {
       $session->clearChallenge();
