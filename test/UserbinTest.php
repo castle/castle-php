@@ -105,6 +105,17 @@ class UserbinTest extends Userbin_TestCase
     $this->assertInstanceOf('Userbin_Challenge', $session->getChallenge());
   }
 
+
+  /**
+   * @dataProvider exampleSessionToken
+   */
+  public function testTwoFactorAuthenticateWithoutMFA($token)
+  {
+    Userbin::getSessionStore()->write($token);
+    $this->assertFalse(Userbin::twoFactorAuthenticate(), false);
+  }
+
+
   /**
    * @dataProvider exampleSessionTokenWithChallenge
    */

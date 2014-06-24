@@ -57,6 +57,11 @@ class Userbin_SessionToken
     return null;
   }
 
+  public function needsChallenge()
+  {
+    return !!$this->jwt->getHeader('vfy');
+  }
+
   public function setChallenge(Userbin_Challenge $challenge)
   {
     $cId = $challenge->getId();

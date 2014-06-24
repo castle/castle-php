@@ -113,7 +113,7 @@ abstract class Userbin
   public static function twoFactorAuthenticate()
   {
     $session = self::getSession();
-    if (isset($session) && $session->getUser()->mfa_enabled) {
+    if (isset($session) && $session->needsChallenge()) {
       $challenge = $session->getUser()->challenges()->create();
       $session->setChallenge($challenge);
       self::getSessionStore()->write($session->serialize());
