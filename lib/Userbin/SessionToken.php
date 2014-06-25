@@ -41,6 +41,7 @@ class Userbin_SessionToken
     $body = $this->jwt->getBody();
     if (array_key_exists('chg', $body)) {
       unset($body['chg']);
+      unset($body['typ']);
       $this->jwt->setBody($body);
       $this->token = $this->jwt->toString();
     }
@@ -51,23 +52,12 @@ class Userbin_SessionToken
     $challengeId = $this->jwt->getBody('chg');
     if ($challengeId) {
       $instance = new Userbin_Challenge(array(
-        'type' => $this->getChallengeType()
+        'type' => $this->jwt->getBody('typ')
       ));
       $instance->setId($challengeId);
       return $instance;
     }
     return null;
-  }
-
-  public function getChallengeType()
-  {
-    $mfaType = intval($this->jwt->getHeader('mfa'));
-    switch ($mfaType) {
-      case 1:
-        return 'authenticator';
-      default:
-        return false;
-    }
   }
 
   public function needsChallenge()
@@ -80,6 +70,7 @@ class Userbin_SessionToken
     $cId = $challenge->getId();
     if (isset($cId)) {
       $this->jwt->setBody('chg', $cId);
+      $this->jwt->setBody('typ', $challenge->type);
     }
   }
 }

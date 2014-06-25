@@ -21,11 +21,11 @@ class UserbinSessionTest extends Userbin_TestCase
     Userbin::setApiKey('secretkey');
     $jwt = new Userbin_JWT();
     $jwt->setHeader(array(
-      'mfa' => 1,
       'iss' => 1,
       'vfy' => 1
     ));
     $jwt->setBody('chg', '1');
+    $jwt->setBody('typ', 'authenticator');
     return array(array($jwt->toString()));
   }
 
@@ -79,15 +79,6 @@ class UserbinSessionTest extends Userbin_TestCase
     $session = new Userbin_SessionToken($sessionToken);
     $this->assertInstanceOf('Userbin_Challenge', $session->getChallenge());
     $this->assertEquals($session->getChallenge()->getId(), '1');
-  }
-
-  /**
-   * @dataProvider exampleSessionTokenWithChallenge
-   */
-  public function testGetChallengeType($sessionToken)
-  {
-    $session = new Userbin_SessionToken($sessionToken);
-    $this->assertEquals($session->getChallengeType(), 'authenticator');
     $this->assertEquals($session->getChallenge()->type, 'authenticator');
   }
 
@@ -96,12 +87,13 @@ class UserbinSessionTest extends Userbin_TestCase
    */
   public function testSetChallenge($sessionData, $sessionToken)
   {
-    Userbin_RequestTransport::setResponse(201, array('id' => 1));
+    Userbin_RequestTransport::setResponse(201, array('id' => 1, 'type' => 'authenticator'));
     $session = new Userbin_SessionToken($sessionToken);
     $challenge = $session->getUser()->challenges()->create();
     $session->setChallenge($challenge);
     $gotChallenge = $session->getChallenge();
     $this->assertEquals($challenge->getId(), $gotChallenge->getId());
+    $this->assertEquals($challenge->type, $gotChallenge->type);
   }
 
   /**
