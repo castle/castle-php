@@ -88,7 +88,7 @@ abstract class Userbin
     return $session->getUser();
   }
 
-  public function getTwoFactorMethod()
+  public static function getTwoFactorMethod()
   {
     $session = self::getSession();
     if (empty($session)) {
