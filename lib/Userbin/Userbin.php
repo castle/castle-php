@@ -98,7 +98,7 @@ abstract class Userbin
     if (empty($challenge)) {
       return false;
     }
-    return $challenge->type;
+    return $challenge->channel['type'];
   }
 
   /**

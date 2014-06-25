@@ -77,9 +77,10 @@ class UserbinSessionTest extends Userbin_TestCase
   public function testGetChallengeWithChallenge($sessionToken)
   {
     $session = new Userbin_SessionToken($sessionToken);
-    $this->assertInstanceOf('Userbin_Challenge', $session->getChallenge());
-    $this->assertEquals($session->getChallenge()->getId(), '1');
-    $this->assertEquals($session->getChallenge()->type, 'authenticator');
+    $challenge = $session->getChallenge();
+    $this->assertInstanceOf('Userbin_Challenge', $challenge);
+    $this->assertEquals($challenge->getId(), '1');
+    $this->assertEquals($challenge->channel['type'], 'authenticator');
   }
 
   /**
@@ -87,13 +88,13 @@ class UserbinSessionTest extends Userbin_TestCase
    */
   public function testSetChallenge($sessionData, $sessionToken)
   {
-    Userbin_RequestTransport::setResponse(201, array('id' => 1, 'type' => 'authenticator'));
+    Userbin_RequestTransport::setResponse(201, array('id' => 1, 'channel' => array('type' => 'authenticator')));
     $session = new Userbin_SessionToken($sessionToken);
     $challenge = $session->getUser()->challenges()->create();
     $session->setChallenge($challenge);
     $gotChallenge = $session->getChallenge();
     $this->assertEquals($challenge->getId(), $gotChallenge->getId());
-    $this->assertEquals($challenge->type, $gotChallenge->type);
+    $this->assertEquals($challenge->channel['type'], $gotChallenge->channel['type']);
   }
 
   /**

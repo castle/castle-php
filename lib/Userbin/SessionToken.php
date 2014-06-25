@@ -52,7 +52,7 @@ class Userbin_SessionToken
     $challengeId = $this->jwt->getBody('chg');
     if ($challengeId) {
       $instance = new Userbin_Challenge(array(
-        'type' => $this->jwt->getBody('typ')
+        'channel' => array('type' => $this->jwt->getBody('typ'))
       ));
       $instance->setId($challengeId);
       return $instance;
@@ -70,7 +70,7 @@ class Userbin_SessionToken
     $cId = $challenge->getId();
     if (isset($cId)) {
       $this->jwt->setBody('chg', $cId);
-      $this->jwt->setBody('typ', $challenge->type);
+      $this->jwt->setBody('typ', $challenge->channel['type']);
     }
   }
 }
