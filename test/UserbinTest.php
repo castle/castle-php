@@ -43,6 +43,7 @@ class UserbinTest extends Userbin_TestCase
     $jwt = new Userbin_JWT();
     $jwt->setHeader(array('vfy' => '1', 'iss' => '1'));
     $jwt->setBody('chg', '1');
+    $jwt->setBody('typ', 'authenticator');
     return array(array($jwt->toString()));
   }
 
@@ -69,6 +70,15 @@ class UserbinTest extends Userbin_TestCase
     $user = Userbin::authorize('user-2412');
     $this->assertEquals($user->id, 'user-2412');
     $this->assertRequest('post', '/heartbeat', array('X-Userbin-Session-Token' => $token));
+  }
+
+  /**
+   * @dataProvider exampleSessionTokenWithChallenge
+   */
+  public function testGetTwoFactorMethodWithChallenge($token)
+  {
+    $_SESSION['userbin'] = $token;
+    $this->assertEquals(Userbin::getTwoFactorMethod(), 'authenticator');
   }
 
   /**

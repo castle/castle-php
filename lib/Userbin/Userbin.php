@@ -88,6 +88,19 @@ abstract class Userbin
     return $session->getUser();
   }
 
+  public function getTwoFactorMethod()
+  {
+    $session = self::getSession();
+    if (empty($session)) {
+      return false;
+    }
+    $challenge = $session->getChallenge();
+    if (empty($challenge)) {
+      return false;
+    }
+    return $challenge->type;
+  }
+
   /**
    * This method ends the current monitoring session. It should be called
    * whenever the user logs out from your system.
