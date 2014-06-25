@@ -121,11 +121,24 @@ class UserbinTest extends Userbin_TestCase
    */
   public function testTwoFactorVerify($sessionToken)
   {
-    Userbin_RequestTransport::setResponse(200);
+    // Generate new session token from server
+    $jwt = new Userbin_JWT($sessionToken);
+    $jwt->setHeader('vfy', 0);
+    $newSessionToken = $jwt->toString();
+
+    Userbin_RequestTransport::setResponse(204, null, array("X-Userbin-Session-Token" => $newSessionToken));
+
     Userbin::getSessionStore()->write($sessionToken);
+
+    # Verify challenge
+    $session = Userbin::getSession();
+    $this->assertTrue($session->needsChallenge());
     $this->assertTrue(Userbin::twoFactorVerify('1234'));
+
+    # Verify that challenge has been cleared
     $session = Userbin::getSession();
     $this->assertNull($session->getChallenge());
+    $this->assertFalse($session->needsChallenge());
   }
 
   /**

@@ -141,6 +141,7 @@ abstract class Userbin
     }
     $result = $challenge->verify($response);
     if ($result) {
+      $session = self::getSession();
       $session->clearChallenge();
       self::getSessionStore()->write($session->serialize());
     }
