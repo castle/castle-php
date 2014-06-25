@@ -88,6 +88,12 @@ abstract class Userbin
     return $session->getUser();
   }
 
+  /**
+   * If a two-factor authentication process has been started, this method will
+   * return the method which is used to perform the authentication. Eg.
+   * "authenticator" or "sms"
+   * @return string Two-factor authentication method
+   */
   public static function getTwoFactorMethod()
   {
     $session = self::getSession();
