@@ -21,6 +21,7 @@ class UserbinSessionTest extends Userbin_TestCase
     Userbin::setApiKey('secretkey');
     $jwt = new Userbin_JWT();
     $jwt->setHeader(array(
+      'mfa' => 1,
       'iss' => 1,
       'vfy' => 1
     ));
@@ -78,6 +79,16 @@ class UserbinSessionTest extends Userbin_TestCase
     $session = new Userbin_SessionToken($sessionToken);
     $this->assertInstanceOf('Userbin_Challenge', $session->getChallenge());
     $this->assertEquals($session->getChallenge()->getId(), '1');
+  }
+
+  /**
+   * @dataProvider exampleSessionTokenWithChallenge
+   */
+  public function testGetChallengeType($sessionToken)
+  {
+    $session = new Userbin_SessionToken($sessionToken);
+    $this->assertEquals($session->getChallengeType(), 'authenticator');
+    $this->assertEquals($session->getChallenge()->type, 'authenticator');
   }
 
   /**

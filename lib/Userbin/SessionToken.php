@@ -50,11 +50,24 @@ class Userbin_SessionToken
   {
     $challengeId = $this->jwt->getBody('chg');
     if ($challengeId) {
-      $instance = new Userbin_Challenge();
+      $instance = new Userbin_Challenge(array(
+        'type' => $this->getChallengeType()
+      ));
       $instance->setId($challengeId);
       return $instance;
     }
     return null;
+  }
+
+  public function getChallengeType()
+  {
+    $mfaType = intval($this->jwt->getHeader('mfa'));
+    switch ($mfaType) {
+      case 1:
+        return 'authenticator';
+      default:
+        return false;
+    }
   }
 
   public function needsChallenge()
