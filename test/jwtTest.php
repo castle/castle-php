@@ -70,6 +70,12 @@ class UserbinJWTTest extends \PHPUnit_Framework_TestCase
     $this->assertTrue($jwt->isValid());
   }
 
+  public function testGetNonExistantBodyKey()
+  {
+    $jwt = new Userbin_JWT();
+    $this->assertNull($jwt->getBody('chg'));
+  }
+
   /**
    * @dataProvider validJWTs
    */

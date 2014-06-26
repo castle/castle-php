@@ -24,7 +24,7 @@ class Userbin_JWT
   public function getArrayKey($array, $key=null)
   {
     if (!is_array($array)) {
-      return array();
+      $array = array();
     }
     if (is_string($key)) {
       if (array_key_exists($key, $array)) {
