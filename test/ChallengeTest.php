@@ -18,8 +18,7 @@ class UserbinChallengeTest extends Userbin_TestCase
   {
     $challenge = new Userbin_Challenge(1);
     $challenge->verify('1234');
-    $this->assertRequest('post', '/challenges/1/verify');
-    $request = Userbin_RequestTransport::getLastRequest();
+    $request = $this->assertRequest('post', '/challenges/1/verify');
     $this->assertArrayHasKey('response', $request['params']);
     $this->assertEquals($request['params']['response'], '1234');
   }

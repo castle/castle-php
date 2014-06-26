@@ -125,6 +125,18 @@ class UserbinTest extends Userbin_TestCase
     $this->assertFalse(Userbin::twoFactorAuthenticate(), false);
   }
 
+  /**
+   * @dataProvider exampleSessionTokenWithChallenge
+   */
+  public function testTwoFactorAuthenticateRemovesExisting($token)
+  {
+    Userbin::getSessionStore()->write($token);
+    $challenge = Userbin::getSession()->getChallenge();
+    Userbin::twoFactorAuthenticate();
+    Userbin_RequestTransport::getLastRequest(); // Pop one request
+    $this->assertRequest('delete', '/challenges/'.$challenge->getId());
+  }
+
 
   /**
    * @dataProvider exampleSessionTokenWithChallenge

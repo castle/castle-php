@@ -132,13 +132,24 @@ abstract class Userbin
   public static function twoFactorAuthenticate()
   {
     $session = self::getSession();
-    if (isset($session) && $session->needsChallenge()) {
-      $challenge = $session->getUser()->challenges()->create();
-      $session->setChallenge($challenge);
-      self::getSessionStore()->write($session->serialize());
-      return $challenge;
+    if (empty($session)) {
+      return false;
     }
-    return false;
+    if (!$session->needsChallenge()) {
+      return false;
+    }
+
+    $challenge = $session->getChallenge();
+    if (isset($challenge)) {
+      try {
+        $challenge->delete();
+      }
+      catch (Exception $e) {}
+    }
+    $challenge = $session->getUser()->challenges()->create();
+    $session->setChallenge($challenge);
+    self::getSessionStore()->write($session->serialize());
+    return $challenge;
   }
 
   /**
@@ -160,6 +171,7 @@ abstract class Userbin
     }
     $result = $challenge->verify($response);
     if ($result) {
+      // Read session from store again since it might have been changed by verify
       $session = self::getSession();
       $session->clearChallenge();
       self::getSessionStore()->write($session->serialize());

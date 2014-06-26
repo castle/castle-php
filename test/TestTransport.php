@@ -8,12 +8,12 @@ class Userbin_RequestTransport
   public $rError;
   public $rMessage;
 
-  private static $params = null;
+  private static $params = array();
 
-  private static $lastRequest = null;
+  private static $lastRequest = array();
 
   public function send($method, $url, $params=null, $headers=array()) {
-    if (!self::$params) {
+    if (empty(self::$params)) {
       self::setResponse(200, '{}');
     }
     $headers_array = array();
@@ -23,33 +23,34 @@ class Userbin_RequestTransport
         $headers_array[$matches[1]] = $matches[2];
       }
     }
-    self::$lastRequest = array(
+    self::$lastRequest[]= array(
       'method'  => $method,
       'headers' => $headers_array,
       'params'  => $params,
       'url'     => $url
     );
-    $this->rBody = self::$params['body'];
-    $this->rStatus = self::$params['code'];
-    $this->rHeaders = self::$params['headers'];
+    $params = array_pop(self::$params);
+    $this->rBody = $params['body'];
+    $this->rStatus = $params['code'];
+    $this->rHeaders = $params['headers'];
   }
 
   public static function getLastRequest()
   {
-    return self::$lastRequest;
+    return array_pop(self::$lastRequest);
   }
 
   public static function reset()
   {
-    self::$lastRequest = null;
-    self::$params = null;
+    self::$lastRequest = array();
+    self::$params = array();
   }
 
   public static function setResponse($code=200, $body='', $headers=array()) {
     if (is_array($body)) {
       $body = json_encode($body, true);
     }
-    self::$params = array(
+    self::$params[]= array(
       'body' => $body,
       'code' => $code,
       'headers' => $headers

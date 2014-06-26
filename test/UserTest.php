@@ -62,8 +62,7 @@ class UserbinUserTest extends Userbin_TestCase
     Userbin_RequestTransport::setResponse(200, array());
     $user = new Userbin_User($userData);
     $user->sessions()->create(array('user' => $userData));
-    $request = Userbin_RequestTransport::getLastRequest();
-    $this->assertRequest('post', '/users/'.$user->id.'/sessions');
+    $request = $this->assertRequest('post', '/users/'.$user->id.'/sessions');
     $this->assertEquals($request['params']['user'], $userData);
   }
 }
