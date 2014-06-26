@@ -118,7 +118,8 @@ abstract class Userbin
     $session = self::getSession();
     if (isset($session)) {
       self::getSessionStore()->destroy();
-      Userbin_Session::destroy($session->getId());
+      $sess = new Userbin_Session($session->getId());
+      $sess->delete();
     }
   }
 
