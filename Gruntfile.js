@@ -1,6 +1,9 @@
 module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
+    phplint: {
+      src: ['lib/**/*.php']
+    },
     phpunit: {
       classes: {
         dir: 'test/'
@@ -12,19 +15,16 @@ module.exports = function(grunt) {
       }
     },
     watch: {
-      sourcephp: {
-        files: ['lib/**/*.php'],
-        tasks: ['phpunit']
-      },
-      testfiles: {
-        files: ['test/**/*.php'],
-        tasks: ['phpunit']
+      source: {
+        files: ['test/**/*.php', 'lib/**/*.php'],
+        tasks: ['test']
       }
     }
   });
+  grunt.loadNpmTasks('grunt-phplint');
   grunt.loadNpmTasks('grunt-phpunit');
   grunt.loadNpmTasks('grunt-contrib-watch');
 
-  grunt.registerTask('test', ['phpunit']);
+  grunt.registerTask('test', ['phpunit', 'phplint']);
   grunt.registerTask('default', ['test']);
 };
