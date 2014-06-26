@@ -70,7 +70,7 @@ abstract class Userbin
     if (empty($session)) {
       $user = new Userbin_User($userData);
       $user->setId($userId);
-      $newSession = $user->sessions()->create();
+      $newSession = $user->sessions()->create(array('user' => $userData));
       $session = new Userbin_SessionToken($newSession->token);
       self::getSessionStore()->write($session->serialize());
     }

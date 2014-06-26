@@ -61,6 +61,16 @@ class UserbinTest extends Userbin_TestCase
   }
 
   /**
+   * @dataProvider exampleUser
+   */
+  public function testAuthorizeSendsUserData($userData)
+  {
+    $user = Userbin::authorize($userData['id'], $userData);
+    $request = $this->assertRequest('post', '/users/'.$userData['id'].'/sessions');
+    $this->assertEquals($request['params']['user'], $userData);
+  }
+
+  /**
    * @dataProvider exampleSessionToken
    */
   public function testAuthorizeWithExistingSession($token)
