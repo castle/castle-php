@@ -63,14 +63,17 @@ abstract class Userbin
    * @param  array  $userData An array of additional user data (for display purposes). At least email is recommended.
    * @return Userbin_User     The user object returned from Userbin
    */
-  public static function authorize($userId, array $userData=array())
+  public static function authorize($userId, array $userData=null)
   {
     $session = self::getSession();
 
     if (empty($session)) {
       $user = new Userbin_User($userData);
       $user->setId($userId);
-      $newSession = $user->sessions()->create(array('user' => $userData));
+      if (is_array($userData)) {
+        $userData = array('user' => $userData);
+      }
+      $newSession = $user->sessions()->create($userData);
       $session = new Userbin_SessionToken($newSession->token);
       self::getSessionStore()->write($session->serialize());
     }
