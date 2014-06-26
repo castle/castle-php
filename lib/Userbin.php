@@ -7,6 +7,14 @@ if (!function_exists('json_decode')) {
   throw new Exception('Userbin needs the JSON PHP extension.');
 }
 
+if (!function_exists('lcfirst'))
+{
+  function lcfirst( $str ) {
+    $str[0] = strtolower($str[0]);
+    return (string)$str;
+  }
+}
+
 require(dirname(__FILE__) . '/Userbin/Userbin.php');
 require(dirname(__FILE__) . '/Userbin/Errors.php');
 require(dirname(__FILE__) . '/Userbin/SessionToken.php');
