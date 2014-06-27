@@ -130,10 +130,15 @@ abstract class Userbin
    * This method creates a two factor challenge for the current user, if the
    * user has enabled a device for authentication.
    *
+   * If there already exists a challenge on the current session, it will be
+   * returned. Otherwise a new will be created.
+   *
+   * @param  forceChallenge    Will force generate a new challenge instead of
+   * returning any existing
    * @return Userbin_Challenge The challenge object. It will tell you what type
    * factor the user is using to authenticate (SMS, Google Authenticator etc.).
    */
-  public static function twoFactorAuthenticate()
+  public static function twoFactorAuthenticate($force = false)
   {
     $session = self::getSession();
     if (empty($session)) {
@@ -145,6 +150,9 @@ abstract class Userbin
 
     $challenge = $session->getChallenge();
     if (isset($challenge)) {
+      if (!$force) {
+        return $challenge;
+      }
       try {
         $challenge->delete();
       }
