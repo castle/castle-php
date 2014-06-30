@@ -34,15 +34,17 @@ class UserbinTest extends Userbin_TestCase
   public function exampleSessionTokenWithMFA()
   {
     $jwt = new Userbin_JWT();
-    $jwt->setHeader(array('vfy' => '1', 'iss' => '1', 'mfa' => '1'));
+    $jwt->setHeader(array('iss' => '1', 'mfa' => '1'));
+    $jwt->setBody('vfy', 1);
     return array(array($jwt->toString()));
   }
 
   public function exampleSessionTokenWithChallenge()
   {
     $jwt = new Userbin_JWT();
-    $jwt->setHeader(array('vfy' => '1', 'iss' => '1'));
+    $jwt->setHeader(array('iss' => '1'));
     $jwt->setBody('chg', '1');
+    $jwt->setBody('vfy', 1);
     $jwt->setBody('typ', 'authenticator');
     return array(array($jwt->toString()));
   }
@@ -165,7 +167,7 @@ class UserbinTest extends Userbin_TestCase
   {
     // Generate new session token from server
     $jwt = new Userbin_JWT($sessionToken);
-    $jwt->setHeader('vfy', 0);
+    $jwt->setBody('vfy', 0);
     $newSessionToken = $jwt->toString();
 
     Userbin_RequestTransport::setResponse(204, null, array("X-Userbin-Session-Token" => $newSessionToken));

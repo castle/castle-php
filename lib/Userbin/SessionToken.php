@@ -31,7 +31,6 @@ class Userbin_SessionToken
     if ($userId) {
       $instance = new Userbin_User();
       $instance->setId($userId);
-      $instance->mfa_enabled = !!$this->jwt->getHeader('mfa');
     }
     return $instance;
   }
@@ -62,7 +61,7 @@ class Userbin_SessionToken
 
   public function needsChallenge()
   {
-    return !!$this->jwt->getHeader('vfy');
+    return !!$this->jwt->getBody('vfy');
   }
 
   public function setChallenge(Userbin_Challenge $challenge)
