@@ -46,10 +46,10 @@ class Userbin_JWT
       $array = $key;
     }
     else if (isset($value)) {
-      if (!is_array($array)) {
-        $array = array();
-      }
       $array[$key] = $value;
+    }
+    else {
+      unset($array[$key]);
     }
     return $array;
   }

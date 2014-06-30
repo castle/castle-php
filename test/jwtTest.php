@@ -76,6 +76,15 @@ class UserbinJWTTest extends \PHPUnit_Framework_TestCase
     $this->assertNull($jwt->getBody('chg'));
   }
 
+  public function testSetEmptyHeader()
+  {
+    $jwt = new Userbin_JWT();
+    $jwt->setHeader('tmp', 1);
+    $this->assertEquals(1, $jwt->getHeader('tmp'));
+    $jwt->setHeader('tmp');
+    $this->assertNull($jwt->getHeader('tmp'));
+  }
+
   /**
    * @dataProvider validJWTs
    */
