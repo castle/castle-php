@@ -159,8 +159,6 @@ abstract class Userbin
       catch (Exception $e) {}
     }
     $challenge = $session->getUser()->challenges()->create();
-    $session->setChallenge($challenge);
-    self::getSessionStore()->write($session->serialize());
     return $challenge;
   }
 
@@ -181,14 +179,7 @@ abstract class Userbin
     if (empty($challenge)) {
       return false;
     }
-    $result = $challenge->verify($response);
-    if ($result) {
-      // Read session from store again since it might have been changed by verify
-      $session = self::getSession();
-      $session->clearChallenge();
-      self::getSessionStore()->write($session->serialize());
-    }
-    return $result;
+    return $challenge->verify($response);
   }
 
   /**

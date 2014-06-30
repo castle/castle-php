@@ -24,7 +24,7 @@ class UserbinSessionTest extends Userbin_TestCase
       'iss' => 1
     ));
     $jwt->setBody('vfy', 1);
-    $jwt->setBody('chg', '1');
+    $jwt->setBody('chg', array('id' => 1, 'typ' => 'authenticator'));
     $jwt->setBody('typ', 'authenticator');
     return array(array($jwt->toString()));
   }
@@ -90,20 +90,6 @@ class UserbinSessionTest extends Userbin_TestCase
   {
     $session = new Userbin_SessionToken($sessionToken);
     $this->assertTrue($session->needsChallenge());
-  }
-
-  /**
-   * @dataProvider exampleSession
-   */
-  public function testSetChallenge($sessionData, $sessionToken)
-  {
-    Userbin_RequestTransport::setResponse(201, array('id' => 1, 'channel' => array('type' => 'authenticator')));
-    $session = new Userbin_SessionToken($sessionToken);
-    $challenge = $session->getUser()->challenges()->create();
-    $session->setChallenge($challenge);
-    $gotChallenge = $session->getChallenge();
-    $this->assertEquals($challenge->getId(), $gotChallenge->getId());
-    $this->assertEquals($challenge->channel['type'], $gotChallenge->channel['type']);
   }
 
   /**

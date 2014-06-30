@@ -34,7 +34,7 @@ class UserbinTest extends Userbin_TestCase
   public function exampleSessionTokenWithMFA()
   {
     $jwt = new Userbin_JWT();
-    $jwt->setHeader(array('iss' => '1', 'mfa' => '1'));
+    $jwt->setHeader(array('iss' => '1'));
     $jwt->setBody('vfy', 1);
     return array(array($jwt->toString()));
   }
@@ -43,7 +43,7 @@ class UserbinTest extends Userbin_TestCase
   {
     $jwt = new Userbin_JWT();
     $jwt->setHeader(array('iss' => '1'));
-    $jwt->setBody('chg', '1');
+    $jwt->setBody('chg', array('id' => 1, 'typ' => 'authenticator'));
     $jwt->setBody('vfy', 1);
     $jwt->setBody('typ', 'authenticator');
     return array(array($jwt->toString()));
@@ -120,7 +120,12 @@ class UserbinTest extends Userbin_TestCase
    */
   public function testTwoFactorAuthenticate($sessionToken)
   {
-    Userbin_RequestTransport::setResponse(201, array('id' => '1'));
+    // Generate new session token from server
+    $jwt = new Userbin_JWT($sessionToken);
+    $jwt->setBody('vfy', 0);
+    $jwt->setBody('chg', array('id' => 1, 'typ' => 'authenticator'));
+    $newSessionToken = $jwt->toString();
+    Userbin_RequestTransport::setResponse(201, array('id' => '1'), array("X-Userbin-Session-Token" => $newSessionToken));
     Userbin::getSessionStore()->write($sessionToken);
     Userbin::twoFactorAuthenticate();
     $session = Userbin::getSession();
@@ -168,6 +173,7 @@ class UserbinTest extends Userbin_TestCase
     // Generate new session token from server
     $jwt = new Userbin_JWT($sessionToken);
     $jwt->setBody('vfy', 0);
+    $jwt->setBody('chg', null);
     $newSessionToken = $jwt->toString();
 
     Userbin_RequestTransport::setResponse(204, null, array("X-Userbin-Session-Token" => $newSessionToken));

@@ -35,25 +35,14 @@ class Userbin_SessionToken
     return $instance;
   }
 
-  public function clearChallenge()
-  {
-    $body = $this->jwt->getBody();
-    if (array_key_exists('chg', $body)) {
-      unset($body['chg']);
-      unset($body['typ']);
-      $this->jwt->setBody($body);
-      $this->token = $this->jwt->toString();
-    }
-  }
-
   public function getChallenge()
   {
-    $challengeId = $this->jwt->getBody('chg');
-    if (isset($challengeId)) {
+    $challenge = $this->jwt->getBody('chg');
+    if (is_array($challenge)) {
       $instance = new Userbin_Challenge(array(
-        'channel' => array('type' => $this->jwt->getBody('typ'))
+        'channel' => array('type' => $challenge['typ'])
       ));
-      $instance->setId($challengeId);
+      $instance->setId($challenge['id']);
       return $instance;
     }
     return null;
@@ -62,14 +51,5 @@ class Userbin_SessionToken
   public function needsChallenge()
   {
     return !!$this->jwt->getBody('vfy');
-  }
-
-  public function setChallenge(Userbin_Challenge $challenge)
-  {
-    $cId = $challenge->getId();
-    if (isset($cId)) {
-      $this->jwt->setBody('chg', $cId);
-      $this->jwt->setBody('typ', $challenge->channel['type']);
-    }
   }
 }
