@@ -1,7 +1,7 @@
 {
     "name": "userbin/userbin-php",
     "description": "PHP bindings for Userbin",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "keywords": ["account monitoring", "two factor authentication", "authorization"],
     "homepage": "https://github.com/userbin/userbin-php",
     "require-dev": {
