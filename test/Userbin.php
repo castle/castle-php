@@ -28,6 +28,7 @@ require(dirname(__FILE__) . '/../lib/Userbin/SessionToken.php');
 require(dirname(__FILE__) . '/../lib/Userbin/SessionStore.php');
 require(dirname(__FILE__) . '/../lib/Userbin/Resource.php');
 require(dirname(__FILE__) . '/../lib/Userbin/Model.php');
+require(dirname(__FILE__) . '/../lib/Userbin/Models/Account.php');
 require(dirname(__FILE__) . '/../lib/Userbin/Models/Challenge.php');
 require(dirname(__FILE__) . '/../lib/Userbin/Models/Session.php');
 require(dirname(__FILE__) . '/../lib/Userbin/Models/User.php');

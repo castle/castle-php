@@ -21,6 +21,7 @@ require(dirname(__FILE__) . '/Userbin/SessionToken.php');
 require(dirname(__FILE__) . '/Userbin/SessionStore.php');
 require(dirname(__FILE__) . '/Userbin/Resource.php');
 require(dirname(__FILE__) . '/Userbin/Model.php');
+require(dirname(__FILE__) . '/Userbin/Models/Account.php');
 require(dirname(__FILE__) . '/Userbin/Models/Challenge.php');
 require(dirname(__FILE__) . '/Userbin/Models/Session.php');
 require(dirname(__FILE__) . '/Userbin/Models/User.php');
