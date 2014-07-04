@@ -24,7 +24,9 @@ class Userbin_ApiError extends Userbin_Error
 {
   public function __construct($type, $msg, $status)
   {
-
+    parent::__construct($msg);
+    $this->type = $type;
+    $this->httpStatus = $status;
   }
 }
 
