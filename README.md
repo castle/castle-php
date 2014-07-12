@@ -1,3 +1,5 @@
+[![Latest Stable Version](https://poser.pugx.org/userbin/userbin-php/v/stable.svg)](https://packagist.org/packages/userbin/userbin-php) [![Total Downloads](https://poser.pugx.org/userbin/userbin-php/downloads.svg)](https://packagist.org/packages/userbin/userbin-php) [![License](https://poser.pugx.org/userbin/userbin-php/license.svg)](https://packagist.org/packages/userbin/userbin-php)
+
 [![Build Status](https://travis-ci.org/userbin/userbin-php.png)](https://travis-ci.org/userbin/userbin-php)
 [![Code Climate](https://codeclimate.com/github/userbin/userbin-php.png)](https://codeclimate.com/github/userbin/userbin-php)
 
