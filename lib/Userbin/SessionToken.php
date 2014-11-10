@@ -9,16 +9,6 @@ class Userbin_SessionToken
     $this->jwt = new Userbin_JWT($token);
   }
 
-  public function hasExpired()
-  {
-    return $this->jwt->hasExpired();
-  }
-
-  public function serialize()
-  {
-    return $this->jwt->toString();
-  }
-
   public function getId()
   {
     return $this->jwt->getHeader('sub');
@@ -29,27 +19,43 @@ class Userbin_SessionToken
     $userId = $this->jwt->getHeader('iss');
     $instance = null;
     if ($userId) {
-      $instance = new Userbin_User();
-      $instance->setId($userId);
+      $instance = new Userbin_User($userId);
     }
     return $instance;
   }
 
-  public function getChallenge()
+  public function hasChallenge()
   {
-    $challenge = $this->jwt->getBody('chg');
-    if (is_array($challenge)) {
-      $instance = new Userbin_Challenge(array(
-        'channel' => array('type' => $challenge['typ'])
-      ));
-      $instance->setId($challenge['id']);
-      return $instance;
-    }
-    return null;
+    return $this->jwt->getBody('chg') == 1;
   }
 
   public function needsChallenge()
   {
-    return !!$this->jwt->getBody('vfy');
+    return $this->jwt->getBody('vfy') > 0;
+  }
+
+  public function isDeviceTrusted()
+  {
+    return $this->jwt->getBody('tru') == 1;
+  }
+
+  public function isMFAEnabled()
+  {
+    return $this->jwt->getBody('mfa') == 1;
+  }
+
+  public function hasDefaultPairing()
+  {
+    return $this->jwt->getBody('dpr') == 1;
+  }
+
+  public function hasExpired()
+  {
+    return $this->jwt->hasExpired();
+  }
+
+  public function serialize()
+  {
+    return $this->jwt->toString();
   }
 }

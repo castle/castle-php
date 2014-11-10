@@ -43,7 +43,7 @@ class UserbinTest extends Userbin_TestCase
   {
     $jwt = new Userbin_JWT();
     $jwt->setHeader(array('iss' => '1'));
-    $jwt->setBody('chg', array('id' => 1, 'typ' => 'authenticator'));
+    $jwt->setBody('chg', 1);
     $jwt->setBody('vfy', 1);
     $jwt->setBody('typ', 'authenticator');
     return array(array($jwt->toString()));
@@ -52,22 +52,22 @@ class UserbinTest extends Userbin_TestCase
   /**
    * @dataProvider exampleUser
    */
-  public function testAuthorizeWithoutExistingSession($userData)
+  public function testLoginWithoutExistingSession($userData)
   {
     Userbin_RequestTransport::setResponse(201, array('token' => $this->sessionToken));
 
-    $user = Userbin::authorize($userData['id'], $userData);
+    $user = Userbin::login($userData['id'], $userData);
     $this->assertEquals($user->id, $userData['id']);
     $this->assertRequest('post', '/users/'.$userData['id'].'/sessions');
-    $this->assertInstanceOf('Userbin_SessionToken', Userbin::getSession());
+    $this->assertInstanceOf('Userbin_SessionToken', Userbin::getSessionToken());
   }
 
   /**
    * @dataProvider exampleUser
    */
-  public function testAuthorizeSendsUserData($userData)
+  public function testLoginSendsUserData($userData)
   {
-    $user = Userbin::authorize($userData['id'], $userData);
+    $user = Userbin::login($userData['id'], $userData);
     $request = $this->assertRequest('post', '/users/'.$userData['id'].'/sessions');
     $this->assertEquals($request['params']['user'], $userData);
   }
@@ -79,28 +79,8 @@ class UserbinTest extends Userbin_TestCase
   {
     Userbin_RequestTransport::setResponse(201, array('token' => $token));
     $_SESSION['userbin'] = $token;
-    $user = Userbin::authorize('user-2412');
-    $this->assertEquals($user->id, 'user-2412');
+    Userbin::authorize();
     $this->assertRequest('post', '/heartbeat', array('X-Userbin-Session-Token' => $token));
-  }
-
-  /**
-   * @dataProvider exampleSessionTokenWithChallenge
-   */
-  public function testGetTwoFactorMethodWithChallenge($token)
-  {
-    $_SESSION['userbin'] = $token;
-    $this->assertEquals(Userbin::getTwoFactorMethod(), 'authenticator');
-  }
-
-  /**
-   * @dataProvider exampleSessionToken
-   * @expectedException Userbin_Error
-   */
-  public function testAuthorizeWithExistingSessionAndWrongUser($token)
-  {
-    $_SESSION['userbin'] = $token;
-    $user = Userbin::authorize('wrong-user-id');
   }
 
   /**
@@ -109,113 +89,9 @@ class UserbinTest extends Userbin_TestCase
   public function testLogout($token)
   {
     Userbin::getSessionStore()->write($token);
-    $session = Userbin::getSession();
+    $session = Userbin::getSessionToken();
     Userbin::logout();
     $this->assertRequest('delete', '/sessions/'.$session->getId());
     $this->assertFalse(array_key_exists('userbin', $_SESSION));
-  }
-
-  /**
-   * @dataProvider exampleSessionTokenWithMFA
-   */
-  public function testTwoFactorAuthenticate($sessionToken)
-  {
-    // Generate new session token from server
-    $jwt = new Userbin_JWT($sessionToken);
-    $jwt->setBody('vfy', 0);
-    $jwt->setBody('chg', array('id' => 1, 'typ' => 'authenticator'));
-    $newSessionToken = $jwt->toString();
-    Userbin_RequestTransport::setResponse(201, array('id' => '1'), array("X-Userbin-Session-Token" => $newSessionToken));
-    Userbin::getSessionStore()->write($sessionToken);
-    Userbin::twoFactorAuthenticate();
-    $session = Userbin::getSession();
-    $this->assertInstanceOf('Userbin_Challenge', $session->getChallenge());
-  }
-
-
-  /**
-   * @dataProvider exampleSessionToken
-   */
-  public function testTwoFactorAuthenticateWithoutMFA($token)
-  {
-    Userbin::getSessionStore()->write($token);
-    $this->assertFalse(Userbin::twoFactorAuthenticate(), false);
-  }
-
-  /**
-   * @dataProvider exampleSessionTokenWithChallenge
-   */
-  public function testTwoFactorAuthenticateRemovesExistingWhenForced($token)
-  {
-    Userbin::getSessionStore()->write($token);
-    $challenge = Userbin::getSession()->getChallenge();
-    Userbin::twoFactorAuthenticate(true);
-    Userbin_RequestTransport::getLastRequest(); // Pop one request
-    $this->assertRequest('delete', '/challenges/'.$challenge->getId());
-  }
-  /**
-   * @dataProvider exampleSessionTokenWithChallenge
-   */
-  public function testTwoFactorAuthenticateReturnsExisting($token)
-  {
-    Userbin::getSessionStore()->write($token);
-    $challenge = Userbin::getSession()->getChallenge();
-    $returnedChallenge = Userbin::twoFactorAuthenticate();
-    $this->assertEquals($challenge, $returnedChallenge);
-  }
-
-
-  /**
-   * @dataProvider exampleSessionTokenWithChallenge
-   */
-  public function testTwoFactorVerify($sessionToken)
-  {
-    // Generate new session token from server
-    $jwt = new Userbin_JWT($sessionToken);
-    $jwt->setBody('vfy', 0);
-    $jwt->setBody('chg', null);
-    $newSessionToken = $jwt->toString();
-
-    Userbin_RequestTransport::setResponse(204, null, array("X-Userbin-Session-Token" => $newSessionToken));
-
-    Userbin::getSessionStore()->write($sessionToken);
-
-    # Verify challenge
-    $session = Userbin::getSession();
-    $this->assertTrue($session->needsChallenge());
-    $this->assertTrue(Userbin::twoFactorVerify('1234'));
-
-    # Verify that challenge has been cleared
-    $session = Userbin::getSession();
-    $this->assertNull($session->getChallenge());
-    $this->assertFalse($session->needsChallenge());
-  }
-
-  /**
-   * @dataProvider exampleSessionToken
-   */
-  public function testTwoFactorVerifyWithoutChallenge($token)
-  {
-    $_SESSION['userbin'] = $token;
-    Userbin::twoFactorVerify('1234');
-  }
-
-  /**
-   * @dataProvider exampleSessionToken
-   */
-  public function testSecuritySettingsUrl($token)
-  {
-    $_SESSION['userbin'] = $token;
-    $url = Userbin::securitySettingsUrl();
-    $this->assertContains($token, $url);
-  }
-
-  /**
-   * @expectedException Userbin_Error
-   */
-  public function testSecuritySettingsUrlWithoutSession()
-  {
-    $url = Userbin::securitySettingsUrl();
-    $this->assertEmpty($url);
   }
 }

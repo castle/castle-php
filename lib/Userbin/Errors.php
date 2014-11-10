@@ -22,7 +22,7 @@ class Userbin_ConfigurationError extends Userbin_Error
 
 class Userbin_ApiError extends Userbin_Error
 {
-  public function __construct($type, $msg, $status)
+  public function __construct($msg, $type = null, $status = null)
   {
     parent::__construct($msg);
     $this->type = $type;
@@ -37,6 +37,11 @@ class Userbin_BadRequest extends Userbin_ApiError
 
 
 class Userbin_UnauthorizedError extends Userbin_ApiError
+{
+
+}
+
+class Userbin_ChallengeRequiredError extends Userbin_ApiError
 {
 
 }

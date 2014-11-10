@@ -4,9 +4,13 @@ class Userbin_Request
 {
   public static function apiUrl($url='')
   {
-    $apiBase    = Userbin::$apiBase;
-    $apiVersion = Userbin::getApiVersion();
-    return $apiBase."/".$apiVersion.$url;
+    $apiEndpoint = getenv('USERBIN_API_ENDPOINT');
+    if ( !$apiEndpoint ) {
+      $apiBase    = Userbin::$apiBase;
+      $apiVersion = Userbin::getApiVersion();
+      $apiEndpoint = $apiBase.'/'.$apiVersion;
+    }
+    return $apiEndpoint.$url;
   }
 
   public static function clientUserAgent()
@@ -30,19 +34,19 @@ class Userbin_Request
     $msg  = $response['message'];
     switch ($status) {
       case 400:
-        throw new Userbin_BadRequest($type, $msg, $status);
+        throw new Userbin_BadRequest($msg, $type, $status);
       case 401:
-        throw new Userbin_UnauthorizedError($type, $msg, $status);
+        throw new Userbin_UnauthorizedError($msg, $type, $status);
       case 403:
-        throw new Userbin_ForbiddenError($type, $msg, $status);
+        throw new Userbin_ForbiddenError($msg, $type, $status);
       case 404:
-        throw new Userbin_NotFoundError($type, $msg, $status);
+        throw new Userbin_NotFoundError($msg, $type, $status);
       case 419:
-        throw new Userbin_UserUnauthorizedError($type, $msg, $status);
+        throw new Userbin_UserUnauthorizedError($msg, $type, $status);
       case 422:
-        throw new Userbin_InvalidParametersError($type, $msg, $status);
+        throw new Userbin_InvalidParametersError($msg, $type, $status);
       default:
-        throw new Userbin_ApiError($type, $msg, $status);
+        throw new Userbin_ApiError($msg, $type, $status);
     }
   }
 
@@ -87,7 +91,7 @@ class Userbin_Request
     try {
       $response = json_decode($request->rBody, true);
     } catch (Exception $e) {
-      throw new Userbin_ApiError('api_error', 'Invalid response from API', $request->rStatus);
+      throw new Userbin_ApiError('Invalid response from API', 'api_error', $request->rStatus);
     }
 
     if ($request->rStatus < 200 || $request->rStatus >= 300) {
@@ -95,8 +99,8 @@ class Userbin_Request
     }
 
     // Update the local session if it was updated by Userbin
-    if (array_key_exists('X-Userbin-Session-Token', $request->rHeaders)) {
-      Userbin::getSessionStore()->write($request->rHeaders['X-Userbin-Session-Token']);
+    if (array_key_exists('X-Userbin-Set-Session-Token', $request->rHeaders)) {
+      Userbin::getSessionStore()->write($request->rHeaders['X-Userbin-Set-Session-Token']);
     }
 
     return array($response, $request);

@@ -24,7 +24,7 @@ class UserbinSessionTest extends Userbin_TestCase
       'iss' => 1
     ));
     $jwt->setBody('vfy', 1);
-    $jwt->setBody('chg', array('id' => 1, 'typ' => 'authenticator'));
+    $jwt->setBody('chg', 1);
     $jwt->setBody('typ', 'authenticator');
     return array(array($jwt->toString()));
   }
@@ -65,22 +65,19 @@ class UserbinSessionTest extends Userbin_TestCase
   /**
    * @dataProvider exampleSession
    */
-  public function testGetChallengeWithoutChallenge($sessionData, $sessionToken)
+  public function testHasChallengeWithoutChallenge($sessionData, $sessionToken)
   {
     $session = new Userbin_SessionToken($sessionToken);
-    $this->assertNull($session->getChallenge());
+    $this->assertFalse($session->hasChallenge());
   }
 
   /**
    * @dataProvider exampleSessionTokenWithChallenge
    */
-  public function testGetChallengeWithChallenge($sessionToken)
+  public function testHasChallengeWithChallenge($sessionToken)
   {
     $session = new Userbin_SessionToken($sessionToken);
-    $challenge = $session->getChallenge();
-    $this->assertInstanceOf('Userbin_Challenge', $challenge);
-    $this->assertEquals($challenge->getId(), '1');
-    $this->assertEquals($challenge->channel['type'], 'authenticator');
+    $this->assertTrue($session->hasChallenge());
   }
 
   /**

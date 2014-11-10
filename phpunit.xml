@@ -5,4 +5,8 @@
       <directory>./test</directory>
     </testsuite>
   </testsuites>
+  <logging>
+      <log type="coverage-php" target="build/cov/coverage.cov"/>
+      <log type="coverage-clover" target="build/logs/clover.xml"/>
+  </logging>
 </phpunit>
