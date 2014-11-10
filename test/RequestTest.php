@@ -24,6 +24,26 @@ class UserbinRequestTest extends \Userbin_TestCase
   }
 
   /**
+   * @expectedException Userbin_ApiError
+   */
+  public function testInvalidResponse()
+  {
+    Userbin_RequestTransport::setResponse(200, '{invalid');
+    $req = new Userbin_Request();
+    $req->send('GET', '/users');
+  }
+
+  /**
+   * @expectedException Userbin_ApiError
+   */
+  public function testApiErrorRequest()
+  {
+    Userbin_RequestTransport::setResponse(500);
+    $req = new Userbin_Request();
+    $req->send('GET', '/users');
+  }
+
+  /**
    * @expectedException Userbin_UnauthorizedError
    */
   public function testUnauthorizedRequest()

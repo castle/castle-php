@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/userbin/userbin-php.png)](https://travis-ci.org/userbin/userbin-php)
 [![Code Climate](https://codeclimate.com/github/userbin/userbin-php.png)](https://codeclimate.com/github/userbin/userbin-php)
+[![Coverage Status](https://coveralls.io/repos/userbin/userbin-php/badge.png?branch=master)](https://coveralls.io/r/userbin/userbin-php?branch=master)
 
 # PHP SDK for Userbin
 

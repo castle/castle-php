@@ -88,9 +88,8 @@ class Userbin_Request
       $this->handleRequestError($request);
     }
 
-    try {
-      $response = json_decode($request->rBody, true);
-    } catch (Exception $e) {
+    $response = json_decode($request->rBody, true);
+    if (!empty($request->rBody) && $response === null) {
       throw new Userbin_ApiError('Invalid response from API', 'api_error', $request->rStatus);
     }
 
