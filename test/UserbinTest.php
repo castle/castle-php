@@ -34,7 +34,7 @@ class UserbinTest extends Userbin_TestCase
   public function exampleSessionTokenWithMFA()
   {
     $jwt = new Userbin_JWT();
-    $jwt->setHeader(array('iss' => '1'));
+    $jwt->setHeader(array('iss' => '1', 'exp' => time()));
     $jwt->setBody('vfy', 1);
     return array(array($jwt->toString()));
   }
@@ -42,7 +42,7 @@ class UserbinTest extends Userbin_TestCase
   public function exampleSessionTokenWithChallenge()
   {
     $jwt = new Userbin_JWT();
-    $jwt->setHeader(array('iss' => '1'));
+    $jwt->setHeader(array('iss' => '1', 'exp' => time()));
     $jwt->setBody('chg', 1);
     $jwt->setBody('vfy', 1);
     $jwt->setBody('typ', 'authenticator');
@@ -88,6 +88,26 @@ class UserbinTest extends Userbin_TestCase
    */
   public function testAuthorizeWithoutSession()
   {
+    Userbin::authorize();
+  }
+
+  /**
+   * @dataProvider exampleSessionTokenWithMFA
+   * @expectedException Userbin_ChallengeRequiredError
+   */
+  public function testAuthorizeWithMFASession($token)
+  {
+    $_SESSION['userbin'] = $token;
+    Userbin::authorize();
+  }
+
+  /**
+   * @dataProvider exampleSessionTokenWithChallenge
+   * @expectedException Userbin_UserUnauthorizedError
+   */
+  public function testAuthorizeWithChallengeSession($token)
+  {
+    $_SESSION['userbin'] = $token;
     Userbin::authorize();
   }
 

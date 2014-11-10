@@ -85,7 +85,7 @@ abstract class Userbin
     }
 
     if ( self::isMFARequired() && !self::isDeviceTrusted() ) {
-      throw new Userbin_ChallengeRequiredError();
+      throw new Userbin_ChallengeRequiredError('Two-step verification necessary');
     }
   }
 

@@ -57,6 +57,9 @@ class Userbin_JWT
   public function hasExpired()
   {
     $headers = $this->getHeader();
+    if (!array_key_exists('exp', $headers)) {
+      throw new Userbin_SecurityError('Invalid JWT. Has no expiry time');
+    }
     date_default_timezone_set('UTC');
     return time() > intval($headers['exp']);
   }
