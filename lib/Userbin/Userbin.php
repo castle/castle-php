@@ -71,7 +71,7 @@ abstract class Userbin
   {
     $sessionToken = self::getSessionToken();
     if ( !$sessionToken ) {
-      throw new Userbin_UnauthorizedError('Need to call login before authorize');
+      throw new Userbin_UserUnauthorizedError('Need to call login before authorize');
     }
 
     if ( $sessionToken->hasExpired() ) {
@@ -81,7 +81,7 @@ abstract class Userbin
 
     if ( self::isMFAInProgress() ) {
       self::logout();
-      throw new Userbin_UnauthorizedError('Logged out due to being unverified');
+      throw new Userbin_UserUnauthorizedError('Logged out due to being unverified');
     }
 
     if ( self::isMFARequired() && !self::isDeviceTrusted() ) {

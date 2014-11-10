@@ -77,10 +77,18 @@ class UserbinTest extends Userbin_TestCase
    */
   public function testAuthorizeWithExistingSession($token)
   {
-    Userbin_RequestTransport::setResponse(201, array('token' => $token));
     $_SESSION['userbin'] = $token;
     Userbin::authorize();
     $this->assertRequest('post', '/heartbeat', array('X-Userbin-Session-Token' => $token));
+  }
+
+
+  /**
+   * @expectedException Userbin_UserUnauthorizedError
+   */
+  public function testAuthorizeWithoutSession()
+  {
+    Userbin::authorize();
   }
 
   /**
