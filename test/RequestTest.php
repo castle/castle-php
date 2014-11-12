@@ -14,6 +14,7 @@ class UserbinRequestTest extends \Userbin_TestCase
   {
     $_SESSION = array();
   }
+
   public function tearDown()
   {
     Userbin_RequestTransport::setResponse();
@@ -28,14 +29,36 @@ class UserbinRequestTest extends \Userbin_TestCase
     return false;
   }
 
-  public function testRequestContent()
+  public function exampleSessionToken()
   {
-    Userbin::getSessionStore()->write('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImlzcyI6InVzZXItMjQxMiIsInN1YiI6IlMyb2R4UmVabkdxaHF4UGFRN1Y3a05rTG9Ya0daUEZ6IiwiYXVkIjoiODAwMDAwMDAwMDAwMDAwIiwiZXhwIjoxMzk5NDc5Njc1LCJpYXQiOjEzOTk0Nzk2NjUsImp0aSI6MH0.eyJjaGFsbGVuZ2UiOnsiaWQiOiJUVENqd3VyM3lwbTRUR1ZwWU43cENzTXFxOW9mWEVBSCIsInR5cGUiOiJvdHBfYXV0aGVudGljYXRvciJ9fQ.LT9mUzJEbsizbFxcpMo3zbms0aCDBzfgMbveMGSi1-s');
+    return array(array('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImlzcyI6InVzZXItMjQxMiIsInN1YiI6IlMyb2R4UmVabkdxaHF4UGFRN1Y3a05rTG9Ya0daUEZ6IiwiYXVkIjoiODAwMDAwMDAwMDAwMDAwIiwiZXhwIjoxMzk5NDc5Njc1LCJpYXQiOjEzOTk0Nzk2NjUsImp0aSI6MH0.eyJjaGFsbGVuZ2UiOnsiaWQiOiJUVENqd3VyM3lwbTRUR1ZwWU43cENzTXFxOW9mWEVBSCIsInR5cGUiOiJvdHBfYXV0aGVudGljYXRvciJ9fQ.LT9mUzJEbsizbFxcpMo3zbms0aCDBzfgMbveMGSi1-s'));
+  }
+
+  /**
+   * @dataProvider exampleSessionToken
+   */
+  public function testRequestContent($sessionToken)
+  {
+    Userbin::getSessionStore()->write($sessionToken);
     Userbin::authorize();
 
     $this->assertRequest('post', '/heartbeat', array('Content-Length' => '0'));
     $request = Userbin_RequestTransport::getLastRequest();
     $this->assertEquals($request['body'], '');
+  }
+
+  /**
+   * @dataProvider exampleSessionToken
+   */
+  public function testRequestClearsSessionOnUserUnauthorized($sessionToken)
+  {
+    $Store = Userbin::getSessionStore();
+    $Store->write($sessionToken);
+    Userbin_RequestTransport::setResponse(419);
+    try {
+      Userbin::authorize();
+    } catch (Exception $e) { }
+    $this->assertEmpty($Store->read());
   }
 
   /**

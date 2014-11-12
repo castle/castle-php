@@ -42,6 +42,8 @@ class Userbin_Request
       case 404:
         throw new Userbin_NotFoundError($msg, $type, $status);
       case 419:
+        /* Clear session since this error means that is is invalid or removed */
+        Userbin::getSessionStore()->destroy();
         throw new Userbin_UserUnauthorizedError($msg, $type, $status);
       case 422:
         throw new Userbin_InvalidParametersError($msg, $type, $status);
