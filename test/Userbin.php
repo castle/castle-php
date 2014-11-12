@@ -26,6 +26,7 @@ require(dirname(__FILE__) . '/../lib/Userbin/Userbin.php');
 require(dirname(__FILE__) . '/../lib/Userbin/Errors.php');
 require(dirname(__FILE__) . '/../lib/Userbin/SessionToken.php');
 require(dirname(__FILE__) . '/../lib/Userbin/SessionStore.php');
+require(dirname(__FILE__) . '/TrustedTokenStore.php');
 require(dirname(__FILE__) . '/../lib/Userbin/Resource.php');
 require(dirname(__FILE__) . '/../lib/Userbin/Model.php');
 require(dirname(__FILE__) . '/../lib/Userbin/Models/Account.php');

@@ -10,6 +10,8 @@ abstract class Userbin
 
   public static $sessionStore = 'Userbin_SessionStore';
 
+  public static $trustedTokenStore = 'Userbin_TrustedTokenStore';
+
   const VERSION = '1.1.0';
 
   public static function getApiKey()
@@ -59,6 +61,11 @@ abstract class Userbin
     else {
       Userbin::getSessionStore()->destroy();
     }
+  }
+
+  public static function getTrustedTokenStore($value='')
+  {
+    return new self::$trustedTokenStore;
   }
 
   /**
@@ -210,7 +217,8 @@ abstract class Userbin
       return null;
     }
     $trustedDevice = self::currentUser()->trustedDevices()->create($attributes);
-    # TODO: save to cookie
+
+    self::getTrustedTokenStore()->write($trustedDevice->id);
     return $trustedDevice;
   }
 
@@ -218,9 +226,8 @@ abstract class Userbin
    * Returns the id of the trusted device, if any
    * @return String Id string if available, null otherwise
    */
-  public function trustedDeviceToken()
+  public static function trustedDeviceToken()
   {
-    # TODO: Read from cookie
-    return null;
+    return self::getTrustedTokenStore()->read();
   }
 }

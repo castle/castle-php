@@ -12,6 +12,7 @@ class UserbinTest extends Userbin_TestCase
   {
     $this->sessionToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImlzcyI6InVzZXItMjQxMiIsInN1YiI6IlMyb2R4UmVabkdxaHF4UGFRN1Y3a05rTG9Ya0daUEZ6IiwiYXVkIjoiODAwMDAwMDAwMDAwMDAwIiwiZXhwIjoxMzk5NDc5Njc1LCJpYXQiOjEzOTk0Nzk2NjUsImp0aSI6MH0.eyJjaGFsbGVuZ2UiOnsiaWQiOiJUVENqd3VyM3lwbTRUR1ZwWU43cENzTXFxOW9mWEVBSCIsInR5cGUiOiJvdHBfYXV0aGVudGljYXRvciJ9fQ.LT9mUzJEbsizbFxcpMo3zbms0aCDBzfgMbveMGSi1-s';
     $_SESSION = array();
+    $_COOKIE = array();
   }
 
   public function testSetApiKey()
@@ -133,5 +134,21 @@ class UserbinTest extends Userbin_TestCase
     $session = Userbin::getSessionToken();
     Userbin::logout();
     /* No exception should be thrown */
+  }
+
+  public function testTrustDeviceWithoutUser()
+  {
+    $this->assertNull(Userbin::trustDevice());
+  }
+
+  /**
+   * @dataProvider exampleSessionToken
+   */
+  public function testTrustDeviceWithSession($token)
+  {
+    Userbin_RequestTransport::setResponse(201, array('id' => '12345'));
+    Userbin::getSessionStore()->write($token);
+    Userbin::trustDevice();
+    $this->assertEquals('12345', Userbin::trustedDeviceToken());
   }
 }
