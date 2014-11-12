@@ -122,4 +122,16 @@ class UserbinTest extends Userbin_TestCase
     $this->assertRequest('delete', '/sessions/'.$session->getId());
     $this->assertFalse(array_key_exists('userbin', $_SESSION));
   }
+
+  /**
+   * @dataProvider exampleSessionToken
+   */
+  public function testLogoutWithNonExisting($token)
+  {
+    Userbin_RequestTransport::setResponse(404);
+    Userbin::getSessionStore()->write($token);
+    $session = Userbin::getSessionToken();
+    Userbin::logout();
+    /* No exception should be thrown */
+  }
 }

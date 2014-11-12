@@ -189,8 +189,11 @@ abstract class Userbin
       return false;
     }
 
-    $session = new Userbin_Session($sessionToken->getId());
-    $session->delete();
+    try {
+      /* Silence cases where the session has already been removed etc. */
+      $session = new Userbin_Session($sessionToken->getId());
+      $session->delete();
+    } catch (Userbin_ApiError $e) {}
 
     self::setSessionToken(null);
   }
