@@ -162,6 +162,13 @@ class UserbinModelTest extends Userbin_TestCase
     $this->assertRequest('put', '/users/1/session');
   }
 
+  public function testHasManyForSingleResourceInstanceMethod()
+  {
+    $user = new Userbin_User(1);
+    $challenge = $user->challenges()->verify(1, 'response');
+    $this->assertRequest('post', '/users/1/challenges/1/verify');
+  }
+
 
   public function testEscapeUrl()
   {

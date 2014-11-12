@@ -14,6 +14,17 @@ class Userbin_Resource
     }
   }
 
+  public function __call($method, $arguments)
+  {
+    /* Check if there is an instance method */
+    $instance = $this->createModel();
+    if (method_exists($instance, $method)) {
+      $id = array_shift($arguments);
+      $instance->setId($id);
+      call_user_func_array(array($instance, $method), $arguments);
+    }
+  }
+
   protected function createModel($attributes=null)
   {
     $instance = new $this->model($attributes);
