@@ -1,6 +1,6 @@
 <?php
 
-class Userbin_Session extends Userbin_Model
+class Userbin_Session extends RestModel
 {
 
 }

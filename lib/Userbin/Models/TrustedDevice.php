@@ -1,6 +1,6 @@
 <?php
 
-class Userbin_TrustedDevice extends Userbin_Model
+class Userbin_TrustedDevice extends RestModel
 {
 
 }

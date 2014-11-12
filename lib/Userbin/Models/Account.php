@@ -1,6 +1,6 @@
 <?php
 
-class Userbin_Account extends Userbin_Model
+class Userbin_Account extends RestModel
 {
   protected $isSingular = true;
 

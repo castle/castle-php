@@ -1,6 +1,6 @@
 <?php
 
-class Userbin_Event extends Userbin_Model
+class Userbin_Event extends RestModel
 {
 
 }

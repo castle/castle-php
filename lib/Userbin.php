@@ -21,7 +21,7 @@ require(dirname(__FILE__) . '/Userbin/SessionToken.php');
 require(dirname(__FILE__) . '/Userbin/SessionStore.php');
 require(dirname(__FILE__) . '/Userbin/TrustedTokenStore.php');
 require(dirname(__FILE__) . '/Userbin/Resource.php');
-require(dirname(__FILE__) . '/Userbin/Model.php');
+require(dirname(__FILE__) . '/RestModel/Model.php');
 require(dirname(__FILE__) . '/Userbin/Models/Account.php');
 require(dirname(__FILE__) . '/Userbin/Models/BackupCode.php');
 require(dirname(__FILE__) . '/Userbin/Models/Challenge.php');

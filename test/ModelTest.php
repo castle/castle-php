@@ -42,7 +42,7 @@ class UserbinModelTest extends Userbin_TestCase
       'id' => 1,
       'email' => 'hello@example.com'
     );
-    $model = new Userbin_Model($attributes);
+    $model = new RestModel($attributes);
 
     $this->assertEquals($model->email, $attributes['email']);
     $this->assertEquals($model->id, $attributes['id']);
@@ -53,7 +53,7 @@ class UserbinModelTest extends Userbin_TestCase
    */
   public function testSnakeCase($camel, $snake)
   {
-    $this->assertEquals(Userbin_Model::snakeCase($camel), $snake);
+    $this->assertEquals(RestModel::snakeCase($camel), $snake);
   }
 
   public function testGetName()

@@ -1,6 +1,6 @@
 <?php
 
-class Userbin_Model
+class RestModel
 {
   protected $attributes   = array();
 
@@ -87,7 +87,7 @@ class Userbin_Model
     }
   }
 
-  public function setParent(Userbin_Model $parent)
+  public function setParent(RestModel $parent)
   {
     $this->parent = $parent;
   }

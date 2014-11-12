@@ -1,6 +1,6 @@
 <?php
 
-class Userbin_Pairing extends Userbin_Model
+class Userbin_Pairing extends RestModel
 {
   public function verify($params)
   {

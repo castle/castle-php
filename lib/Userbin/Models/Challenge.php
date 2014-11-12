@@ -1,6 +1,6 @@
 <?php
 
-class Userbin_Challenge extends Userbin_Model
+class Userbin_Challenge extends RestModel
 {
   public function verify($response)
   {

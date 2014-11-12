@@ -1,6 +1,6 @@
 <?php
 
-class Userbin_BackupCode extends Userbin_Model
+class Userbin_BackupCode extends RestModel
 {
 
 }
