@@ -37,7 +37,7 @@ class Userbin_RequestTransport
     }
   }
 
-  public function send($method, $url, $params=null, $headers=array()) {
+  public function send($method, $url, $body=null, $headers=array()) {
     $curl = curl_init();
     $method = strtolower($method);
     switch($method) {
@@ -57,10 +57,8 @@ class Userbin_RequestTransport
         throw new Userbin_RequestError();
     }
     $curlOptions = array();
-    if (!empty($params)) {
-      $data_string = json_encode($params);
-      $curlOptions[CURLOPT_POSTFIELDS] = $data_string;
-      $headers[]= 'Content-Length: ' . strlen($data_string);
+    if (!empty($body)) {
+      $curlOptions[CURLOPT_POSTFIELDS] = $body;
     }
 
     $curlOptions[CURLOPT_URL] = $url;

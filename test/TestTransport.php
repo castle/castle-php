@@ -12,7 +12,7 @@ class Userbin_RequestTransport
 
   private static $lastRequest = array();
 
-  public function send($method, $url, $params=null, $headers=array()) {
+  public function send($method, $url, $body=null, $headers=array()) {
     if (empty(self::$params)) {
       self::setResponse(200, '{}');
     }
@@ -23,10 +23,11 @@ class Userbin_RequestTransport
         $headers_array[$matches[1]] = $matches[2];
       }
     }
+    $body = empty($body) ? null : json_decode($body, true);
     self::$lastRequest[]= array(
       'method'  => $method,
       'headers' => $headers_array,
-      'params'  => $params,
+      'params'  => $body,
       'url'     => $url
     );
     $params = array_pop(self::$params);
