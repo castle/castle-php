@@ -55,15 +55,13 @@ class Userbin_Resource
 
   public function destroy($id=null)
   {
-    $instance = $this->createModel();
-    $instance->setId($id);
+    $instance = $this->createModel($id);
     return $instance->delete();
   }
 
   public function find($id)
   {
-    $instance = new $this->model;
-    $instance->setId($id);
+    $instance = $this->createModel($id);
     return $instance->fetch();
   }
 }

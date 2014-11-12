@@ -134,6 +134,13 @@ class UserbinModelTest extends Userbin_TestCase
     $this->assertEquals($found_user->email, $user['email']);
   }
 
+  public function testNestedFind($value='')
+  {
+    $user = new Userbin_User(1234);
+    $user->challenges()->find(5678);
+    $this->assertRequest('get', '/users/1234/challenges/5678');
+  }
+
   public function testHasOne()
   {
     $userData = array(
