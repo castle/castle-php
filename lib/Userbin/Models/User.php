@@ -12,9 +12,9 @@ class Userbin_User extends RestModel
     return $this->hasMany('Userbin_Challenge');
   }
 
-  public function disableMFA()
+  public function disableMFA($params = null)
   {
-    $this->post('disable_mfa');
+    $this->post('disable_mfa', $params);
   }
 
   public function enableMFA()
