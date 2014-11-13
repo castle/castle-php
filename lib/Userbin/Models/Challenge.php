@@ -11,8 +11,7 @@ class Userbin_Challenge extends RestModel
   {
     $cId = $this->getId();
     if (isset($cId)) {
-      $this->post('verify', array('response' => $response));
-      return true;
+      return $this->post('verify', array('response' => $response));
     }
     return false;
   }

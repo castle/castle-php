@@ -138,9 +138,10 @@ class UserbinModelTest extends Userbin_TestCase
   {
     Userbin_RequestTransport::setResponse(201, array('id' => '1', 'verified' => true));
     $challenge = new Userbin_Challenge(1);
-    $challenge->verify('12345');
+    $response = $challenge->verify('12345');
     $this->assertEquals(1, $challenge->id);
     $this->assertEquals(true, $challenge->verified);
+    $this->assertInstanceOf('Userbin_Challenge', $response);
   }
 
   public function testNestedFind()

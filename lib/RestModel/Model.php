@@ -233,7 +233,7 @@ class RestModel
     if (is_array($response)) {
       $this->setAttributes($response);
     }
-    return $response;
+    return $this;
   }
 
   public function get($path=null, $params=null)
