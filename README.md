@@ -8,7 +8,7 @@
 
 [Userbin](https://userbin.com) provides an additional security layer to your application by adding multi-factor authentication, user activity monitoring, and real-time threat protection in a white-label package. Your users **do not** need to be signed up or registered for Userbin before using the service. Also, Userbin requires **no modification of your current database schema** as it uses your local user IDs.
 
-Your users can now easily activate two-factor authentication, configure the level of security in terms of monitoring and notifications and take action on suspicious behaviour. These settings are available as a per-user security settings page which is easily customized to fit your current layout.
+Your users can now easily activate two-factor authentication, configure the level of security in terms of monitoring and notifications and take action on suspicious behaviour.
 
 ## Getting started
 
@@ -32,15 +32,15 @@ Userbin::setApiKey('YOUR_API_SECRET');
 
 ## Installing user monitoring
 
-To activate user monitoring you only need to **insert code at two places**: when the user is **fetched from the database and logged in** and when the user **logs out**:
+To activate user monitoring you only need to **insert code at three places**: when the user is **logged in**, when the user is **loaded** and when the user **logs out**:
 
 ```php
 
 // the $user variable would be a representation of the currently logged in user.
-// The call to authorize should be made right after the user has been fetched
+// The call to login should be made right after the user has been fetched
 // from the database and authenticated.
 
-Userbin::authorize($user->id, array(
+Userbin::login($user->id, array(
   'email' => $user->email,
   'name'  => $user->name
 ));
@@ -48,13 +48,33 @@ Userbin::authorize($user->id, array(
 
 ```php
 
-// If a user is currently logged in (by calling `authorize`) it is logged out
+// On every route that requires a logged in user, authorize should be called
+// right after the user has been loaded and authorized locally in your app.
+
+Userbin::authorize();
+
+```
+
+```php
+
+// If a user is currently logged in (by calling `login`) it is logged out
 // by simply calling `logout`. It is safe to call this method even if there is
 // no user logged in.
 
 Userbin::logout();
 
 ```
+
+### Log in
+
+You should call `login` as soon as the user has logged in to your application. Pass a unique user identifier, and an *optional* hash of user properties which are used when searching for users in your dashboard. This will create a [Session](https://api.userbin.com/#POST--version-users--user_id-sessions---format-) resource and return a corresponding [session token](https://api.userbin.com/#session-tokens) which is stored in the Userbin client.
+
+##### Arguments
+
+`$userId`: The first argument is a locally unique identifier for the logged in user, commonly the `id` field. This is the identifier you'll use further on when querying the user.
+
+`$userData`: The second argument is an array of properties you know about the user. See the User reference documentation for available fields and their meaning.
+
 
 ### Authorize (after logging in)
 
@@ -65,17 +85,8 @@ You’ll want to `authorize` a user with any relevant information as soon as the
 > Note that every call to `authorize` **does not** result in an HTTP request. Only the very first call, as well as expired session tokens result in a request. Session tokens expire every 5 minutes.
 
 ```php
-Userbin::authorize($user->id, array(
-  "email" => $user->email
-  "name"  => $user->name
-));
+Userbin::authorize();
 ```
-
-#### Arguments
-
-`$userId`: The first argument is a locally unique identifier for the logged in user, commonly the `id` field. This is the identifier you'll use further on when querying the user.
-
-`$userData`: The second argument is an array of properties you know about the user. See the User reference documentation for available fields and their meaning.
 
 ### Logging out
 
@@ -89,63 +100,13 @@ This method doesn't take any arguments.
 
 ## Installing Two-factor authentication
 
-Two-factor authentication is available to your users out-of-the-box. By browsing to their Security Page, they're able to configure Google Authenticator and SMS settings, set up a backup phone number, and download their recovery codes.
+Using two-factor authentication involves two steps: **pairing** and **authenticating**.
 
-The session token returned from `authorize` indicates if two-factor authentication is required from the user once your application asks for it. You can do this immediately after you've called `authorize`, or you can wait until later. You have complete control over what actions you when you want to require two-factor authentication, e.g. when logging in, changing account information, making a purchase etc.
+### Pairing
 
-### Step 1: Prompt the user
+Before your users can protect their account with two-factor authentication, they will need to pair their their preferred way of authenticating. The [Pairing API](https://api.userbin.com/#pairings) lets users add, verify, and remove authentication channels. Only *verified* pairings are valid for authentication.
 
-`Userbin::twoFactorAuthenticate()` acts as a gateway in your application. If the user has enabled two-factor authentication, this method will return the second factor that is used to authenticate. If SMS is used, this call will also send out an SMS to the user's registered phone number.
-
-When `Userbin::twoFactorAuthenticate()` returns non-falsy value, you should display the appropriate form to the user, requesting their authentication code.
-
-```php
-$factor = Userbin::twoFactorAuthenticate();
-
-switch ($factor) {
-  case "authenticator":
-    // show form for Google Authenticator
-    break;
-  case "sms":
-    // show form for SMS
-    break;
-}
-```
-
-> Note that this call may return a factor more than once per session since Userbin continously scans for behaviour that would require another round of two-factor authentication, such as the user switching to another IP address or web browser.
-
-### Step 2: Verify the code
-
-The user enters the authentication code in the form and posts it to your handler. The last step is for your application to verify the code with Userbin by calling `twoFactorVerify`. The session token will get updated on a successful verification, so you'll need to update it in your local session or cookie.
-
-`code` can be either a code from the Google Authenticator app, an SMS, or one of the user's recovery codes.
-
-```php
-try {
-  Userbin::twoFactorVerify($_POST["code"]);
-} catch (Userbin_UserUnauthorizedError $e) {
-  // invalid code, show the form again
-} catch (Userbin_ForbiddenError $e) {
-  // no tries remaining, log out
-  Userbin::logout();
-} catch (Userbin_ApiError $e) {
-  // other error, log out
-  Userbin::logout();
-}
-```
-
-## Security settings page
-
-Every user has access to their security settings, which is a hosted page on Userbin. Here users can configure two-factor authentication, revoke suspicious sessions and set up notifications. The security page can be customized to fit your current layout by going to the appearance settings in your Userbin dashboard.
-
-**Important:** Since the generated URL contains a Userbin session token that needs to be up-to-date, it's crucial that you don't use this helper directly in your HTML, but instead create a new route where you redirect to the security page.
-
-```php
-<?php
-  $securityURL = Userbin::securitySettingsUrl();
-  header('Location: ' . $securityURL);
-?>
-```
+### TODO...
 
 ## Errors
 Whenever something unexpected happens, an exception is thrown to indicate what went wrong.
@@ -158,7 +119,7 @@ Whenever something unexpected happens, an exception is thrown to indicate what w
 | `Userbin_SecurityError`          | The session signature doesn't match, either it has been tampered with or the Userbin API key has been changed. |
 | `Userbin_ConfigurationError`     | The Userbin secret API key has not been set |
 | `Userbin_UnauthorizedError`      | Wrong Userbin API secret key |
-| `Userbin_UnauthorizedError`      | Wrong Userbin API secret key |
+| `Userbin_ChallengeRequiredError` | You need to prompt the user for Two-step verification |
 | `Userbin_BadRequest`             | The request was invalid. For example if a challenge is created without the user having MFA enabled. |
 | `Userbin_ForbiddenError`         | The user has entered the wrong code too many times and a new challenge has to be requested. |
 | `Userbin_NotFoundError`          | The resource requestd was not found. For example if a session has been revoked. |
@@ -167,7 +128,7 @@ Whenever something unexpected happens, an exception is thrown to indicate what w
 
 ## REST Bindings
 
-To facilitate working with the [Userbin REST API](https://secure.userbin.com) the library provides a set of models.
+To facilitate working with the [Userbin REST API](https://api.userbin.com) the library provides a set of models.
 
 Examples:
 
@@ -179,6 +140,12 @@ $users = Userbin_User::all();
 $user = Userbin_User::find(1);
 $user->name = "Napoleon Dynamite";
 $user->save();
+
+// Create and verify a pairing
+$pairing = $user->pairings()->create(array(
+  'type' => 'authenticator'
+));
+$pairing->verify(array('response' => '123456'));
 
 // Create new
 $user = new Userbin_User(array(
