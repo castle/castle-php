@@ -107,15 +107,22 @@ class RestModel
     $this->perPage = $perPage;
   }
 
+
+  public function getAttributeName($className = null)
+  {
+    $className = is_string($className) ? $className : get_class($this);
+    $resource = self::snakeCase($className);
+    return str_replace($this->stripPrefix, '', $resource);
+  }
+
   public function getResourceName()
   {
     if (isset($this->resourceName)) return $this->resourceName;
-    $resource = self::snakeCase(get_class($this));
-    # TODO: better pluralization
+    $resource = $this->getAttributeName();
     if (!$this->isSingular) {
-      $resource .= 's';
+      $resource = self::pluralize($resource);
     }
-    return str_replace($this->stripPrefix, '', $resource);
+    return $resource;
   }
 
   public function getResourcePath($extraPath = null)
@@ -135,16 +142,50 @@ class RestModel
     return $path;
   }
 
-  public function hasMany($model, $items=null)
+  /*
+   * Relations
+   */
+
+  public function belongsTo($model, $localKey = null)
   {
+    $attrName = $this->getAttributeName($model);
+    if (empty($localKey)) {
+      $localKey = $attrName."_id";
+    }
+
+    $instance = new $model();
+    $modelAttrs = $this->getAttribute($attrName);
+    if (is_array($modelAttrs)) {
+      $instance->setAttributes($modelAttrs);
+    }
+    $modelId = $this->getAttribute($localKey);
+    if (!empty($modelId)) {
+      $instance->setId($modelId);
+    }
+    if (!$instance->getId()) {
+      return null;
+    }
+    if($this->parent) {
+      $instance->setParent($this->parent);
+    }
+    return $instance;
+  }
+
+  public function hasMany($model)
+  {
+    $attrName = $this->getAttributeName($model);
+    $attrName = self::pluralize($attrName);
+    $items = $this->getAttribute($attrName);
     $resource = new Userbin_Resource($model, $items);
     $resource->setParent($this);
     return $resource;
   }
 
-  public function hasOne($model, $attributes=null)
+  public function hasOne($model)
   {
-    $instance = new $model($attributes);
+    $attrName = $this->getAttributeName($model);
+    $attrs = $this->getAttribute($attrName);
+    $instance = new $model($attrs);
     $instance->setParent($this);
     $instance->setSingular(true);
     return $instance;
@@ -199,6 +240,12 @@ class RestModel
   /*
    * Static
    */
+
+  public static function pluralize($name)
+  {
+    # TODO: better pluralization
+    return $name .= 's';
+  }
 
   public static function snakeCase($input) {
     preg_match_all('!([A-Z][A-Z0-9]*(?=$|[A-Z][a-z0-9])|[A-Za-z][a-z0-9]+)!', $input, $matches);

@@ -150,6 +150,29 @@ class UserbinModelTest extends Userbin_TestCase
     $this->assertRequest('post', '/users/1234/challenges/1/verify');
   }
 
+  public function testBelongsToWithIdAttribute()
+  {
+    $challenge = new Userbin_Challenge(array('id' => 1, 'pairing_id' => 2));
+    $pairing = $challenge->pairing();
+    $this->assertInstanceOf('Userbin_Pairing', $pairing);
+    $this->assertEquals(2, $pairing->id);
+  }
+
+  public function testBelongsToWithObject()
+  {
+    $challenge = new Userbin_Challenge(array('id' => 1, 'pairing' => array('id' => 2)));
+    $pairing = $challenge->pairing();
+    $this->assertInstanceOf('Userbin_Pairing', $pairing);
+    $this->assertEquals(2, $pairing->id);
+  }
+
+  public function testBelongsToWithoutId()
+  {
+    $challenge = new Userbin_Challenge(array('id' => 1));
+    $pairing = $challenge->pairing();
+    $this->assertNull($pairing);
+  }
+
   public function testHasOne()
   {
     $userData = array(
@@ -157,7 +180,8 @@ class UserbinModelTest extends Userbin_TestCase
       'session' => array('id' => 1)
     );
     $user = new Userbin_User($userData);
-    $session = $user->hasOne('Userbin_Session', $user->session);
+    $session = $user->hasOne('Userbin_Session');
+    $this->assertEquals(1, $session->id);
     $session->save();
     $this->assertRequest('put', '/users/1/session');
   }

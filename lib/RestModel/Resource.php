@@ -10,7 +10,7 @@ class Userbin_Resource
   {
     $this->model = $model;
     if (is_array($items)) {
-      $this->items = $this->addItems($items);
+      $this->loadItems($items);
     }
   }
 

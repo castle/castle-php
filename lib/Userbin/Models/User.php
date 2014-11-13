@@ -9,7 +9,7 @@ class Userbin_User extends RestModel
 
   public function challenges()
   {
-    return $this->hasMany('Userbin_Challenge', $this->challenges);
+    return $this->hasMany('Userbin_Challenge');
   }
 
   public function disableMFA()
@@ -24,17 +24,17 @@ class Userbin_User extends RestModel
 
   public function events()
   {
-    return $this->hasMany('Userbin_Event', $this->events);
+    return $this->hasMany('Userbin_Event');
   }
 
   public function pairings()
   {
-    return $this->hasMany('Userbin_Pairing', $this->pairings);
+    return $this->hasMany('Userbin_Pairing');
   }
 
   public function sessions()
   {
-    return $this->hasMany('Userbin_Session', $this->sessions);
+    return $this->hasMany('Userbin_Session');
   }
 
   public function trustedDevices()
