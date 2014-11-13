@@ -23,6 +23,9 @@ class Userbin_Resource
       $instance->setId($id);
       call_user_func_array(array($instance, $method), $arguments);
     }
+    else {
+      trigger_error('Call to undefined method: '.$method);
+    }
   }
 
   protected function createModel($attributes=null)
