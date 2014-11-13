@@ -21,7 +21,7 @@ class Userbin_Resource
     if (method_exists($instance, $method)) {
       $id = array_shift($arguments);
       $instance->setId($id);
-      call_user_func_array(array($instance, $method), $arguments);
+      return call_user_func_array(array($instance, $method), $arguments);
     }
     else {
       trigger_error('Call to undefined method: '.$method);

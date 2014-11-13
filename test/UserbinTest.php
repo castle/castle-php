@@ -151,4 +151,15 @@ class UserbinTest extends Userbin_TestCase
     Userbin::trustDevice();
     $this->assertEquals('12345', Userbin::trustedDeviceToken());
   }
+
+  /**
+   * @dataProvider exampleSessionToken
+   */
+  public function testCurrentUserVerifyPairing($token)
+  {
+    Userbin::getSessionStore()->write($token);
+    Userbin_RequestTransport::setResponse(201, array('id' => '12345', 'verified' => true));
+    $pairing = Userbin::currentUser()->pairings()->verify(1, array('response' => '12345'));
+    $this->assertInstanceOf('Userbin_Pairing', $pairing);
+  }
 }
