@@ -134,6 +134,15 @@ class UserbinModelTest extends Userbin_TestCase
     $this->assertEquals($found_user->email, $user['email']);
   }
 
+  public function testInstancePost()
+  {
+    Userbin_RequestTransport::setResponse(201, array('id' => '1', 'verified' => true));
+    $challenge = new Userbin_Challenge(1);
+    $challenge->verify('12345');
+    $this->assertEquals(1, $challenge->id);
+    $this->assertEquals(true, $challenge->verified);
+  }
+
   public function testNestedFind()
   {
     $user = new Userbin_User(1234);

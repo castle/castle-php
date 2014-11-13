@@ -229,7 +229,11 @@ class RestModel
 
   public function post($path=null, $params=null)
   {
-    return $this->request('post', $path, $params);
+    $response = $this->request('post', $path, $params);
+    if (is_array($response)) {
+      $this->setAttributes($response);
+    }
+    return $response;
   }
 
   public function get($path=null, $params=null)
