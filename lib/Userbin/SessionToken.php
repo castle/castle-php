@@ -16,12 +16,7 @@ class Userbin_SessionToken
 
   public function getUser()
   {
-    $userId = $this->jwt->getHeader('iss');
-    $instance = null;
-    if ($userId) {
-      $instance = new Userbin_User($userId);
-    }
-    return $instance;
+    return new Userbin_User('$current');
   }
 
   public function hasChallenge()

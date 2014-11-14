@@ -95,7 +95,7 @@ class UserbinSessionTest extends Userbin_TestCase
   public function testUserId($sessionData, $sessionToken)
   {
     $session = new Userbin_SessionToken($sessionToken);
-    $this->assertEquals($session->getUser()->getId(), 'user-2412');
+    $this->assertEquals($session->getUser()->getId(), '$current');
   }
 
   /**
