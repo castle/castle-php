@@ -175,10 +175,11 @@ abstract class Userbin
 
     $user = new Userbin_User($userAttributes);
     $user->setId($userId);
-    if ( is_array($userAttributes) ) {
-      $userAttributes = array('user' => $userAttributes);
-    }
-    $newSession = $user->sessions()->create($userAttributes);
+
+    $newSession = $user->sessions()->create(array(
+      'user' => $userAttributes,
+      'trusted_device_token' => self::trustedDeviceToken()
+    ));
     $session = new Userbin_SessionToken($newSession->token);
     self::setSessionToken($session->serialize());
     return $user;
@@ -218,7 +219,7 @@ abstract class Userbin
     }
     $trustedDevice = self::currentUser()->trustedDevices()->create($attributes);
 
-    self::getTrustedTokenStore()->write($trustedDevice->id);
+    self::getTrustedTokenStore()->write($trustedDevice->token);
     return $trustedDevice;
   }
 

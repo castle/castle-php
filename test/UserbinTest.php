@@ -76,6 +76,20 @@ class UserbinTest extends Userbin_TestCase
   /**
    * @dataProvider exampleSessionToken
    */
+  public function testLoginWithTrustedDevice($token)
+  {
+    $_SESSION['userbin'] = $token;
+    Userbin_RequestTransport::setResponse(201, array('token' => '12345'));
+    Userbin::trustDevice();
+    Userbin_RequestTransport::setResponse(201, array('token' => $token));
+    Userbin::login(1);
+    $request = $this->assertRequest('post', '/users/1/sessions');
+    $this->assertEquals('12345', $request['params']['trusted_device_token']);
+  }
+
+  /**
+   * @dataProvider exampleSessionToken
+   */
   public function testAuthorizeWithExistingSession($token)
   {
     $_SESSION['userbin'] = $token;
@@ -146,7 +160,7 @@ class UserbinTest extends Userbin_TestCase
    */
   public function testTrustDeviceWithSession($token)
   {
-    Userbin_RequestTransport::setResponse(201, array('id' => '12345'));
+    Userbin_RequestTransport::setResponse(201, array('token' => '12345'));
     Userbin::getSessionStore()->write($token);
     Userbin::trustDevice();
     $this->assertEquals('12345', Userbin::trustedDeviceToken());
