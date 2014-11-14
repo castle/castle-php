@@ -11,7 +11,7 @@ interface Userbin_iTrustedTokenStore
  */
 class Userbin_TrustedTokenStore implements Userbin_iTrustedTokenStore
 {
-  protected $key     = 'userbin.trusted_device_token';
+  protected $key     = '_ubt';
 
   public function destroy()
   {
