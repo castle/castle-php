@@ -50,6 +50,39 @@ class UserbinRequestTest extends \Userbin_TestCase
   /**
    * @dataProvider exampleSessionToken
    */
+  public function testRequestContextIp($sessionToken)
+  {
+    Userbin::getSessionStore()->write($sessionToken);
+    Userbin::authorize();
+    $this->assertRequest('post', '/heartbeat', array('X-Userbin-Ip' => '8.8.8.8'));
+  }
+
+  /**
+   * @dataProvider exampleSessionToken
+   */
+  public function testRequestContextForwardedIp($sessionToken)
+  {
+    Userbin::getSessionStore()->write($sessionToken);
+    $_SERVER['HTTP_X_FORWARDED_FOR'] = '1.1.1.1';
+    Userbin::authorize();
+    $this->assertRequest('post', '/heartbeat', array('X-Userbin-Ip' => '1.1.1.1'));
+  }
+
+  /**
+   * @dataProvider exampleSessionToken
+   */
+  public function testRequestContextRealIp($sessionToken)
+  {
+    Userbin::getSessionStore()->write($sessionToken);
+    $_SERVER['HTTP_X_REAL_IP'] = '2.2.2.2';
+    Userbin::authorize();
+    $this->assertRequest('post', '/heartbeat', array('X-Userbin-Ip' => '2.2.2.2'));
+  }
+
+
+  /**
+   * @dataProvider exampleSessionToken
+   */
   public function testRequestClearsSessionOnUserUnauthorized($sessionToken)
   {
     $Store = Userbin::getSessionStore();

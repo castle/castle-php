@@ -28,6 +28,21 @@ class Userbin_Request
     return json_encode($userAgent);
   }
 
+  public static function getIp()
+  {
+    if (array_key_exists('HTTP_X_FORWARDED_FOR', $_SERVER)) {
+      $parts = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+      return $parts[0];
+    }
+    if (array_key_exists('HTTP_X_REAL_IP', $_SERVER)) {
+      return $_SERVER['HTTP_X_REAL_IP'];
+    }
+    if (array_key_exists('REMOTE_ADDR', $_SERVER)) {
+      return $_SERVER['REMOTE_ADDR'];
+    }
+    return null;
+  }
+
   public function handleApiError($response, $status)
   {
     $type = $response['type'];
@@ -96,7 +111,7 @@ class Userbin_Request
     $body = empty($params) ? null : json_encode($params);
     $headers = array(
       'X-Userbin-User-Agent: ' . $_SERVER['HTTP_USER_AGENT'],
-      'X-Userbin-Ip: ' . $_SERVER['REMOTE_ADDR'],
+      'X-Userbin-Ip: ' . self::getIp(),
       'X-Userbin-Client-User-Agent: ' . $client,
       'Content-Type: application/json',
       'Content-Length: ' . strlen($body)
