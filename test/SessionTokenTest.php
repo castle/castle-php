@@ -107,4 +107,14 @@ class UserbinSessionTest extends Userbin_TestCase
     $user = $session->getUser();
     $this->assertTrue($user instanceof Userbin_User);
   }
+
+  /**
+   * @dataProvider exampleSession
+   */
+  public function testSerialize($sessionData, $sessionToken)
+  {
+    $session = new Userbin_SessionToken($sessionToken);
+    $this->assertEquals($sessionToken, $session->serialize());
+    $this->assertEquals($sessionToken, sprintf('%s', $session));
+  }
 }

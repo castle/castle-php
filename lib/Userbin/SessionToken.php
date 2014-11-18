@@ -9,6 +9,11 @@ class Userbin_SessionToken
     $this->jwt = new Userbin_JWT($token);
   }
 
+  public function __toString()
+  {
+    return $this->serialize();
+  }
+
   public function getId()
   {
     return $this->jwt->getHeader('sub');
