@@ -140,13 +140,13 @@ abstract class Userbin
   public static function isMFAInProgress()
   {
     $sessionToken = self::getSessionToken();
-    return $sessionToken ? $sessionToken->hasChallenge() : false;
+    return $sessionToken ? $sessionToken->isMFAInProgress() : false;
   }
 
   public static function isMFARequired()
   {
     $sessionToken = self::getSessionToken();
-    return $sessionToken ? $sessionToken->needsChallenge() : false;
+    return $sessionToken ? $sessionToken->isMFARequired() : false;
   }
 
 

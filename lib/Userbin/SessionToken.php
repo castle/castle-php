@@ -19,14 +19,14 @@ class Userbin_SessionToken
     return new Userbin_User('$current');
   }
 
-  public function hasChallenge()
+  public function hasDefaultPairing()
   {
-    return $this->jwt->getBody('chg') == 1;
+    return $this->jwt->getBody('dpr') == 1;
   }
 
-  public function needsChallenge()
+  public function hasExpired()
   {
-    return $this->jwt->getBody('vfy') > 0;
+    return $this->jwt->hasExpired();
   }
 
   public function isDeviceTrusted()
@@ -39,14 +39,14 @@ class Userbin_SessionToken
     return $this->jwt->getBody('mfa') == 1;
   }
 
-  public function hasDefaultPairing()
+  public function isMFAInProgress()
   {
-    return $this->jwt->getBody('dpr') == 1;
+    return $this->jwt->getBody('chg') == 1;
   }
 
-  public function hasExpired()
+  public function isMFARequired()
   {
-    return $this->jwt->hasExpired();
+    return $this->jwt->getBody('vfy') > 0;
   }
 
   public function serialize()

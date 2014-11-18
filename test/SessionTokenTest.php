@@ -65,28 +65,28 @@ class UserbinSessionTest extends Userbin_TestCase
   /**
    * @dataProvider exampleSession
    */
-  public function testHasChallengeWithoutChallenge($sessionData, $sessionToken)
+  public function testMFAInProgressWithoutChallenge($sessionData, $sessionToken)
   {
     $session = new Userbin_SessionToken($sessionToken);
-    $this->assertFalse($session->hasChallenge());
+    $this->assertFalse($session->isMFAInProgress());
   }
 
   /**
    * @dataProvider exampleSessionTokenWithChallenge
    */
-  public function testHasChallengeWithChallenge($sessionToken)
+  public function testMFAInProgressWithChallenge($sessionToken)
   {
     $session = new Userbin_SessionToken($sessionToken);
-    $this->assertTrue($session->hasChallenge());
+    $this->assertTrue($session->isMFAInProgress());
   }
 
   /**
    * @dataProvider exampleSessionTokenWithChallenge
    */
-  public function testNeedsChallengeWithChallenge($sessionToken)
+  public function testMFARequiredWithChallenge($sessionToken)
   {
     $session = new Userbin_SessionToken($sessionToken);
-    $this->assertTrue($session->needsChallenge());
+    $this->assertTrue($session->isMFARequired());
   }
 
   /**
