@@ -74,7 +74,7 @@ class Userbin_Request
 
     // Update the local session if it was updated by Userbin
     if (array_key_exists('X-Userbin-Set-Session-Token', $request->rHeaders)) {
-      Userbin::getSessionStore()->write($request->rHeaders['X-Userbin-Set-Session-Token']);
+      Userbin::setSessionToken($request->rHeaders['X-Userbin-Set-Session-Token']);
     }
 
     return array($response, $request);

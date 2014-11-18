@@ -26,6 +26,16 @@ class UserbinUserTest extends Userbin_TestCase
   /**
    * @dataProvider exampleUser
    */
+  public function testBackupCodes($userData)
+  {
+    $user = new Userbin_User($userData);
+    $user->backupCodes()->generate();
+    $this->assertRequest('post', '/users/'.$user->id.'/backup_codes');
+  }
+
+  /**
+   * @dataProvider exampleUser
+   */
   public function testCreateChallenge($userData)
   {
     $user = new Userbin_User($userData);

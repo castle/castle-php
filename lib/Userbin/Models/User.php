@@ -4,7 +4,7 @@ class Userbin_User extends RestModel
 {
   public function backupCodes()
   {
-    return $this->hasOne('Userbin_BackupCode');
+    return $this->hasOne('Userbin_BackupCodes');
   }
 
   public function challenges()

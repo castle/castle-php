@@ -23,7 +23,7 @@ require(dirname(__FILE__) . '/Userbin/TrustedTokenStore.php');
 require(dirname(__FILE__) . '/RestModel/Resource.php');
 require(dirname(__FILE__) . '/RestModel/Model.php');
 require(dirname(__FILE__) . '/Userbin/Models/Account.php');
-require(dirname(__FILE__) . '/Userbin/Models/BackupCode.php');
+require(dirname(__FILE__) . '/Userbin/Models/BackupCodes.php');
 require(dirname(__FILE__) . '/Userbin/Models/Challenge.php');
 require(dirname(__FILE__) . '/Userbin/Models/Event.php');
 require(dirname(__FILE__) . '/Userbin/Models/Pairing.php');
