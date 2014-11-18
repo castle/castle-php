@@ -32,6 +32,7 @@ require(dirname(__FILE__) . '/../lib/RestModel/Model.php');
 require(dirname(__FILE__) . '/../lib/Userbin/Models/Account.php');
 require(dirname(__FILE__) . '/../lib/Userbin/Models/BackupCodes.php');
 require(dirname(__FILE__) . '/../lib/Userbin/Models/Challenge.php');
+require(dirname(__FILE__) . '/../lib/Userbin/Models/Context.php');
 require(dirname(__FILE__) . '/../lib/Userbin/Models/Event.php');
 require(dirname(__FILE__) . '/../lib/Userbin/Models/Pairing.php');
 require(dirname(__FILE__) . '/../lib/Userbin/Models/Session.php');

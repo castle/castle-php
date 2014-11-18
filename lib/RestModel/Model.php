@@ -171,19 +171,23 @@ class RestModel
     return $instance;
   }
 
-  public function hasMany($model)
+  public function hasMany($model, $attrName = null)
   {
-    $attrName = $this->getAttributeName($model);
-    $attrName = self::pluralize($attrName);
+    if ($attrName == null) {
+      $attrName = $this->getAttributeName($model);
+      $attrName = self::pluralize($attrName);
+    }
     $items = $this->getAttribute($attrName);
     $resource = new Userbin_Resource($model, $items);
     $resource->setParent($this);
     return $resource;
   }
 
-  public function hasOne($model)
+  public function hasOne($model, $attrName = null)
   {
-    $attrName = $this->getAttributeName($model);
+    if ($attrName == null) {
+      $attrName = $this->getAttributeName($model);
+    }
     $attrs = $this->getAttribute($attrName);
     $instance = new $model($attrs);
     $instance->setParent($this);
