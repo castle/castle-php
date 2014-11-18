@@ -75,4 +75,34 @@ class UserbinUserTest extends Userbin_TestCase
     $request = $this->assertRequest('post', '/users/'.$user->id.'/sessions');
     $this->assertEquals($request['params']['user'], $userData);
   }
+
+  /**
+   * @dataProvider exampleUser
+   */
+  public function testDisableMFA($userData)
+  {
+    $user = new Userbin_User($userData);
+    $user->disableMFA();
+    $this->assertRequest('post', '/users/'.$user->id.'/disable_mfa');
+  }
+
+  /**
+   * @dataProvider exampleUser
+   */
+  public function testEnableMFA($userData)
+  {
+    $user = new Userbin_User($userData);
+    $user->enableMFA();
+    $this->assertRequest('post', '/users/'.$user->id.'/enable_mfa');
+  }
+
+  /**
+   * @dataProvider exampleUser
+   */
+  public function testEventsMFA($userData)
+  {
+    $user = new Userbin_User($userData);
+    $user->events()->fetch();
+    $this->assertRequest('get', '/users/'.$user->id.'/events');
+  }
 }

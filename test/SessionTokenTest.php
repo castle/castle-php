@@ -25,6 +25,8 @@ class UserbinSessionTest extends Userbin_TestCase
     ));
     $jwt->setBody('vfy', 1);
     $jwt->setBody('chg', 1);
+    $jwt->setBody('mfa', 1);
+    $jwt->setBody('dpr', 1);
     $jwt->setBody('typ', 'authenticator');
     return array(array($jwt->toString()));
   }
@@ -63,12 +65,30 @@ class UserbinSessionTest extends Userbin_TestCase
   }
 
   /**
+   * @dataProvider exampleSessionTokenWithChallenge
+   */
+  public function testDefaultPairingWithChallenge($sessionToken)
+  {
+    $session = new Userbin_SessionToken($sessionToken);
+    $this->assertTrue($session->hasDefaultPairing());
+  }
+
+  /**
    * @dataProvider exampleSession
    */
   public function testMFAInProgressWithoutChallenge($sessionData, $sessionToken)
   {
     $session = new Userbin_SessionToken($sessionToken);
     $this->assertFalse($session->isMFAInProgress());
+  }
+
+  /**
+   * @dataProvider exampleSessionTokenWithChallenge
+   */
+  public function testMFAEnableWithChallenge($sessionToken)
+  {
+    $session = new Userbin_SessionToken($sessionToken);
+    $this->assertTrue($session->isMFAEnabled());
   }
 
   /**

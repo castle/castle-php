@@ -22,4 +22,10 @@ class UserbinChallengeTest extends Userbin_TestCase
     $this->assertArrayHasKey('response', $request['params']);
     $this->assertEquals($request['params']['response'], '1234');
   }
+
+  public function testValidateWithoutId()
+  {
+    $challenge = new Userbin_Challenge();
+    $this->assertFalse($challenge->verify('1234'));
+  }
 }
