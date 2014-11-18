@@ -3,8 +3,6 @@ interface Userbin_iSessionStore
 {
   public function destroy();
   public function read();
-  public function getUserId();
-  public function setUserId($userId);
   public function write($data);
 }
 
@@ -31,21 +29,6 @@ class Userbin_SessionStore implements Userbin_iSessionStore
       return $_SESSION[$this->key];
     }
     return null;
-  }
-
-  public function getUserId()
-  {
-    if (isset($_SESSION) && array_key_exists($this->userKey, $_SESSION)) {
-      return $_SESSION[$this->userKey];
-    }
-    return null;
-  }
-
-  public function setUserId($userId)
-  {
-    if (isset($_SESSION)) {
-      $_SESSION[$this->userKey] = $userId;
-    }
   }
 
   public function write($data)

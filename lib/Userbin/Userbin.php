@@ -116,17 +116,6 @@ abstract class Userbin
   }
 
   /**
-   * Sets the currently logged in user id
-   * @param  String $userId The local ID of your currently logged in user
-   * @return None
-   */
-  public static function identify($userId)
-  {
-    $userId = urlencode($userId);
-    Userbin::getSessionStore()->setUserId($userId);
-  }
-
-  /**
    * Checks whether there is an active session, ie. if the current user is
    * authorized
    * @return boolean True if authorized, False otherwise
@@ -170,8 +159,6 @@ abstract class Userbin
   public static function login($userId, $userAttributes = Array())
   {
     self::setSessionToken(null);
-
-    self::identify($userId);
 
     $user = new Userbin_User($userAttributes);
     $user->setId($userId);
