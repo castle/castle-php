@@ -57,10 +57,10 @@ class UserbinTest extends Userbin_TestCase
   {
     Userbin_RequestTransport::setResponse(201, array('token' => $this->sessionToken));
 
-    $user = Userbin::login($userData['id'], $userData);
-    $this->assertEquals($user->id, $userData['id']);
+    $session = Userbin::login($userData['id'], $userData);
+    $this->assertEquals($this->sessionToken, $session->serialize());
     $this->assertRequest('post', '/users/'.$userData['id'].'/sessions');
-    $this->assertInstanceOf('Userbin_SessionToken', Userbin::getSessionToken());
+    $this->assertInstanceOf('Userbin_SessionToken', $session);
   }
 
   /**

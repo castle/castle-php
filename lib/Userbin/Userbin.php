@@ -169,7 +169,7 @@ abstract class Userbin
     ));
     $session = new Userbin_SessionToken($newSession->token);
     self::setSessionToken($session->serialize());
-    return $user;
+    return $session;
   }
 
   /**
