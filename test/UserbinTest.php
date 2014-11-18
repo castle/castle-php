@@ -45,6 +45,8 @@ class UserbinTest extends Userbin_TestCase
     $jwt = new Userbin_JWT();
     $jwt->setHeader(array('iss' => '1', 'exp' => time()));
     $jwt->setBody('chg', 1);
+    $jwt->setBody('dpr', 1);
+    $jwt->setBody('mfa', 1);
     $jwt->setBody('vfy', 1);
     $jwt->setBody('typ', 'authenticator');
     return array(array($jwt->toString()));
@@ -127,6 +129,27 @@ class UserbinTest extends Userbin_TestCase
   }
 
   /**
+   * @dataProvider exampleSessionTokenWithChallenge
+   */
+  public function testHasDefaultPairing($token)
+  {
+    $this->assertFalse(Userbin::hasDefaultPairing());
+    Userbin::setSessionToken($token);
+    $this->assertTrue(Userbin::hasDefaultPairing());
+  }
+
+  /**
+   * @dataProvider exampleSessionTokenWithChallenge
+   */
+  public function testIsMFAEnabled($token)
+  {
+    $this->assertFalse(Userbin::isMFAEnabled());
+    Userbin::setSessionToken($token);
+    $this->assertTrue(Userbin::isMFAEnabled());
+  }
+
+
+  /**
    * @dataProvider exampleSessionToken
    */
   public function testLogout($token)
@@ -136,6 +159,11 @@ class UserbinTest extends Userbin_TestCase
     Userbin::logout();
     $this->assertRequest('delete', '/users/%24current/sessions/'.$session->getId());
     $this->assertFalse(array_key_exists('userbin', $_SESSION));
+  }
+
+  public function testLogoutWithoutToken()
+  {
+    $this->assertFalse(Userbin::logout());
   }
 
   /**
@@ -148,6 +176,17 @@ class UserbinTest extends Userbin_TestCase
     $session = Userbin::getSessionToken();
     Userbin::logout();
     /* No exception should be thrown */
+  }
+
+
+  /**
+   * @dataProvider exampleSessionToken
+   */
+  public function testIsAuthorized($token)
+  {
+    $this->assertFalse(Userbin::isAuthorized());
+    Userbin::setSessionToken($token);
+    $this->assertTrue(Userbin::isAuthorized());
   }
 
   /**
