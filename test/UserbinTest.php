@@ -150,9 +150,12 @@ class UserbinTest extends Userbin_TestCase
     /* No exception should be thrown */
   }
 
+  /**
+   * @expectedException Userbin_UserUnauthorizedError
+   */
   public function testTrustDeviceWithoutUser()
   {
-    $this->assertNull(Userbin::trustDevice());
+    Userbin::trustDevice();
   }
 
   /**

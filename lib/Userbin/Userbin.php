@@ -202,7 +202,7 @@ abstract class Userbin
   {
     $currentUser = self::currentUser();
     if (!$currentUser) {
-      return null;
+      throw new Userbin_UserUnauthorizedError('Need to call login before trusting device');
     }
     $trustedDevice = self::currentUser()->trustedDevices()->create($attributes);
 
