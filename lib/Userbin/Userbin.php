@@ -186,8 +186,8 @@ abstract class Userbin
 
     try {
       /* Silence cases where the session has already been removed etc. */
-      $session = new Userbin_Session($sessionToken->getId());
-      $session->delete();
+      $sessionId = $sessionToken->getId();
+      $sessionToken->getUser()->sessions()->delete($sessionId);
     } catch (Userbin_ApiError $e) {}
 
     self::setSessionToken(null);
