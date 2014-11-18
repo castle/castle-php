@@ -25,8 +25,8 @@ abstract class Userbin_TestCase extends \PHPUnit_Framework_TestCase
 require(dirname(__FILE__) . '/../lib/Userbin/Userbin.php');
 require(dirname(__FILE__) . '/../lib/Userbin/Errors.php');
 require(dirname(__FILE__) . '/../lib/Userbin/SessionToken.php');
-require(dirname(__FILE__) . '/../lib/Userbin/SessionStore.php');
-require(dirname(__FILE__) . '/TrustedTokenStore.php');
+require(dirname(__FILE__) . '/../lib/Userbin/TokenStore.php');
+require(dirname(__FILE__) . '/CookieStore.php');
 require(dirname(__FILE__) . '/../lib/RestModel/Resource.php');
 require(dirname(__FILE__) . '/../lib/RestModel/Model.php');
 require(dirname(__FILE__) . '/../lib/Userbin/Models/Account.php');

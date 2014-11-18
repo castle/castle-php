@@ -78,7 +78,7 @@ class UserbinTest extends Userbin_TestCase
    */
   public function testLoginWithTrustedDevice($token)
   {
-    $_SESSION['userbin'] = $token;
+    Userbin::setSessionToken($token);
     Userbin_RequestTransport::setResponse(201, array('token' => '12345'));
     Userbin::trustDevice();
     Userbin_RequestTransport::setResponse(201, array('token' => $token));
@@ -92,7 +92,7 @@ class UserbinTest extends Userbin_TestCase
    */
   public function testAuthorizeWithExistingSession($token)
   {
-    $_SESSION['userbin'] = $token;
+    Userbin::setSessionToken($token);
     Userbin::authorize();
     $this->assertRequest('post', '/heartbeat', array('X-Userbin-Session-Token' => $token));
   }
@@ -112,7 +112,7 @@ class UserbinTest extends Userbin_TestCase
    */
   public function testAuthorizeWithMFASession($token)
   {
-    $_SESSION['userbin'] = $token;
+    Userbin::setSessionToken($token);
     Userbin::authorize();
   }
 
@@ -122,7 +122,7 @@ class UserbinTest extends Userbin_TestCase
    */
   public function testAuthorizeWithChallengeSession($token)
   {
-    $_SESSION['userbin'] = $token;
+    Userbin::setSessionToken($token);
     Userbin::authorize();
   }
 
@@ -131,7 +131,7 @@ class UserbinTest extends Userbin_TestCase
    */
   public function testLogout($token)
   {
-    Userbin::getSessionStore()->write($token);
+    Userbin::getTokenStore()->setSession($token);
     $session = Userbin::getSessionToken();
     Userbin::logout();
     $this->assertRequest('delete', '/users/%24current/sessions/'.$session->getId());
@@ -144,7 +144,7 @@ class UserbinTest extends Userbin_TestCase
   public function testLogoutWithNonExisting($token)
   {
     Userbin_RequestTransport::setResponse(404);
-    Userbin::getSessionStore()->write($token);
+    Userbin::getTokenStore()->setSession($token);
     $session = Userbin::getSessionToken();
     Userbin::logout();
     /* No exception should be thrown */
@@ -164,7 +164,7 @@ class UserbinTest extends Userbin_TestCase
   public function testTrustDeviceWithSession($token)
   {
     Userbin_RequestTransport::setResponse(201, array('token' => '12345'));
-    Userbin::getSessionStore()->write($token);
+    Userbin::getTokenStore()->setSession($token);
     Userbin::trustDevice();
     $this->assertEquals('12345', Userbin::trustedDeviceToken());
   }
@@ -174,7 +174,7 @@ class UserbinTest extends Userbin_TestCase
    */
   public function testCurrentUserVerifyPairing($token)
   {
-    Userbin::getSessionStore()->write($token);
+    Userbin::getTokenStore()->setSession($token);
     Userbin_RequestTransport::setResponse(201, array('id' => '12345', 'verified' => true));
     $pairing = Userbin::currentUser()->pairings()->verify(1, array('response' => '12345'));
     $this->assertInstanceOf('Userbin_Pairing', $pairing);

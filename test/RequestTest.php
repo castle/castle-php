@@ -39,7 +39,7 @@ class UserbinRequestTest extends \Userbin_TestCase
    */
   public function testRequestContent($sessionToken)
   {
-    Userbin::getSessionStore()->write($sessionToken);
+    Userbin::getTokenStore()->setSession($sessionToken);
     Userbin::authorize();
 
     $this->assertRequest('post', '/heartbeat', array('Content-Length' => '0'));
@@ -52,7 +52,7 @@ class UserbinRequestTest extends \Userbin_TestCase
    */
   public function testRequestContextIp($sessionToken)
   {
-    Userbin::getSessionStore()->write($sessionToken);
+    Userbin::getTokenStore()->setSession($sessionToken);
     Userbin::authorize();
     $this->assertRequest('post', '/heartbeat', array('X-Userbin-Ip' => '8.8.8.8'));
   }
@@ -62,7 +62,7 @@ class UserbinRequestTest extends \Userbin_TestCase
    */
   public function testRequestContextForwardedIp($sessionToken)
   {
-    Userbin::getSessionStore()->write($sessionToken);
+    Userbin::getTokenStore()->setSession($sessionToken);
     $_SERVER['HTTP_X_FORWARDED_FOR'] = '1.1.1.1';
     Userbin::authorize();
     $this->assertRequest('post', '/heartbeat', array('X-Userbin-Ip' => '1.1.1.1'));
@@ -73,7 +73,7 @@ class UserbinRequestTest extends \Userbin_TestCase
    */
   public function testRequestContextRealIp($sessionToken)
   {
-    Userbin::getSessionStore()->write($sessionToken);
+    Userbin::getTokenStore()->setSession($sessionToken);
     $_SERVER['HTTP_X_REAL_IP'] = '2.2.2.2';
     Userbin::authorize();
     $this->assertRequest('post', '/heartbeat', array('X-Userbin-Ip' => '2.2.2.2'));
@@ -85,13 +85,13 @@ class UserbinRequestTest extends \Userbin_TestCase
    */
   public function testRequestClearsSessionOnUserUnauthorized($sessionToken)
   {
-    $Store = Userbin::getSessionStore();
-    $Store->write($sessionToken);
+    $Store = Userbin::getTokenStore();
+    $Store->setSession($sessionToken);
     Userbin_RequestTransport::setResponse(419);
     try {
       Userbin::authorize();
     } catch (Exception $e) { }
-    $this->assertEmpty($Store->read());
+    $this->assertEmpty($Store->getSession());
   }
 
   /**

@@ -8,9 +8,9 @@ abstract class Userbin
 
   public static $apiVersion = 'v1';
 
-  public static $sessionStore = 'Userbin_SessionStore';
+  public static $tokenStore = 'Userbin_TokenStore';
 
-  public static $trustedTokenStore = 'Userbin_TrustedTokenStore';
+  public static $cookieStore = 'Userbin_CookieStore';
 
   const VERSION = '1.1.0';
 
@@ -34,19 +34,24 @@ abstract class Userbin
     self::$apiVersion = $apiVersion;
   }
 
-  public static function getSessionStore()
+  public static function getCookieStore()
   {
-    return new self::$sessionStore;
+    return new self::$cookieStore;
   }
 
-  public static function setSessionStore($serializerClass)
+  public static function getTokenStore()
   {
-    self::$sessionStore = $serializerClass;
+    return new self::$tokenStore(self::getCookieStore());
+  }
+
+  public static function setTokenStore($serializerClass)
+  {
+    self::$tokenStore = $serializerClass;
   }
 
   public static function getSessionToken()
   {
-    $sessionData = self::getSessionStore()->read();
+    $sessionData = self::getTokenStore()->getSession();
     if ($sessionData) {
       return new Userbin_SessionToken($sessionData);
     }
@@ -56,16 +61,11 @@ abstract class Userbin
   public static function setSessionToken($token)
   {
     if ( is_string($token) ) {
-      Userbin::getSessionStore()->write($token);
+      Userbin::getTokenStore()->setSession($token);
     }
     else {
-      Userbin::getSessionStore()->destroy();
+      Userbin::getTokenStore()->setSession();
     }
-  }
-
-  public static function getTrustedTokenStore($value='')
-  {
-    return new self::$trustedTokenStore;
   }
 
   /**
@@ -206,7 +206,7 @@ abstract class Userbin
     }
     $trustedDevice = self::currentUser()->trustedDevices()->create($attributes);
 
-    self::getTrustedTokenStore()->write($trustedDevice->token);
+    self::getTokenStore()->setTrustedDevice($trustedDevice->token);
     return $trustedDevice;
   }
 
@@ -216,6 +216,6 @@ abstract class Userbin
    */
   public static function trustedDeviceToken()
   {
-    return self::getTrustedTokenStore()->read();
+    return self::getTokenStore()->getTrustedDevice();
   }
 }

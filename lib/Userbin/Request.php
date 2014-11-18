@@ -58,7 +58,7 @@ class Userbin_Request
         throw new Userbin_NotFoundError($msg, $type, $status);
       case 419:
         /* Clear session since this error means that is is invalid or removed */
-        Userbin::getSessionStore()->destroy();
+        Userbin::getTokenStore()->setSession();
         throw new Userbin_UserUnauthorizedError($msg, $type, $status);
       case 422:
         throw new Userbin_InvalidParametersError($msg, $type, $status);
@@ -118,7 +118,7 @@ class Userbin_Request
     );
 
     // Check if there is a current session and pass it along
-    $session = Userbin::getSessionStore()->read();
+    $session = Userbin::getTokenStore()->getSession();
     if (isset($session)) {
       $headers[]= 'X-Userbin-Session-Token: '.$session;
     }
