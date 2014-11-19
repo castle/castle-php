@@ -26,7 +26,7 @@ class Userbin_SessionToken
 
   public function hasDefaultPairing()
   {
-    return $this->jwt->getBody('dpr') == 1;
+    return $this->jwt->getBody('dpr') > 0;
   }
 
   public function hasExpired()
