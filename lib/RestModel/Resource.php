@@ -1,6 +1,6 @@
 <?php
 
-class Userbin_Resource
+class Castle_Resource
 {
   protected $parent = null;
 

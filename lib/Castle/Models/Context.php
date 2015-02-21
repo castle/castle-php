@@ -1,6 +1,6 @@
 <?php
 
-class Userbin_Context extends RestModel
+class Castle_Context extends RestModel
 {
   public function location()
   {

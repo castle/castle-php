@@ -1,5 +1,5 @@
 <?php
-interface Userbin_iCookieStore
+interface Castle_iCookieStore
 {
   public function destroy($key);
   public function read($key);
@@ -9,7 +9,7 @@ interface Userbin_iCookieStore
 /**
  * By default the session token is persisted in a cookie
  */
-class Userbin_CookieStore implements Userbin_iCookieStore
+class Castle_CookieStore implements Castle_iCookieStore
 {
   public function destroy($key)
   {

@@ -1,15 +1,15 @@
 <?php
 
-class Userbin_User extends RestModel
+class Castle_User extends RestModel
 {
   public function backupCodes()
   {
-    return $this->hasOne('Userbin_BackupCodes');
+    return $this->hasOne('Castle_BackupCodes');
   }
 
   public function challenges()
   {
-    return $this->hasMany('Userbin_Challenge');
+    return $this->hasMany('Castle_Challenge');
   }
 
   public function disableMFA($params = null)
@@ -24,21 +24,21 @@ class Userbin_User extends RestModel
 
   public function events()
   {
-    return $this->hasMany('Userbin_Event');
+    return $this->hasMany('Castle_Event');
   }
 
   public function pairings()
   {
-    return $this->hasMany('Userbin_Pairing');
+    return $this->hasMany('Castle_Pairing');
   }
 
   public function sessions()
   {
-    return $this->hasMany('Userbin_Session');
+    return $this->hasMany('Castle_Session');
   }
 
   public function trustedDevices()
   {
-    return $this->hasMany('Userbin_TrustedDevice');
+    return $this->hasMany('Castle_TrustedDevice');
   }
 }

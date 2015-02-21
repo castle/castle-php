@@ -1,6 +1,6 @@
 <?php
 
-class UserbinPairingTest extends Userbin_TestCase
+class CastlePairingTest extends Castle_TestCase
 {
   public static function setUpBeforeClass()
   {
@@ -10,7 +10,7 @@ class UserbinPairingTest extends Userbin_TestCase
 
   public function tearDown()
   {
-    Userbin_RequestTransport::reset();
+    Castle_RequestTransport::reset();
   }
 
   public function exampleUser()
@@ -37,7 +37,7 @@ class UserbinPairingTest extends Userbin_TestCase
    */
   public function testCreatePairing($userData)
   {
-    $user = new Userbin_User($userData);
+    $user = new Castle_User($userData);
     $user->pairings()->create();
     $this->assertRequest('post', '/users/'.$user->id.'/pairings');
   }
@@ -47,7 +47,7 @@ class UserbinPairingTest extends Userbin_TestCase
    */
   public function testVerifyPairing($pairingData)
   {
-    $pairing = new Userbin_Pairing($pairingData);
+    $pairing = new Castle_Pairing($pairingData);
     $pairing->verify(array('response' => '123456'));
     $this->assertRequest('post', '/pairings/'.$pairing->id.'/verify');
   }
@@ -57,7 +57,7 @@ class UserbinPairingTest extends Userbin_TestCase
    */
   public function testSetDefaultPairing($pairingData)
   {
-    $pairing = new Userbin_Pairing($pairingData);
+    $pairing = new Castle_Pairing($pairingData);
     $pairing->setDefault();
     $this->assertRequest('post', '/pairings/'.$pairing->id.'/set_default');
   }

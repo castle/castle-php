@@ -1,9 +1,9 @@
 <?php
 
-class UserbinJWTTest extends \PHPUnit_Framework_TestCase
+class CastleJWTTest extends \PHPUnit_Framework_TestCase
 {
   public static function setUpBeforeClass() {
-    Userbin::setApiKey('secretkey');
+    Castle::setApiKey('secretkey');
   }
 
   public function invalidJWTs() {
@@ -21,26 +21,26 @@ class UserbinJWTTest extends \PHPUnit_Framework_TestCase
 
   /**
    * @dataProvider invalidJWTs
-   * @expectedException Userbin_SecurityError
+   * @expectedException Castle_SecurityError
    */
   public function testInvalidJWT($data) {
-    $jwt = new Userbin_JWT($data);
+    $jwt = new Castle_JWT($data);
     $jwt->isValid();
   }
 
   /**
-   * @expectedException Userbin_SecurityError
+   * @expectedException Castle_SecurityError
    */
   public function testInvalidConstructorArgument()
   {
-    $jwt = new Userbin_JWT('1234');
+    $jwt = new Castle_JWT('1234');
   }
 
   /**
    * @dataProvider validJWTs
    */
   public function testValidJWT($data) {
-    $jwt = new Userbin_JWT($data);
+    $jwt = new Castle_JWT($data);
     $this->assertTrue($jwt->isValid());
   }
 
@@ -48,14 +48,14 @@ class UserbinJWTTest extends \PHPUnit_Framework_TestCase
    * @dataProvider validJWTs
    */
   public function testValidJWTPayload($data, $key, $value) {
-    $jwt = new Userbin_JWT($data);
+    $jwt = new Castle_JWT($data);
     $payload = $jwt->getBody();
     $this->assertEquals($payload[$key], $value);
   }
 
   public function testSetHeader()
   {
-    $jwt = new Userbin_JWT();
+    $jwt = new Castle_JWT();
     $now = time();
     $jwt->setHeader('exp', $now);
     $header = $jwt->getHeader();
@@ -64,7 +64,7 @@ class UserbinJWTTest extends \PHPUnit_Framework_TestCase
 
   public function testGetSetBody()
   {
-    $jwt = new Userbin_JWT();
+    $jwt = new Castle_JWT();
     $jwt->setBody('chg', '1234');
     $this->assertEquals($jwt->getBody('chg'), '1234');
     $this->assertTrue($jwt->isValid());
@@ -72,13 +72,13 @@ class UserbinJWTTest extends \PHPUnit_Framework_TestCase
 
   public function testGetNonExistantBodyKey()
   {
-    $jwt = new Userbin_JWT();
+    $jwt = new Castle_JWT();
     $this->assertNull($jwt->getBody('chg'));
   }
 
   public function testSetEmptyHeader()
   {
-    $jwt = new Userbin_JWT();
+    $jwt = new Castle_JWT();
     $jwt->setHeader('tmp', 1);
     $this->assertEquals(1, $jwt->getHeader('tmp'));
     $jwt->setHeader('tmp');
@@ -90,13 +90,13 @@ class UserbinJWTTest extends \PHPUnit_Framework_TestCase
    */
   public function testGetheaderWithKey($data)
   {
-    $jwt = new Userbin_JWT($data);
+    $jwt = new Castle_JWT($data);
     $this->assertEquals($jwt->getHeader('typ'), 'JWT');
   }
 
   public function testHasExpired()
   {
-    $jwt = new Userbin_JWT();
+    $jwt = new Castle_JWT();
     $jwt->setHeader(array('exp' => time() + 60));
     $this->assertFalse($jwt->hasExpired());
   }

@@ -1,6 +1,6 @@
 <?php
 
-class UserbinEventTest extends Userbin_TestCase
+class CastleEventTest extends Castle_TestCase
 {
   public static function setUpBeforeClass()
   {
@@ -10,7 +10,7 @@ class UserbinEventTest extends Userbin_TestCase
 
   public function tearDown()
   {
-    Userbin_RequestTransport::reset();
+    Castle_RequestTransport::reset();
   }
 
   public function exampleEvent()
@@ -47,9 +47,9 @@ class UserbinEventTest extends Userbin_TestCase
    */
   public function testEventContext($eventData)
   {
-    $event = new Userbin_Event($eventData);
+    $event = new Castle_Event($eventData);
     $context = $event->context();
-    $this->assertInstanceOf('Userbin_Context', $context);
+    $this->assertInstanceOf('Castle_Context', $context);
   }
 
   /**
@@ -57,7 +57,7 @@ class UserbinEventTest extends Userbin_TestCase
    */
   public function testEventContextLocation($eventData)
   {
-    $event = new Userbin_Event($eventData);
+    $event = new Castle_Event($eventData);
     $context = $event->context();
     $this->assertEquals('United States', $context->location()->country);
   }
@@ -67,7 +67,7 @@ class UserbinEventTest extends Userbin_TestCase
    */
   public function testEventContextUserAgent($eventData)
   {
-    $event = new Userbin_Event($eventData);
+    $event = new Castle_Event($eventData);
     $context = $event->context();
     $this->assertEquals('Firefox', $context->userAgent()->browser);
   }

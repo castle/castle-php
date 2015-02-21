@@ -10,7 +10,7 @@ module.exports = function(grunt) {
       },
       options: {
         bin: 'vendor/bin/phpunit',
-        bootstrap: 'test/Userbin.php',
+        bootstrap: 'test/Castle.php',
         colors: true
       }
     },

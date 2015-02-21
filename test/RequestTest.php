@@ -1,13 +1,13 @@
 <?php
 
-class UserbinRequestTest extends \Userbin_TestCase
+class CastleRequestTest extends \Castle_TestCase
 {
 
   public static function setUpBeforeClass()
   {
     $_SERVER['HTTP_USER_AGENT'] = 'TestAgent';
     $_SERVER['REMOTE_ADDR'] = '8.8.8.8';
-    Userbin::setApiKey('secretkey');
+    Castle::setApiKey('secretkey');
   }
 
   public function setUp()
@@ -17,12 +17,12 @@ class UserbinRequestTest extends \Userbin_TestCase
 
   public function tearDown()
   {
-    Userbin_RequestTransport::setResponse();
+    Castle_RequestTransport::setResponse();
   }
 
   public function headersContains($keyword)
   {
-    $request = Userbin_RequestTransport::getLastRequest();
+    $request = Castle_RequestTransport::getLastRequest();
     if (!empty($request)) {
       return array_key_exists($keyword, $request['headers']);
     }
@@ -39,11 +39,11 @@ class UserbinRequestTest extends \Userbin_TestCase
    */
   public function testRequestContent($sessionToken)
   {
-    Userbin::getTokenStore()->setSession($sessionToken);
-    Userbin::authorize();
+    Castle::getTokenStore()->setSession($sessionToken);
+    Castle::authorize();
 
     $this->assertRequest('post', '/heartbeat', array('Content-Length' => '0'));
-    $request = Userbin_RequestTransport::getLastRequest();
+    $request = Castle_RequestTransport::getLastRequest();
     $this->assertEquals($request['body'], '');
   }
 
@@ -52,9 +52,9 @@ class UserbinRequestTest extends \Userbin_TestCase
    */
   public function testRequestContextIp($sessionToken)
   {
-    Userbin::getTokenStore()->setSession($sessionToken);
-    Userbin::authorize();
-    $this->assertRequest('post', '/heartbeat', array('X-Userbin-Ip' => '8.8.8.8'));
+    Castle::getTokenStore()->setSession($sessionToken);
+    Castle::authorize();
+    $this->assertRequest('post', '/heartbeat', array('X-Castle-Ip' => '8.8.8.8'));
   }
 
   /**
@@ -62,10 +62,10 @@ class UserbinRequestTest extends \Userbin_TestCase
    */
   public function testRequestContextForwardedIp($sessionToken)
   {
-    Userbin::getTokenStore()->setSession($sessionToken);
+    Castle::getTokenStore()->setSession($sessionToken);
     $_SERVER['HTTP_X_FORWARDED_FOR'] = '1.1.1.1';
-    Userbin::authorize();
-    $this->assertRequest('post', '/heartbeat', array('X-Userbin-Ip' => '1.1.1.1'));
+    Castle::authorize();
+    $this->assertRequest('post', '/heartbeat', array('X-Castle-Ip' => '1.1.1.1'));
   }
 
   /**
@@ -73,10 +73,10 @@ class UserbinRequestTest extends \Userbin_TestCase
    */
   public function testRequestContextRealIp($sessionToken)
   {
-    Userbin::getTokenStore()->setSession($sessionToken);
+    Castle::getTokenStore()->setSession($sessionToken);
     $_SERVER['HTTP_X_REAL_IP'] = '2.2.2.2';
-    Userbin::authorize();
-    $this->assertRequest('post', '/heartbeat', array('X-Userbin-Ip' => '2.2.2.2'));
+    Castle::authorize();
+    $this->assertRequest('post', '/heartbeat', array('X-Castle-Ip' => '2.2.2.2'));
   }
 
 
@@ -85,79 +85,79 @@ class UserbinRequestTest extends \Userbin_TestCase
    */
   public function testRequestClearsSessionOnUserUnauthorized($sessionToken)
   {
-    $Store = Userbin::getTokenStore();
+    $Store = Castle::getTokenStore();
     $Store->setSession($sessionToken);
-    Userbin_RequestTransport::setResponse(419);
+    Castle_RequestTransport::setResponse(419);
     try {
-      Userbin::authorize();
+      Castle::authorize();
     } catch (Exception $e) { }
     $this->assertEmpty($Store->getSession());
   }
 
   /**
-   * @expectedException Userbin_ApiError
+   * @expectedException Castle_ApiError
    */
   public function testInvalidResponse()
   {
-    Userbin_RequestTransport::setResponse(200, '{invalid');
-    $req = new Userbin_Request();
+    Castle_RequestTransport::setResponse(200, '{invalid');
+    $req = new Castle_Request();
     $req->send('GET', '/users');
   }
 
   /**
-   * @expectedException Userbin_ApiError
+   * @expectedException Castle_ApiError
    */
   public function testApiErrorRequest()
   {
-    Userbin_RequestTransport::setResponse(500);
-    $req = new Userbin_Request();
+    Castle_RequestTransport::setResponse(500);
+    $req = new Castle_Request();
     $req->send('GET', '/users');
   }
 
   /**
-   * @expectedException Userbin_UnauthorizedError
+   * @expectedException Castle_UnauthorizedError
    */
   public function testUnauthorizedRequest()
   {
-    Userbin_RequestTransport::setResponse(401);
-    $req = new Userbin_Request();
+    Castle_RequestTransport::setResponse(401);
+    $req = new Castle_Request();
     $req->send('GET', '/users');
   }
 
   /**
-   * @expectedException Userbin_ForbiddenError
+   * @expectedException Castle_ForbiddenError
    */
   public function testForbiddenRequest()
   {
-    Userbin_RequestTransport::setResponse(403);
-    $req = new Userbin_Request();
+    Castle_RequestTransport::setResponse(403);
+    $req = new Castle_Request();
     $req->send('GET', '/users');
   }
 
   /**
-   * @expectedException Userbin_UserUnauthorizedError
+   * @expectedException Castle_UserUnauthorizedError
    */
   public function testUserUnauthorizedRequest()
   {
-    Userbin_RequestTransport::setResponse(419);
-    $req = new Userbin_Request();
+    Castle_RequestTransport::setResponse(419);
+    $req = new Castle_Request();
     $req->send('GET', '/users');
   }
 
   /**
-   * @expectedException Userbin_InvalidParametersError
+   * @expectedException Castle_InvalidParametersError
    */
   public function testInvalidParametersRequest()
   {
-    Userbin_RequestTransport::setResponse(422);
-    $req = new Userbin_Request();
+    Castle_RequestTransport::setResponse(422);
+    $req = new Castle_Request();
     $req->send('GET', '/users');
   }
 
   public function testRequestHeaders() {
-    $req = new Userbin_Request();
+    $req = new Castle_Request();
     $raw = $req->send('GET', '/users');
-    $this->assertTrue($this->headersContains('X-Userbin-Ip'));
-    $this->assertTrue($this->headersContains('X-Userbin-User-Agent'));
+    $this->assertTrue($this->headersContains('X-Castle-Ip'));
+    $this->assertTrue($this->headersContains('X-Castle-User-Agent'));
   }
 }

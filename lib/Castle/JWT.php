@@ -1,6 +1,6 @@
 <?php
 
-class Userbin_JWT
+class Castle_JWT
 {
   function __construct($token=null)
   {
@@ -9,7 +9,7 @@ class Userbin_JWT
     if (is_string($token)) {
       $jwt = explode(".", $token);
       if (count($jwt) != 3) {
-        throw new Userbin_SecurityError('Invalid JWT');
+        throw new Castle_SecurityError('Invalid JWT');
       }
       list($this->_header, $this->_body, $this->_signature) = $jwt;
       $this->isValid();
@@ -18,7 +18,7 @@ class Userbin_JWT
 
   protected function getHmac()
   {
-    return hash_hmac('sha256', "$this->_header.$this->_body", Userbin::getApiKey(), true);
+    return hash_hmac('sha256', "$this->_header.$this->_body", Castle::getApiKey(), true);
   }
 
   public function getArrayKey($array, $key=null)
@@ -58,7 +58,7 @@ class Userbin_JWT
   {
     $headers = $this->getHeader();
     if (!array_key_exists('exp', $headers)) {
-      throw new Userbin_SecurityError('Invalid JWT. Has no expiry time');
+      throw new Castle_SecurityError('Invalid JWT. Has no expiry time');
     }
     date_default_timezone_set('UTC');
     return time() > intval($headers['exp']);
@@ -66,12 +66,15 @@ class Userbin_JWT
 
   public function isValid()
   {
+    $jwt = $this->_header.'.';
+    $jwt .= $this->_body.'.';
+    $jwt .= $this->_signature;
     $hmac = $this->calculateSignature();
     if ($hmac == $this->getSignature()) {
       return true;
     }
     else {
-      throw new Userbin_SecurityError('Signature verification failed');
+      throw new Castle_SecurityError('Signature verification failed');
     }
   }
 

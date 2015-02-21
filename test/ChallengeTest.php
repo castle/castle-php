@@ -1,9 +1,9 @@
 <?php
 
-class UserbinChallengeTest extends Userbin_TestCase
+class CastleChallengeTest extends Castle_TestCase
 {
   public static function setUpBeforeClass() {
-    Userbin::setApiKey('secretkey');
+    Castle::setApiKey('secretkey');
     $_SERVER = array();
     $_SERVER['HTTP_USER_AGENT'] = 'TestAgent';
     $_SERVER['REMOTE_ADDR'] = '8.8.8.8';
@@ -11,12 +11,12 @@ class UserbinChallengeTest extends Userbin_TestCase
 
   public function tearDown()
   {
-    Userbin_RequestTransport::reset();
+    Castle_RequestTransport::reset();
   }
 
   public function testValidate()
   {
-    $challenge = new Userbin_Challenge(1);
+    $challenge = new Castle_Challenge(1);
     $challenge->verify('1234');
     $request = $this->assertRequest('post', '/challenges/1/verify');
     $this->assertArrayHasKey('response', $request['params']);
@@ -25,7 +25,7 @@ class UserbinChallengeTest extends Userbin_TestCase
 
   public function testValidateWithoutId()
   {
-    $challenge = new Userbin_Challenge();
+    $challenge = new Castle_Challenge();
     $this->assertFalse($challenge->verify('1234'));
   }
 }

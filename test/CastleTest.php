@@ -1,11 +1,11 @@
 <?php
 
-class UserbinTest extends Userbin_TestCase
+class CastleTest extends Castle_TestCase
 {
   protected $sessionToken;
 
   public static function setUpBeforeClass() {
-    Userbin::setApiKey('secretkey');
+    Castle::setApiKey('secretkey');
   }
 
   public function setUp()
@@ -17,7 +17,7 @@ class UserbinTest extends Userbin_TestCase
 
   public function testSetApiKey()
   {
-    $this->assertContains('secretkey', Userbin::getApiKey());
+    $this->assertContains('secretkey', Castle::getApiKey());
   }
 
   public function exampleUser()
@@ -34,7 +34,8 @@ class UserbinTest extends Userbin_TestCase
 
   public function exampleSessionTokenWithMFA()
   {
-    $jwt = new Userbin_JWT();
+    Castle::setApiKey('secretkey');
+    $jwt = new Castle_JWT();
     $jwt->setHeader(array('iss' => '1', 'exp' => time()));
     $jwt->setBody('vfy', 1);
     return array(array($jwt->toString()));
@@ -42,13 +43,15 @@ class UserbinTest extends Userbin_TestCase
 
   public function exampleSessionTokenWithChallenge()
   {
-    $jwt = new Userbin_JWT();
+    Castle::setApiKey('secretkey');
+    $jwt = new Castle_JWT();
     $jwt->setHeader(array('iss' => '1', 'exp' => time()));
     $jwt->setBody('chg', 1);
     $jwt->setBody('dpr', 1);
     $jwt->setBody('mfa', 1);
     $jwt->setBody('vfy', 1);
     $jwt->setBody('typ', 'authenticator');
+    $jwt->isValid();
     return array(array($jwt->toString()));
   }
 
@@ -57,12 +60,12 @@ class UserbinTest extends Userbin_TestCase
    */
   public function testLoginWithoutExistingSession($userData)
   {
-    Userbin_RequestTransport::setResponse(201, array('token' => $this->sessionToken));
+    Castle_RequestTransport::setResponse(201, array('token' => $this->sessionToken));
 
-    $session = Userbin::login($userData['id'], $userData);
+    $session = Castle::login($userData['id'], $userData);
     $this->assertEquals($this->sessionToken, $session->serialize());
     $this->assertRequest('post', '/users/'.$userData['id'].'/sessions');
-    $this->assertInstanceOf('Userbin_SessionToken', $session);
+    $this->assertInstanceOf('Castle_SessionToken', $session);
   }
 
   /**
@@ -70,7 +73,7 @@ class UserbinTest extends Userbin_TestCase
    */
   public function testLoginSendsUserData($userData)
   {
-    $user = Userbin::login($userData['id'], $userData);
+    $user = Castle::login($userData['id'], $userData);
     $request = $this->assertRequest('post', '/users/'.$userData['id'].'/sessions');
     $this->assertEquals($request['params']['user'], $userData);
   }
@@ -80,11 +83,11 @@ class UserbinTest extends Userbin_TestCase
    */
   public function testLoginWithTrustedDevice($token)
   {
-    Userbin::setSessionToken($token);
-    Userbin_RequestTransport::setResponse(201, array('token' => '12345'));
-    Userbin::trustDevice();
-    Userbin_RequestTransport::setResponse(201, array('token' => $token));
-    Userbin::login(1);
+    Castle::setSessionToken($token);
+    Castle_RequestTransport::setResponse(201, array('token' => '12345'));
+    Castle::trustDevice();
+    Castle_RequestTransport::setResponse(201, array('token' => $token));
+    Castle::login(1);
     $request = $this->assertRequest('post', '/users/1/sessions');
     $this->assertEquals('12345', $request['params']['trusted_device_token']);
   }
@@ -94,38 +97,38 @@ class UserbinTest extends Userbin_TestCase
    */
   public function testAuthorizeWithExistingSession($token)
   {
-    Userbin::setSessionToken($token);
-    Userbin::authorize();
-    $this->assertRequest('post', '/heartbeat', array('X-Userbin-Session-Token' => $token));
+    Castle::setSessionToken($token);
+    Castle::authorize();
+    $this->assertRequest('post', '/heartbeat', array('X-Castle-Session-Token' => $token));
   }
 
 
   /**
-   * @expectedException Userbin_UserUnauthorizedError
+   * @expectedException Castle_UserUnauthorizedError
    */
   public function testAuthorizeWithoutSession()
   {
-    Userbin::authorize();
+    Castle::authorize();
   }
 
   /**
    * @dataProvider exampleSessionTokenWithMFA
-   * @expectedException Userbin_ChallengeRequiredError
+   * @expectedException Castle_ChallengeRequiredError
    */
   public function testAuthorizeWithMFASession($token)
   {
-    Userbin::setSessionToken($token);
-    Userbin::authorize();
+    Castle::setSessionToken($token);
+    Castle::authorize();
   }
 
   /**
    * @dataProvider exampleSessionTokenWithChallenge
-   * @expectedException Userbin_UserUnauthorizedError
+   * @expectedException Castle_UserUnauthorizedError
    */
   public function testAuthorizeWithChallengeSession($token)
   {
-    Userbin::setSessionToken($token);
-    Userbin::authorize();
+    Castle::setSessionToken($token);
+    Castle::authorize();
   }
 
   /**
@@ -133,9 +136,9 @@ class UserbinTest extends Userbin_TestCase
    */
   public function testHasDefaultPairing($token)
   {
-    $this->assertFalse(Userbin::hasDefaultPairing());
-    Userbin::setSessionToken($token);
-    $this->assertTrue(Userbin::hasDefaultPairing());
+    $this->assertFalse(Castle::hasDefaultPairing());
+    Castle::setSessionToken($token);
+    $this->assertTrue(Castle::hasDefaultPairing());
   }
 
   /**
@@ -143,9 +146,9 @@ class UserbinTest extends Userbin_TestCase
    */
   public function testIsMFAEnabled($token)
   {
-    $this->assertFalse(Userbin::isMFAEnabled());
-    Userbin::setSessionToken($token);
-    $this->assertTrue(Userbin::isMFAEnabled());
+    $this->assertFalse(Castle::isMFAEnabled());
+    Castle::setSessionToken($token);
+    $this->assertTrue(Castle::isMFAEnabled());
   }
 
 
@@ -154,16 +157,16 @@ class UserbinTest extends Userbin_TestCase
    */
   public function testLogout($token)
   {
-    Userbin::getTokenStore()->setSession($token);
-    $session = Userbin::getSessionToken();
-    Userbin::logout();
+    Castle::getTokenStore()->setSession($token);
+    $session = Castle::getSessionToken();
+    Castle::logout();
     $this->assertRequest('delete', '/users/%24current/sessions/'.$session->getId());
-    $this->assertFalse(array_key_exists('userbin', $_SESSION));
+    $this->assertFalse(array_key_exists('castle', $_SESSION));
   }
 
   public function testLogoutWithoutToken()
   {
-    $this->assertFalse(Userbin::logout());
+    $this->assertFalse(Castle::logout());
   }
 
   /**
@@ -171,10 +174,10 @@ class UserbinTest extends Userbin_TestCase
    */
   public function testLogoutWithNonExisting($token)
   {
-    Userbin_RequestTransport::setResponse(404);
-    Userbin::getTokenStore()->setSession($token);
-    $session = Userbin::getSessionToken();
-    Userbin::logout();
+    Castle_RequestTransport::setResponse(404);
+    Castle::getTokenStore()->setSession($token);
+    $session = Castle::getSessionToken();
+    Castle::logout();
     /* No exception should be thrown */
   }
 
@@ -184,17 +187,17 @@ class UserbinTest extends Userbin_TestCase
    */
   public function testIsAuthorized($token)
   {
-    $this->assertFalse(Userbin::isAuthorized());
-    Userbin::setSessionToken($token);
-    $this->assertTrue(Userbin::isAuthorized());
+    $this->assertFalse(Castle::isAuthorized());
+    Castle::setSessionToken($token);
+    $this->assertTrue(Castle::isAuthorized());
   }
 
   /**
-   * @expectedException Userbin_UserUnauthorizedError
+   * @expectedException Castle_UserUnauthorizedError
    */
   public function testTrustDeviceWithoutUser()
   {
-    Userbin::trustDevice();
+    Castle::trustDevice();
   }
 
   /**
@@ -202,10 +205,10 @@ class UserbinTest extends Userbin_TestCase
    */
   public function testTrustDeviceWithSession($token)
   {
-    Userbin_RequestTransport::setResponse(201, array('token' => '12345'));
-    Userbin::getTokenStore()->setSession($token);
-    Userbin::trustDevice();
-    $this->assertEquals('12345', Userbin::trustedDeviceToken());
+    Castle_RequestTransport::setResponse(201, array('token' => '12345'));
+    Castle::getTokenStore()->setSession($token);
+    Castle::trustDevice();
+    $this->assertEquals('12345', Castle::trustedDeviceToken());
   }
 
   /**
@@ -213,9 +216,9 @@ class UserbinTest extends Userbin_TestCase
    */
   public function testCurrentUserVerifyPairing($token)
   {
-    Userbin::getTokenStore()->setSession($token);
-    Userbin_RequestTransport::setResponse(201, array('id' => '12345', 'verified' => true));
-    $pairing = Userbin::currentUser()->pairings()->verify(1, array('response' => '12345'));
-    $this->assertInstanceOf('Userbin_Pairing', $pairing);
+    Castle::getTokenStore()->setSession($token);
+    Castle_RequestTransport::setResponse(201, array('id' => '12345', 'verified' => true));
+    $pairing = Castle::currentUser()->pairings()->verify(1, array('response' => '12345'));
+    $this->assertInstanceOf('Castle_Pairing', $pairing);
   }
 }

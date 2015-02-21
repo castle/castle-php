@@ -1,12 +1,12 @@
 <?php
-interface Userbin_iCookieStore
+interface Castle_iCookieStore
 {
   public function destroy($key);
   public function read($key);
   public function write($key, $data);
 }
 
-class Userbin_CookieStore implements Userbin_iCookieStore
+class Castle_CookieStore implements Castle_iCookieStore
 {
   public function destroy($key)
   {

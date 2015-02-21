@@ -1,9 +1,9 @@
 <?php
 
-class UserbinSessionTest extends Userbin_TestCase
+class CastleSessionTest extends Castle_TestCase
 {
   public static function setUpBeforeClass() {
-    Userbin::setApiKey('secretkey');
+    Castle::setApiKey('secretkey');
   }
 
   public function setUp()
@@ -13,13 +13,13 @@ class UserbinSessionTest extends Userbin_TestCase
 
   public function tearDown()
   {
-    Userbin_RequestTransport::reset();
+    Castle_RequestTransport::reset();
   }
 
   public function exampleSessionTokenWithChallenge()
   {
-    Userbin::setApiKey('secretkey');
-    $jwt = new Userbin_JWT();
+    Castle::setApiKey('secretkey');
+    $jwt = new Castle_JWT();
     $jwt->setHeader(array(
       'iss' => 1
     ));
@@ -51,7 +51,7 @@ class UserbinSessionTest extends Userbin_TestCase
    */
   public function testHasExpired($sessionData, $sessionToken)
   {
-    $session = new Userbin_SessionToken($sessionToken);
+    $session = new Castle_SessionToken($sessionToken);
     $this->assertTrue($session->hasExpired());
   }
 
@@ -60,8 +60,8 @@ class UserbinSessionTest extends Userbin_TestCase
    */
   public function testUser($sessionData, $sessionToken)
   {
-    $session = new Userbin_SessionToken($sessionToken);
-    $this->assertTrue($session->getUser() instanceof Userbin_User);
+    $session = new Castle_SessionToken($sessionToken);
+    $this->assertTrue($session->getUser() instanceof Castle_User);
   }
 
   /**
@@ -69,7 +69,7 @@ class UserbinSessionTest extends Userbin_TestCase
    */
   public function testDefaultPairingWithChallenge($sessionToken)
   {
-    $session = new Userbin_SessionToken($sessionToken);
+    $session = new Castle_SessionToken($sessionToken);
     $this->assertTrue($session->hasDefaultPairing());
   }
 
@@ -78,7 +78,7 @@ class UserbinSessionTest extends Userbin_TestCase
    */
   public function testMFAInProgressWithoutChallenge($sessionData, $sessionToken)
   {
-    $session = new Userbin_SessionToken($sessionToken);
+    $session = new Castle_SessionToken($sessionToken);
     $this->assertFalse($session->isMFAInProgress());
   }
 
@@ -87,7 +87,7 @@ class UserbinSessionTest extends Userbin_TestCase
    */
   public function testMFAEnableWithChallenge($sessionToken)
   {
-    $session = new Userbin_SessionToken($sessionToken);
+    $session = new Castle_SessionToken($sessionToken);
     $this->assertTrue($session->isMFAEnabled());
   }
 
@@ -96,7 +96,7 @@ class UserbinSessionTest extends Userbin_TestCase
    */
   public function testMFAInProgressWithChallenge($sessionToken)
   {
-    $session = new Userbin_SessionToken($sessionToken);
+    $session = new Castle_SessionToken($sessionToken);
     $this->assertTrue($session->isMFAInProgress());
   }
 
@@ -105,7 +105,7 @@ class UserbinSessionTest extends Userbin_TestCase
    */
   public function testMFARequiredWithChallenge($sessionToken)
   {
-    $session = new Userbin_SessionToken($sessionToken);
+    $session = new Castle_SessionToken($sessionToken);
     $this->assertTrue($session->isMFARequired());
   }
 
@@ -114,7 +114,7 @@ class UserbinSessionTest extends Userbin_TestCase
    */
   public function testUserId($sessionData, $sessionToken)
   {
-    $session = new Userbin_SessionToken($sessionToken);
+    $session = new Castle_SessionToken($sessionToken);
     $this->assertEquals($session->getUser()->getId(), '$current');
   }
 
@@ -123,9 +123,9 @@ class UserbinSessionTest extends Userbin_TestCase
    */
   public function testLoad($sessionData, $sessionToken)
   {
-    $session = new Userbin_SessionToken($sessionToken);
+    $session = new Castle_SessionToken($sessionToken);
     $user = $session->getUser();
-    $this->assertTrue($user instanceof Userbin_User);
+    $this->assertTrue($user instanceof Castle_User);
   }
 
   /**
@@ -133,7 +133,7 @@ class UserbinSessionTest extends Userbin_TestCase
    */
   public function testSerialize($sessionData, $sessionToken)
   {
-    $session = new Userbin_SessionToken($sessionToken);
+    $session = new Castle_SessionToken($sessionToken);
     $this->assertEquals($sessionToken, $session->serialize());
     $this->assertEquals($sessionToken, sprintf('%s', $session));
   }

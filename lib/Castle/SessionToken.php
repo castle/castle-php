@@ -1,12 +1,12 @@
 <?php
 
-class Userbin_SessionToken
+class Castle_SessionToken
 {
   protected $jwt;
 
   public function __construct($token)
   {
-    $this->jwt = new Userbin_JWT($token);
+    $this->jwt = new Castle_JWT($token);
   }
 
   public function __toString()
@@ -21,7 +21,7 @@ class Userbin_SessionToken
 
   public function getUser()
   {
-    return new Userbin_User('$current');
+    return new Castle_User('$current');
   }
 
   public function hasDefaultPairing()

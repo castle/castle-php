@@ -1,6 +1,6 @@
 <?php
 
-class UserbinErrorTest extends Userbin_TestCase
+class CastleErrorTest extends Castle_TestCase
 {
 
   public function setUp()
@@ -8,70 +8,70 @@ class UserbinErrorTest extends Userbin_TestCase
     $_SERVER = array();
     $_SERVER['HTTP_USER_AGENT'] = 'TestAgent';
     $_SERVER['REMOTE_ADDR'] = '8.8.8.8';
-    Userbin_RequestTransport::reset();
-    $this->request = new Userbin_Request();
+    Castle_RequestTransport::reset();
+    $this->request = new Castle_Request();
   }
 
   /**
-   * @expectedException Userbin_BadRequest
+   * @expectedException Castle_BadRequest
    */
   public function testBadRequest()
   {
-    Userbin_RequestTransport::setResponse(400);
+    Castle_RequestTransport::setResponse(400);
     $this->request->send('GET', '/test');
   }
 
   /**
-   * @expectedException Userbin_UnauthorizedError
+   * @expectedException Castle_UnauthorizedError
    */
   public function testUnauthorized()
   {
-    Userbin_RequestTransport::setResponse(401);
+    Castle_RequestTransport::setResponse(401);
     $this->request->send('GET', '/test');
   }
 
   /**
-   * @expectedException Userbin_ForbiddenError
+   * @expectedException Castle_ForbiddenError
    */
   public function testForbidden()
   {
-    Userbin_RequestTransport::setResponse(403);
+    Castle_RequestTransport::setResponse(403);
     $this->request->send('GET', '/test');
   }
 
   /**
-   * @expectedException Userbin_NotFoundError
+   * @expectedException Castle_NotFoundError
    */
   public function testNotFound()
   {
-    Userbin_RequestTransport::setResponse(404);
+    Castle_RequestTransport::setResponse(404);
     $this->request->send('GET', '/test');
   }
 
   /**
-   * @expectedException Userbin_UserUnauthorizedError
+   * @expectedException Castle_UserUnauthorizedError
    */
   public function testUserUnauthorized()
   {
-    Userbin_RequestTransport::setResponse(419);
+    Castle_RequestTransport::setResponse(419);
     $this->request->send('GET', '/test');
   }
 
   /**
-   * @expectedException Userbin_InvalidParametersError
+   * @expectedException Castle_InvalidParametersError
    */
   public function testInvalidParameters()
   {
-    Userbin_RequestTransport::setResponse(422);
+    Castle_RequestTransport::setResponse(422);
     $this->request->send('GET', '/test');
   }
 
   /**
-   * @expectedException Userbin_ConfigurationError
+   * @expectedException Castle_ConfigurationError
    */
   public function testConfiguration()
   {
-    Userbin::setApiKey(null);
+    Castle::setApiKey(null);
     $this->request->send('GET', '/test');
   }
 }

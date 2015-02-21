@@ -1,13 +1,13 @@
 <?php
 
-class Userbin_Request
+class Castle_Request
 {
   public static function apiUrl($url='')
   {
-    $apiEndpoint = getenv('USERBIN_API_ENDPOINT');
+    $apiEndpoint = getenv('CASTLE_API_ENDPOINT');
     if ( !$apiEndpoint ) {
-      $apiBase    = Userbin::$apiBase;
-      $apiVersion = Userbin::getApiVersion();
+      $apiBase    = Castle::$apiBase;
+      $apiVersion = Castle::getApiVersion();
       $apiEndpoint = $apiBase.'/'.$apiVersion;
     }
     return $apiEndpoint.$url;
@@ -18,11 +18,11 @@ class Userbin_Request
     $langVersion = phpversion();
     $uname = php_uname();
     $userAgent = array(
-      'bindings_version' => Userbin::VERSION,
+      'bindings_version' => Castle::VERSION,
       'lang' => 'php',
       'lang_version' => $langVersion,
       'platform' => PHP_OS,
-      'publisher' => 'userbin',
+      'publisher' => 'castle',
       'uname' => $uname
     );
     return json_encode($userAgent);
@@ -49,27 +49,27 @@ class Userbin_Request
     $msg  = $response['message'];
     switch ($status) {
       case 400:
-        throw new Userbin_BadRequest($msg, $type, $status);
+        throw new Castle_BadRequest($msg, $type, $status);
       case 401:
-        throw new Userbin_UnauthorizedError($msg, $type, $status);
+        throw new Castle_UnauthorizedError($msg, $type, $status);
       case 403:
-        throw new Userbin_ForbiddenError($msg, $type, $status);
+        throw new Castle_ForbiddenError($msg, $type, $status);
       case 404:
-        throw new Userbin_NotFoundError($msg, $type, $status);
+        throw new Castle_NotFoundError($msg, $type, $status);
       case 419:
         /* Clear session since this error means that is is invalid or removed */
-        Userbin::getTokenStore()->setSession();
-        throw new Userbin_UserUnauthorizedError($msg, $type, $status);
+        Castle::getTokenStore()->setSession();
+        throw new Castle_UserUnauthorizedError($msg, $type, $status);
       case 422:
-        throw new Userbin_InvalidParametersError($msg, $type, $status);
+        throw new Castle_InvalidParametersError($msg, $type, $status);
       default:
-        throw new Userbin_ApiError($msg, $type, $status);
+        throw new Castle_ApiError($msg, $type, $status);
     }
   }
 
   public function handleRequestError($request)
   {
-    throw new Userbin_RequestError("$request->rError: $request->rMessage");
+    throw new Castle_RequestError("$request->rError: $request->rMessage");
   }
 
   public function handleResponse($request)
@@ -80,16 +80,16 @@ class Userbin_Request
 
     $response = json_decode($request->rBody, true);
     if (!empty($request->rBody) && $response === null) {
-      throw new Userbin_ApiError('Invalid response from API', 'api_error', $request->rStatus);
+      throw new Castle_ApiError('Invalid response from API', 'api_error', $request->rStatus);
     }
 
     if ($request->rStatus < 200 || $request->rStatus >= 300) {
       $this->handleApiError($response, $request->rStatus);
     }
 
-    // Update the local session if it was updated by Userbin
-    if (array_key_exists('X-Userbin-Set-Session-Token', $request->rHeaders)) {
-      Userbin::setSessionToken($request->rHeaders['X-Userbin-Set-Session-Token']);
+    // Update the local session if it was updated by Castle
+    if (array_key_exists('X-Castle-Set-Session-Token', $request->rHeaders)) {
+      Castle::setSessionToken($request->rHeaders['X-Castle-Set-Session-Token']);
     }
 
     return array($response, $request);
@@ -97,9 +97,9 @@ class Userbin_Request
 
   public function preFlightCheck()
   {
-    $key = Userbin::getApiKey();
+    $key = Castle::getApiKey();
     if (empty($key)) {
-      throw new Userbin_ConfigurationError();
+      throw new Castle_ConfigurationError();
     }
   }
 
@@ -107,23 +107,23 @@ class Userbin_Request
   {
     $this->preFlightCheck();
 
-    $client = Userbin_Request::clientUserAgent();
+    $client = Castle_Request::clientUserAgent();
     $body = empty($params) ? null : json_encode($params);
     $headers = array(
-      'X-Userbin-User-Agent: ' . $_SERVER['HTTP_USER_AGENT'],
-      'X-Userbin-Ip: ' . self::getIp(),
-      'X-Userbin-Client-User-Agent: ' . $client,
+      'X-Castle-User-Agent: ' . $_SERVER['HTTP_USER_AGENT'],
+      'X-Castle-Ip: ' . self::getIp(),
+      'X-Castle-Client-User-Agent: ' . $client,
       'Content-Type: application/json',
       'Content-Length: ' . strlen($body)
     );
 
     // Check if there is a current session and pass it along
-    $session = Userbin::getTokenStore()->getSession();
+    $session = Castle::getTokenStore()->getSession();
     if (isset($session)) {
-      $headers[]= 'X-Userbin-Session-Token: '.$session;
+      $headers[]= 'X-Castle-Session-Token: '.$session;
     }
 
-    $request = new Userbin_RequestTransport();
+    $request = new Castle_RequestTransport();
     $request->send($method, self::apiUrl($url), $body, $headers);
 
     return $this->handleResponse($request);

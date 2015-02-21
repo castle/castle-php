@@ -1,6 +1,6 @@
 <?php
 
-class Userbin_Pairing extends RestModel
+class Castle_Pairing extends RestModel
 {
   public function setDefault()
   {

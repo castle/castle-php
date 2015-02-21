@@ -1,5 +1,5 @@
 <?php
-class UserbinModelTest extends Userbin_TestCase
+class CastleModelTest extends Castle_TestCase
 {
   public static function setUpBeforeClass()
   {
@@ -9,7 +9,7 @@ class UserbinModelTest extends Userbin_TestCase
 
   public function tearDown()
   {
-    Userbin_RequestTransport::reset();
+    Castle_RequestTransport::reset();
   }
 
   public function exampleUser()
@@ -58,27 +58,27 @@ class UserbinModelTest extends Userbin_TestCase
 
   public function testGetName()
   {
-    $user = new Userbin_User();
+    $user = new Castle_User();
     $this->assertEquals($user->getResourceName(), 'users');
   }
 
   public function testGetResourcePathWithoutId()
   {
-    $user = new Userbin_User();
+    $user = new Castle_User();
     $this->assertEquals($user->getResourcePath(), '/users');
   }
 
   public function testGetResourcePathWithId()
   {
     $userData = array('id' => 1);
-    $user = new Userbin_User($userData);
+    $user = new Castle_User($userData);
     $this->assertEquals($user->getResourcePath(), '/users/1');
   }
 
   // public function testConstructorSetsReference()
   // {
   //   $attributes = array('id' => 1);
-  //   $model = new Userbin_Model($attributes);
+  //   $model = new Castle_Model($attributes);
   //   $attributes['id'] = 2;
   //   $this->assertEquals($model->id, $attributes['id']);
   // }
@@ -88,8 +88,8 @@ class UserbinModelTest extends Userbin_TestCase
    */
   public function testCreate($user)
   {
-    Userbin_RequestTransport::setResponse(200, $user);
-    $user = Userbin_User::create(array('email' => 'hello@example.com'));
+    Castle_RequestTransport::setResponse(200, $user);
+    $user = Castle_User::create(array('email' => 'hello@example.com'));
     $this->assertRequest('post', '/users');
   }
 
@@ -98,8 +98,8 @@ class UserbinModelTest extends Userbin_TestCase
    */
   public function testAll($user)
   {
-    Userbin_RequestTransport::setResponse(200, array($user, $user));
-    $users = Userbin_User::all();
+    Castle_RequestTransport::setResponse(200, array($user, $user));
+    $users = Castle_User::all();
     $this->assertRequest('get', '/users');
     $this->assertEquals($users[0]->id, $user['id']);
   }
@@ -109,8 +109,8 @@ class UserbinModelTest extends Userbin_TestCase
    */
   public function testCreateSendsParams($user)
   {
-    Userbin_User::create($user);
-    $request = Userbin_RequestTransport::getLastRequest();
+    Castle_User::create($user);
+    $request = Castle_RequestTransport::getLastRequest();
     $this->assertEquals($user, $request['params']);
   }
 
@@ -118,8 +118,8 @@ class UserbinModelTest extends Userbin_TestCase
    * @dataProvider exampleUser
    */
   public function testDestroy($user) {
-    Userbin_RequestTransport::setResponse(204);
-    Userbin_User::destroy($user['id']);
+    Castle_RequestTransport::setResponse(204);
+    Castle_User::destroy($user['id']);
     $this->assertRequest('delete', '/users/'.$user['id']);
   }
 
@@ -128,33 +128,33 @@ class UserbinModelTest extends Userbin_TestCase
    */
   public function testFind($user)
   {
-    Userbin_RequestTransport::setResponse(201, $user);
-    $found_user = Userbin_User::find($user['id']);
+    Castle_RequestTransport::setResponse(201, $user);
+    $found_user = Castle_User::find($user['id']);
     $this->assertRequest('get', '/users/'.$user['id']);
     $this->assertEquals($found_user->email, $user['email']);
   }
 
   public function testInstancePost()
   {
-    Userbin_RequestTransport::setResponse(201, array('id' => '1', 'verified' => true));
-    $challenge = new Userbin_Challenge(1);
+    Castle_RequestTransport::setResponse(201, array('id' => '1', 'verified' => true));
+    $challenge = new Castle_Challenge(1);
     $response = $challenge->verify('12345');
     $this->assertEquals(1, $challenge->id);
     $this->assertEquals(true, $challenge->verified);
-    $this->assertInstanceOf('Userbin_Challenge', $response);
+    $this->assertInstanceOf('Castle_Challenge', $response);
   }
 
   public function testNestedFind()
   {
-    $user = new Userbin_User(1234);
+    $user = new Castle_User(1234);
     $user->challenges()->find(5678);
     $this->assertRequest('get', '/users/1234/challenges/5678');
   }
 
   public function testNestedInstanceMethod()
   {
-    Userbin_RequestTransport::setResponse(200, array('id' => 1));
-    $user = new Userbin_User(1234);
+    Castle_RequestTransport::setResponse(200, array('id' => 1));
+    $user = new Castle_User(1234);
     $challenge = $user->challenges()->find(1);
     $challenge->verify('response');
     $this->assertRequest('post', '/users/1234/challenges/1/verify');
@@ -162,23 +162,23 @@ class UserbinModelTest extends Userbin_TestCase
 
   public function testBelongsToWithIdAttribute()
   {
-    $challenge = new Userbin_Challenge(array('id' => 1, 'pairing_id' => 2));
+    $challenge = new Castle_Challenge(array('id' => 1, 'pairing_id' => 2));
     $pairing = $challenge->pairing();
-    $this->assertInstanceOf('Userbin_Pairing', $pairing);
+    $this->assertInstanceOf('Castle_Pairing', $pairing);
     $this->assertEquals(2, $pairing->id);
   }
 
   public function testBelongsToWithObject()
   {
-    $challenge = new Userbin_Challenge(array('id' => 1, 'pairing' => array('id' => 2)));
+    $challenge = new Castle_Challenge(array('id' => 1, 'pairing' => array('id' => 2)));
     $pairing = $challenge->pairing();
-    $this->assertInstanceOf('Userbin_Pairing', $pairing);
+    $this->assertInstanceOf('Castle_Pairing', $pairing);
     $this->assertEquals(2, $pairing->id);
   }
 
   public function testBelongsToWithoutId()
   {
-    $challenge = new Userbin_Challenge(array('id' => 1));
+    $challenge = new Castle_Challenge(array('id' => 1));
     $pairing = $challenge->pairing();
     $this->assertNull($pairing);
   }
@@ -189,8 +189,8 @@ class UserbinModelTest extends Userbin_TestCase
       'id' => 1,
       'session' => array('id' => 1)
     );
-    $user = new Userbin_User($userData);
-    $session = $user->hasOne('Userbin_Session');
+    $user = new Castle_User($userData);
+    $session = $user->hasOne('Castle_Session');
     $this->assertEquals(1, $session->id);
     $session->save();
     $this->assertRequest('put', '/users/1/session');
@@ -198,7 +198,7 @@ class UserbinModelTest extends Userbin_TestCase
 
   public function testHasManyForSingleResourceInstanceMethod()
   {
-    $user = new Userbin_User(1);
+    $user = new Castle_User(1);
     $challenge = $user->challenges()->verify(1, 'response');
     $this->assertRequest('post', '/users/1/challenges/1/verify');
   }
@@ -206,9 +206,9 @@ class UserbinModelTest extends Userbin_TestCase
 
   public function testEscapeUrl()
   {
-    $user = new Userbin_User('Hofbräuhaus / München');
+    $user = new Castle_User('Hofbräuhaus / München');
     $user->fetch();
-    $request = Userbin_RequestTransport::getLastRequest();
+    $request = Castle_RequestTransport::getLastRequest();
     $this->assertStringEndsWith('Hofbr%C3%A4uhaus%20%2F%20M%C3%BCnchen', $request['url']);
   }
 }

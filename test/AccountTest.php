@@ -1,9 +1,9 @@
 <?php
 
-class UserbinAccountTest extends Userbin_TestCase
+class CastleAccountTest extends Castle_TestCase
 {
   public static function setUpBeforeClass() {
-    Userbin::setApiKey('secretkey');
+    Castle::setApiKey('secretkey');
     $_SERVER = array();
     $_SERVER['HTTP_USER_AGENT'] = 'TestAgent';
     $_SERVER['REMOTE_ADDR'] = '8.8.8.8';
@@ -11,7 +11,7 @@ class UserbinAccountTest extends Userbin_TestCase
 
   public function tearDown()
   {
-    Userbin_RequestTransport::reset();
+    Castle_RequestTransport::reset();
   }
 
   public function exampleSettings()
@@ -30,8 +30,8 @@ class UserbinAccountTest extends Userbin_TestCase
    */
   public function testAccountGetRequest($settings)
   {
-    Userbin_RequestTransport::setResponse(200, $settings);
-    $settings = new Userbin_Account();
+    Castle_RequestTransport::setResponse(200, $settings);
+    $settings = new Castle_Account();
     $settings->fetch();
     $this->assertRequest('get', '/account');
   }
@@ -41,8 +41,8 @@ class UserbinAccountTest extends Userbin_TestCase
    */
   public function testAccountPostRequest($settings)
   {
-    Userbin_RequestTransport::setResponse(200, $settings);
-    $settings = new Userbin_Account($settings);
+    Castle_RequestTransport::setResponse(200, $settings);
+    $settings = new Castle_Account($settings);
     $settings->public_name = 'New name';
     $settings->save();
     $request = $this->assertRequest('post', '/account');
@@ -55,14 +55,14 @@ class UserbinAccountTest extends Userbin_TestCase
    */
   public function testGetter($settings)
   {
-    $settings = new Userbin_Account($settings);
+    $settings = new Castle_Account($settings);
     $this->assertEquals('Test', $settings->public_name);
     $this->assertNull($settings->nothing);
   }
 
   public function testSetter()
   {
-    $settings = new Userbin_Account();
+    $settings = new Castle_Account();
     $settings->public_name = "Test";
     $this->assertArrayHasKey('settings', $settings->getAttributes());
     $this->assertEquals('Test', $settings->public_name);

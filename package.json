@@ -1,7 +1,7 @@
 {
-  "name": "userbin-php",
+  "name": "castle-php",
   "version": "0.0.1",
-  "description": "PHP bindings for Userbin",
+  "description": "PHP bindings for Castle",
   "main": "Gruntfile.js",
   "directories": {
     "example": "examples",
@@ -21,11 +21,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/userbin/userbin-php.git"
+    "url": "git://github.com/castle/castle-php.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/userbin/userbin-php/issues"
+    "url": "https://github.com/castle/castle-php/issues"
   }
 }

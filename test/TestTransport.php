@@ -1,6 +1,6 @@
 <?php
 
-class Userbin_RequestTransport
+class Castle_RequestTransport
 {
   public $rBody;
   public $rHeaders;

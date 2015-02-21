@@ -1,6 +1,6 @@
 <?php
 
-class Userbin_RequestTransport
+class Castle_RequestTransport
 {
   public $rBody;
   public $rHeaders;
@@ -54,7 +54,7 @@ class Userbin_RequestTransport
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "DELETE");
         break;
       default:
-        throw new Userbin_RequestError();
+        throw new Castle_RequestError();
     }
     $curlOptions = array();
     if (!empty($body)) {
@@ -62,9 +62,9 @@ class Userbin_RequestTransport
     }
 
     $curlOptions[CURLOPT_URL] = $url;
-    $curlOptions[CURLOPT_USERPWD] = ":" . Userbin::getApiKey();
+    $curlOptions[CURLOPT_USERPWD] = ":" . Castle::getApiKey();
     $curlOptions[CURLOPT_RETURNTRANSFER] = true;
-    $curlOptions[CURLOPT_USERAGENT] = "Userbin/v1 PHPBindings/".Userbin::VERSION;
+    $curlOptions[CURLOPT_USERAGENT] = "Castle/v1 PHPBindings/".Castle::VERSION;
     $curlOptions[CURLOPT_CONNECTTIMEOUT] = 3;
     $curlOptions[CURLOPT_TIMEOUT] = 10;
     $curlOptions[CURLOPT_HTTPHEADER] = $headers;

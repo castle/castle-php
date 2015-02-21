@@ -1,6 +1,6 @@
 <?php
 
-class UserbinUserTest extends Userbin_TestCase
+class CastleUserTest extends Castle_TestCase
 {
   public static function setUpBeforeClass()
   {
@@ -10,7 +10,7 @@ class UserbinUserTest extends Userbin_TestCase
 
   public function tearDown()
   {
-    Userbin_RequestTransport::reset();
+    Castle_RequestTransport::reset();
   }
 
   public function exampleUser()
@@ -28,7 +28,7 @@ class UserbinUserTest extends Userbin_TestCase
    */
   public function testBackupCodes($userData)
   {
-    $user = new Userbin_User($userData);
+    $user = new Castle_User($userData);
     $user->backupCodes()->generate();
     $this->assertRequest('post', '/users/'.$user->id.'/backup_codes');
   }
@@ -38,7 +38,7 @@ class UserbinUserTest extends Userbin_TestCase
    */
   public function testCreateChallenge($userData)
   {
-    $user = new Userbin_User($userData);
+    $user = new Castle_User($userData);
     $user->challenges()->create();
     $this->assertRequest('post', '/users/'.$user->id.'/challenges');
   }
@@ -48,19 +48,19 @@ class UserbinUserTest extends Userbin_TestCase
    */
   public function testCreateSession($userData)
   {
-    $user = new Userbin_User($userData);
+    $user = new Castle_User($userData);
     $user->sessions()->create();
     $this->assertRequest('post', '/users/'.$user->id.'/sessions');
   }
 
   /**
    * @dataProvider exampleUser
-   * @expectedException Userbin_Error
+   * @expectedException Castle_Error
    */
   public function testCreateSessionInvalidResponse($user)
   {
-    Userbin_RequestTransport::setResponse(200, '');
-    $user = new Userbin_User($user);
+    Castle_RequestTransport::setResponse(200, '');
+    $user = new Castle_User($user);
     $user->sessions()->create();
   }
 
@@ -69,8 +69,8 @@ class UserbinUserTest extends Userbin_TestCase
    */
   public function testCreateSessionSendsUserdata($userData)
   {
-    Userbin_RequestTransport::setResponse(200, array());
-    $user = new Userbin_User($userData);
+    Castle_RequestTransport::setResponse(200, array());
+    $user = new Castle_User($userData);
     $user->sessions()->create(array('user' => $userData));
     $request = $this->assertRequest('post', '/users/'.$user->id.'/sessions');
     $this->assertEquals($request['params']['user'], $userData);
@@ -81,7 +81,7 @@ class UserbinUserTest extends Userbin_TestCase
    */
   public function testDisableMFA($userData)
   {
-    $user = new Userbin_User($userData);
+    $user = new Castle_User($userData);
     $user->disableMFA();
     $this->assertRequest('post', '/users/'.$user->id.'/disable_mfa');
   }
@@ -91,7 +91,7 @@ class UserbinUserTest extends Userbin_TestCase
    */
   public function testEnableMFA($userData)
   {
-    $user = new Userbin_User($userData);
+    $user = new Castle_User($userData);
     $user->enableMFA();
     $this->assertRequest('post', '/users/'.$user->id.'/enable_mfa');
   }
@@ -101,7 +101,7 @@ class UserbinUserTest extends Userbin_TestCase
    */
   public function testEventsMFA($userData)
   {
-    $user = new Userbin_User($userData);
+    $user = new Castle_User($userData);
     $user->events()->fetch();
     $this->assertRequest('get', '/users/'.$user->id.'/events');
   }

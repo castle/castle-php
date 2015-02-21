@@ -1,6 +1,6 @@
 <?php
 
-class Userbin_BackupCodes extends RestModel
+class Castle_BackupCodes extends RestModel
 {
   protected $isSingular = true;
 

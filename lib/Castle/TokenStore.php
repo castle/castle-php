@@ -1,5 +1,5 @@
 <?php
-interface Userbin_iSessionStore
+interface Castle_iSessionStore
 {
   public function getSession();
   public function setSession($value);
@@ -10,15 +10,15 @@ interface Userbin_iSessionStore
 /**
  * By default the session token is persisted in the PHP $_SESSION, which may
  * in turn point to any source. This option give you an option to
- * use any store, such as Redis or Memcached to store your Userbin tokens.
+ * use any store, such as Redis or Memcached to store your Castle tokens.
  */
-class Userbin_TokenStore implements Userbin_iSessionStore
+class Castle_TokenStore implements Castle_iSessionStore
 {
   protected $sessionKey       = '_ubt';
   protected $store            = null;
   protected $trustedDeviceKey = '_ubs';
 
-  public function __construct($store = 'Userbin_CookieStore')
+  public function __construct($store = 'Castle_CookieStore')
   {
     $this->store = new $store;
   }

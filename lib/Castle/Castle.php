@@ -1,16 +1,16 @@
 <?php
 
-abstract class Userbin
+abstract class Castle
 {
   public static $apiKey;
 
-  public static $apiBase = 'https://api.userbin.com';
+  public static $apiBase = 'https://api.castle.io';
 
   public static $apiVersion = 'v1';
 
-  public static $tokenStore = 'Userbin_TokenStore';
+  public static $tokenStore = 'Castle_TokenStore';
 
-  public static $cookieStore = 'Userbin_CookieStore';
+  public static $cookieStore = 'Castle_CookieStore';
 
   const VERSION = '1.1.0';
 
@@ -53,7 +53,7 @@ abstract class Userbin
   {
     $sessionData = self::getTokenStore()->getSession();
     if ($sessionData) {
-      return new Userbin_SessionToken($sessionData);
+      return new Castle_SessionToken($sessionData);
     }
     return null;
   }
@@ -61,10 +61,10 @@ abstract class Userbin
   public static function setSessionToken($token)
   {
     if ( is_string($token) ) {
-      Userbin::getTokenStore()->setSession($token);
+      Castle::getTokenStore()->setSession($token);
     }
     else {
-      Userbin::getTokenStore()->setSession();
+      Castle::getTokenStore()->setSession();
     }
   }
 
@@ -78,27 +78,27 @@ abstract class Userbin
   {
     $sessionToken = self::getSessionToken();
     if ( !$sessionToken ) {
-      throw new Userbin_UserUnauthorizedError('Need to call login before authorize');
+      throw new Castle_UserUnauthorizedError('Need to call login before authorize');
     }
 
     if ( $sessionToken->hasExpired() ) {
-      $request = new Userbin_Request();
+      $request = new Castle_Request();
       $request->send('post', '/heartbeat');
     }
 
     if ( self::isMFAInProgress() ) {
       self::logout();
-      throw new Userbin_UserUnauthorizedError('Logged out due to being unverified');
+      throw new Castle_UserUnauthorizedError('Logged out due to being unverified');
     }
 
     if ( self::isMFARequired() && !self::isDeviceTrusted() ) {
-      throw new Userbin_ChallengeRequiredError('Two-step verification necessary');
+      throw new Castle_ChallengeRequiredError('Two-step verification necessary');
     }
   }
 
   /**
    * Returns the currently logged in user, if any
-   * @return Userbin_User User object, null if not available
+   * @return Castle_User User object, null if not available
    */
   public static function currentUser()
   {
@@ -154,20 +154,20 @@ abstract class Userbin
    * Creates a session for a user using
    * @param  String $userId         Local database ID
    * @param  Array  $userAttributes Optional user attributes
-   * @return Userbin_SessionToken   The created session
+   * @return Castle_SessionToken   The created session
    */
   public static function login($userId, $userAttributes = Array())
   {
     self::setSessionToken(null);
 
-    $user = new Userbin_User($userAttributes);
+    $user = new Castle_User($userAttributes);
     $user->setId($userId);
 
     $newSession = $user->sessions()->create(array(
       'user' => $userAttributes,
       'trusted_device_token' => self::trustedDeviceToken()
     ));
-    $session = new Userbin_SessionToken($newSession->token);
+    $session = new Castle_SessionToken($newSession->token);
     self::setSessionToken($session->serialize());
     return $session;
   }
@@ -188,7 +188,7 @@ abstract class Userbin
       /* Silence cases where the session has already been removed etc. */
       $sessionId = $sessionToken->getId();
       $sessionToken->getUser()->sessions()->delete($sessionId);
-    } catch (Userbin_ApiError $e) {}
+    } catch (Castle_ApiError $e) {}
 
     self::setSessionToken(null);
   }
@@ -196,13 +196,13 @@ abstract class Userbin
   /**
    * Creates a trusted device for the current user and saves the id in the
    * selected store (default Cookies via `setcookie`)
-   * @return Userbin_TrustedDevice The created trusted device object. Null if not available
+   * @return Castle_TrustedDevice The created trusted device object. Null if not available
    */
   public static function trustDevice($attributes = null)
   {
     $currentUser = self::currentUser();
     if (!$currentUser) {
-      throw new Userbin_UserUnauthorizedError('Need to call login before trusting device');
+      throw new Castle_UserUnauthorizedError('Need to call login before trusting device');
     }
     $trustedDevice = self::currentUser()->trustedDevices()->create($attributes);
 
