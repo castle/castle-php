@@ -109,7 +109,9 @@ class Castle_Request
 
     $client = Castle_Request::clientUserAgent();
     $body = empty($params) ? null : json_encode($params);
+    $cookies = Castle::getCookieStore();
     $headers = array(
+      'X-Castle-Cookie-Id: ' . $cookies->read('__cid'),
       'X-Castle-User-Agent: ' . $_SERVER['HTTP_USER_AGENT'],
       'X-Castle-Ip: ' . self::getIp(),
       'X-Castle-Client-User-Agent: ' . $client,
