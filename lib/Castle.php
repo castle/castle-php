@@ -28,6 +28,7 @@ require(dirname(__FILE__) . '/Castle/Models/Challenge.php');
 require(dirname(__FILE__) . '/Castle/Models/Context.php');
 require(dirname(__FILE__) . '/Castle/Models/Event.php');
 require(dirname(__FILE__) . '/Castle/Models/Pairing.php');
+require(dirname(__FILE__) . '/Castle/Models/Recommendation.php');
 require(dirname(__FILE__) . '/Castle/Models/Session.php');
 require(dirname(__FILE__) . '/Castle/Models/TrustedDevice.php');
 require(dirname(__FILE__) . '/Castle/Models/User.php');

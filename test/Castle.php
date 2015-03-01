@@ -35,6 +35,7 @@ require(dirname(__FILE__) . '/../lib/Castle/Models/Challenge.php');
 require(dirname(__FILE__) . '/../lib/Castle/Models/Context.php');
 require(dirname(__FILE__) . '/../lib/Castle/Models/Event.php');
 require(dirname(__FILE__) . '/../lib/Castle/Models/Pairing.php');
+require(dirname(__FILE__) . '/../lib/Castle/Models/Recommendation.php');
 require(dirname(__FILE__) . '/../lib/Castle/Models/Session.php');
 require(dirname(__FILE__) . '/../lib/Castle/Models/TrustedDevice.php');
 require(dirname(__FILE__) . '/../lib/Castle/Models/User.php');

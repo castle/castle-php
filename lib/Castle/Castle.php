@@ -193,6 +193,12 @@ abstract class Castle
     self::setSessionToken(null);
   }
 
+  public static function recommendation($params = null)
+  {
+    $recommendation = new Castle_Recommendation();
+    return $recommendation->fetch('?'.http_build_query($params));
+  }
+
   /**
    * Track a security event
    * @param  Array  $attributes An array of attributes to track. The 'name' key

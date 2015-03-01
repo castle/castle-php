@@ -203,9 +203,9 @@ class RestModel
     $this->request('delete');
   }
 
-  public function fetch()
+  public function fetch($path=null)
   {
-    $attributes = $this->request('get');
+    $attributes = $this->request('get', $path);
     $this->setAttributes($attributes);
     return $this;
   }
