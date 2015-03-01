@@ -193,7 +193,7 @@ abstract class Castle
     self::setSessionToken(null);
   }
 
-  public static function recommendation($params = null)
+  public static function recommend($params = null)
   {
     $recommendation = new Castle_Recommendation();
     return $recommendation->fetch('?'.http_build_query($params));

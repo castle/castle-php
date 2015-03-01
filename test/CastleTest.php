@@ -192,6 +192,13 @@ class CastleTest extends Castle_TestCase
     $this->assertTrue(Castle::isAuthorized());
   }
 
+  public function testRecommend()
+  {
+    Castle_RequestTransport::setResponse(200, array('action' => 'ok'));
+    Castle::recommend(array('user_id' => '1'));
+    $this->assertRequest('get', '/recommendation/?user_id=1');
+  }
+
   public function testTrack()
   {
     Castle_RequestTransport::setResponse(204, '');
