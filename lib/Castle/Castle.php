@@ -194,6 +194,18 @@ abstract class Castle
   }
 
   /**
+   * Track a security event
+   * @param  Array  $attributes An array of attributes to track. The 'name' key
+   *                            is required
+   * @return None
+   */
+  public static function track(Array $attributes)
+  {
+    $request = new Castle_Request();
+    $request->send('post', '/events', $attributes);
+  }
+
+  /**
    * Creates a trusted device for the current user and saves the id in the
    * selected store (default Cookies via `setcookie`)
    * @return Castle_TrustedDevice The created trusted device object. Null if not available

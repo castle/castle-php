@@ -192,6 +192,13 @@ class CastleTest extends Castle_TestCase
     $this->assertTrue(Castle::isAuthorized());
   }
 
+  public function testTrack()
+  {
+    Castle_RequestTransport::setResponse(204, '');
+    Castle::track(array('name' => '$login.failed'));
+    $this->assertRequest('post', '/events');
+  }
+
   /**
    * @expectedException Castle_UserUnauthorizedError
    */
