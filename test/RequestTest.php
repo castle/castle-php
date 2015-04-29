@@ -79,6 +79,18 @@ class CastleRequestTest extends \Castle_TestCase
     $this->assertRequest('post', '/heartbeat', array('X-Castle-Ip' => '2.2.2.2'));
   }
 
+  /**
+   *
+   */
+  public function testRequestContextHeaders()
+  {
+    $_SERVER['HTTP_COOKIE'] = 'Should not be sent';
+    Castle::track(array(
+      'name' => '$login.succeeded',
+      'user_id' => '1'
+    ));
+    $this->assertRequest('post', '/events', array('X-Castle-Headers' => '{"User-Agent":"TestAgent"}'));
+  }
 
   /**
    * @dataProvider exampleSessionToken

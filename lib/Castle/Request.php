@@ -28,6 +28,27 @@ class Castle_Request
     return json_encode($userAgent);
   }
 
+  public static function getHeaders()
+  {
+    $headers = array();
+    foreach ($_SERVER as $key => $val) {
+      // Find all HTTP_ headers, convert '_' to '-' and uppercase every word
+      if (substr($key, 0, 5) == 'HTTP_') {
+        $name = strtolower(substr($key, 5));
+        if (strpos($name, '_') != -1) {
+          $name = preg_replace('/ /', '-', ucwords(preg_replace('/_/', ' ', $name)));
+        } else {
+          $name = ucfirst($name);
+        }
+        // Check if header is in scrub list
+        if (!in_array($name, Castle::$scrubHeaders)) {
+          $headers[$name] = $val;
+        }
+      }
+    }
+    return $headers;
+  }
+
   public static function getIp()
   {
     if (array_key_exists('HTTP_X_FORWARDED_FOR', $_SERVER)) {
@@ -107,12 +128,14 @@ class Castle_Request
   {
     $this->preFlightCheck();
 
-    $client = Castle_Request::clientUserAgent();
+    $client = self::clientUserAgent();
     $body = empty($params) ? null : json_encode($params);
     $cookies = Castle::getCookieStore();
+    $requestHeaders = json_encode(self::getHeaders());
     $headers = array(
       'X-Castle-Cookie-Id: ' . $cookies->read('__cid'),
       'X-Castle-User-Agent: ' . $_SERVER['HTTP_USER_AGENT'],
+      'X-Castle-Headers: ' . $requestHeaders,
       'X-Castle-Ip: ' . self::getIp(),
       'X-Castle-Client-User-Agent: ' . $client,
       'Content-Type: application/json',

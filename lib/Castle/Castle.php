@@ -12,6 +12,8 @@ abstract class Castle
 
   public static $cookieStore = 'Castle_CookieStore';
 
+  public static $scrubHeaders = ['Cookie'];
+
   const VERSION = '1.1.0';
 
   public static function getApiKey()
