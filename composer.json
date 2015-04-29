@@ -14,7 +14,10 @@
         }
     ],
     "autoload": {
-      "classmap": ["lib/Castle.php"]
+        "classmap": [
+            "lib/Castle",
+            "lib/RestModel"
+        ]
     },
     "repositories": [
         {
