@@ -6,9 +6,7 @@
 
 # PHP SDK for Castle
 
-[Castle](https://castle.io) provides an additional security layer to your application by adding multi-factor authentication, user activity monitoring, and real-time threat protection in a white-label package. Your users **do not** need to be signed up or registered for Castle before using the service. Also, Castle requires **no modification of your current database schema** as it uses your local user IDs.
-
-Your users can now easily activate two-factor authentication, configure the level of security in terms of monitoring and notifications and take action on suspicious behaviour.
+**[Castle](https://castle.io) adds real-time monitoring of your authentication stack, instantly notifying you and your users on potential account hijacks.**
 
 ## Getting started
 
@@ -30,83 +28,55 @@ Configure the library with your Castle API secret.
 Castle::setApiKey('YOUR_API_SECRET');
 ```
 
-## Installing user monitoring
+## Include the JavaScript snippet
 
-To activate user monitoring you only need to **insert code at three places**: when the user is **logged in**, when the user is **loaded** and when the user **logs out**:
+Before you add start using castle-php, make sure that you have included the Castle javascript snippet on every page in your app. See the [documentation](https://castle.io/docs/php/getting_started) for more information on how that's done.
 
+## Tracking user behavior
+
+`track` lets you record the security-related actions your users perform. The more actions you track, the more accurate Castle is in identifying fraudsters. We recommend that you at least track `$login.succeeded` and `$login.failed`:
+
+**Track successful logins**
 ```php
+Castle::track(array(
+  'name' => '$login.succeeded',
+  'user_id' => $user->id
+));
+```
+> NOTE: `$user` refers to the currently logged in user.
 
-// the $user variable would be a representation of the currently logged in user.
-// The call to login should be made right after the user has been fetched
-// from the database and authenticated.
-
-Castle::login($user->id, array(
-  'email' => $user->email,
-  'name'  => $user->name
+**Track failed logins**
+```php
+Castle::track(array(
+  'name' => '$login.failed',
+  'details' => array(
+    '$login' => 'johan@castle.io'
+  )
 ));
 ```
 
-```php
 
-// On every route that requires a logged in user, authorize should be called
-// right after the user has been loaded and authorized locally in your app.
+### Supported events
 
-Castle::authorize();
+Event names and detail properties that have semantic meaning are prefixed `$`, and we handle them in special ways. Here are all the events that Castle recognizes:
 
-```
+- `$login.succeeded`: Record when a user attempts to log in.
+- `$login.failed`: Record when a user logs out.
+- `$logout.succeeded`:  Record when a user logs out.
+- `$registration.succeeded`: Capture account creation, both when a user signs up as well as when created manually by an administrator.
+- `$registration.failed`: Record when an account failed to be created.
+- `$challenge.requested`: Record when a user is prompted with additional verification, such as two-factor authentication or a captcha.
+- `$challenge.succeeded`: Record when additional verification was successful.
+- `$challenge.failed`: Record when additional verification failed.
+- `$password_reset.requested`: An attempt was made to reset a user’s password.
+- `$password_reset.succeeded`: The user completed all of the steps in the password reset process and the password was successfully reset. Password resets **do not** required knowledge of the current password.
+- `$password_reset.failed`: Use to record when a user failed to reset their password.
+- `$password_change.succeeded`: Use to record when a user changed their password. This event is only logged when users change their **own** password.
+- `$password_change.failed`:  Use to record when a user failed to change their password.
 
-```php
+### Supported detail properties
 
-// If a user is currently logged in (by calling `login`) it is logged out
-// by simply calling `logout`. It is safe to call this method even if there is
-// no user logged in.
-
-Castle::logout();
-
-```
-
-### Log in
-
-You should call `login` as soon as the user has logged in to your application. Pass a unique user identifier, and an *optional* hash of user properties which are used when searching for users in your dashboard. This will create a [Session](https://api.castle.io/#POST--version-users--user_id-sessions---format-) resource and return a corresponding [session token](https://api.castle.io/#session-tokens) which is stored in the Castle client.
-
-##### Arguments
-
-`$userId`: The first argument is a locally unique identifier for the logged in user, commonly the `id` field. This is the identifier you'll use further on when querying the user.
-
-`$userData`: The second argument is an array of properties you know about the user. See the User reference documentation for available fields and their meaning.
-
-
-### Authorize (after logging in)
-
-`authorize` is the key component of the Castle API. It lets you tie a user to their actions and record properties about them. Whenever any suspious behaviour is detected or a user gets locked out, a call to `authorize` may throw an exception which needs to be handled by your application.
-
-You’ll want to `authorize` a user with any relevant information as soon as the current user object is assigned in your application.
-
-> Note that every call to `authorize` **does not** result in an HTTP request. Only the very first call, as well as expired session tokens result in a request. Session tokens expire every 5 minutes.
-
-```php
-Castle::authorize();
-```
-
-### Logging out
-
-Whenever a user is logged out from your application, you should inform Castle about this so that the active session is properly terminated. This prevents the session from being used further on.
-
-```php
-Castle::logout();
-```
-
-This method doesn't take any arguments.
-
-## Installing Two-factor authentication
-
-Using two-factor authentication involves two steps: **pairing** and **authenticating**.
-
-### Pairing
-
-Before your users can protect their account with two-factor authentication, they will need to pair their their preferred way of authenticating. The [Pairing API](https://api.castle.io/#pairings) lets users add, verify, and remove authentication channels. Only *verified* pairings are valid for authentication.
-
-### TODO...
+- `$login`: The submitted email or username from when the user attempted to log in or reset their password. Useful when there is no `user_id` available.
 
 ## Errors
 Whenever something unexpected happens, an exception is thrown to indicate what went wrong.
@@ -126,75 +96,6 @@ Whenever something unexpected happens, an exception is thrown to indicate what w
 | `Castle_UserUnauthorizedError`  | The user is locked or has entered the wrong credentials |
 | `Castle_InvalidParametersError` | One or more of the supplied parameters are incorrect. Check the response for more information. |
 
-## REST Bindings
-
-To facilitate working with the [Castle REST API](https://api.castle.io) the library provides a set of models.
-
-Examples:
-
-```php
-// List all users
-$users = Castle_User::all();
-
-// find by ID
-$user = Castle_User::find(1);
-$user->name = "Napoleon Dynamite";
-$user->save();
-
-// Create and verify a pairing
-$pairing = $user->pairings()->create(array(
-  'type' => 'authenticator'
-));
-$pairing->verify(array('response' => '123456'));
-
-// Create new
-$user = new Castle_User(array(
-  name => "Napoleon Dynamite"
-));
-$user->save();
-echo $user->id;
-
-// List sessions
-$sessions = $user->sessions()->fetch();
-
-// Create a session for a user with local id 1
-$user = new Castle_User(1);
-$session = $user->sessions()->create();
-
-// Delete session
-$session->delete();
-
-// Delete existing session with id 1
-Castle_Session::destroy(1);
-```
-
-## Session store
-
-By default Castle stores its session data in the super global `$_SESSION` variable. If you for some reason need to change this, it can be done by implementing the `Castle_iSessionStore` interface:
-
-```php
-class MyCustomStore implements iCastle_SessionStore
-{
-  public function destroy()
-  {
-    // Code
-  }
-  public function read()
-  {
-    // Code
-  }
-  public function write($data)
-  {
-    // Code
-  }
-}
-```
-
-Then you'll need to tell Castle to user the new store:
-
-```php
-Castle::setSessionStore('MyCustomStore');
-```
 
 
 
