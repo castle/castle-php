@@ -1,21 +1,21 @@
 {
     "name": "castle/castle-php",
     "description": "PHP bindings for Castle",
-    "keywords": ["account monitoring", "two factor authentication", "authorization"],
+    "type": "library",
+    "keywords": ["real-time user account monitoring"],
     "homepage": "https://github.com/castle/castle-php",
     "license": "MIT",
     "authors": [
         {
-            "name": "Sebastian Wallin",
-            "email": "sebastian@castle.io",
-            "homepage": "https://castle.io"
-        },
-        {
-            "name": "Johan Brissmyr",
-            "email": "johan@castle.io",
-            "homepage": "https://castle.io"
+            "name": "Castle",
+            "email": "team@castle.io",
+            "homepage": "https://castle.io",
+            "role": "Developer"
         }
     ],
+    "autoload": {
+      "files": ["lib/Castle.php"]
+    },
     "repositories": [
         {
             "type": "package",
