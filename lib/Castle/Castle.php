@@ -12,7 +12,7 @@ abstract class Castle
 
   public static $cookieStore = 'Castle_CookieStore';
 
-  public static $scrubHeaders = ['Cookie'];
+  public static $scrubHeaders = array('Cookie');
 
   const VERSION = '1.1.0';
 
