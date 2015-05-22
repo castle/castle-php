@@ -8,6 +8,8 @@ abstract class Castle
 
   public static $apiVersion = 'v1';
 
+  public static $caCerts = '../certs/ca-certs.crt';
+
   public static $tokenStore = 'Castle_TokenStore';
 
   public static $cookieStore = 'Castle_CookieStore';

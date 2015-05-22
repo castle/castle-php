@@ -61,6 +61,7 @@ class Castle_RequestTransport
       $curlOptions[CURLOPT_POSTFIELDS] = $body;
     }
 
+    $curlOptions[CURLOPT_CAINFO] = Castle::$caCerts;
     $curlOptions[CURLOPT_URL] = $url;
     $curlOptions[CURLOPT_USERPWD] = ":" . Castle::getApiKey();
     $curlOptions[CURLOPT_RETURNTRANSFER] = true;
