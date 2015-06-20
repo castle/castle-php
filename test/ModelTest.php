@@ -1,4 +1,29 @@
 <?php
+class TestModel extends RestModel {
+  protected $stripPrefix = "test_";
+}
+
+class TestUser extends TestModel
+{
+  public function shoes()
+  {
+    return $this->hasMany('TestShoe');
+  }
+}
+
+class TestShoe extends TestModel
+{
+  public function user()
+  {
+    return $this->belongsTo('TestUser');
+  }
+
+  public function walk($response)
+  {
+    return $this->post('walk', array('response' => $response));
+  }
+}
+
 class CastleModelTest extends Castle_TestCase
 {
   public static function setUpBeforeClass()
@@ -58,20 +83,20 @@ class CastleModelTest extends Castle_TestCase
 
   public function testGetName()
   {
-    $user = new Castle_User();
+    $user = new TestUser();
     $this->assertEquals($user->getResourceName(), 'users');
   }
 
   public function testGetResourcePathWithoutId()
   {
-    $user = new Castle_User();
+    $user = new TestUser();
     $this->assertEquals($user->getResourcePath(), '/users');
   }
 
   public function testGetResourcePathWithId()
   {
     $userData = array('id' => 1);
-    $user = new Castle_User($userData);
+    $user = new TestUser($userData);
     $this->assertEquals($user->getResourcePath(), '/users/1');
   }
 
@@ -89,7 +114,7 @@ class CastleModelTest extends Castle_TestCase
   public function testCreate($user)
   {
     Castle_RequestTransport::setResponse(200, $user);
-    $user = Castle_User::create(array('email' => 'hello@example.com'));
+    $user = TestUser::create(array('email' => 'hello@example.com'));
     $this->assertRequest('post', '/users');
   }
 
@@ -99,7 +124,7 @@ class CastleModelTest extends Castle_TestCase
   public function testAll($user)
   {
     Castle_RequestTransport::setResponse(200, array($user, $user));
-    $users = Castle_User::all();
+    $users = TestUser::all();
     $this->assertRequest('get', '/users');
     $this->assertEquals($users[0]->id, $user['id']);
   }
@@ -109,7 +134,7 @@ class CastleModelTest extends Castle_TestCase
    */
   public function testCreateSendsParams($user)
   {
-    Castle_User::create($user);
+    TestUser::create($user);
     $request = Castle_RequestTransport::getLastRequest();
     $this->assertEquals($user, $request['params']);
   }
@@ -119,7 +144,7 @@ class CastleModelTest extends Castle_TestCase
    */
   public function testDestroy($user) {
     Castle_RequestTransport::setResponse(204);
-    Castle_User::destroy($user['id']);
+    TestUser::destroy($user['id']);
     $this->assertRequest('delete', '/users/'.$user['id']);
   }
 
@@ -129,84 +154,84 @@ class CastleModelTest extends Castle_TestCase
   public function testFind($user)
   {
     Castle_RequestTransport::setResponse(201, $user);
-    $found_user = Castle_User::find($user['id']);
+    $found_user = TestUser::find($user['id']);
     $this->assertRequest('get', '/users/'.$user['id']);
     $this->assertEquals($found_user->email, $user['email']);
   }
 
   public function testInstancePost()
   {
-    Castle_RequestTransport::setResponse(201, array('id' => '1', 'verified' => true));
-    $challenge = new Castle_Challenge(1);
-    $response = $challenge->verify('12345');
-    $this->assertEquals(1, $challenge->id);
-    $this->assertEquals(true, $challenge->verified);
-    $this->assertInstanceOf('Castle_Challenge', $response);
+    Castle_RequestTransport::setResponse(201, array('id' => '1', 'walked' => true));
+    $shoe = new TestShoe(1);
+    $response = $shoe->walk('12345');
+    $this->assertEquals(1, $shoe->id);
+    $this->assertEquals(true, $shoe->walked);
+    $this->assertInstanceOf('TestShoe', $response);
   }
 
   public function testNestedFind()
   {
-    $user = new Castle_User(1234);
-    $user->challenges()->find(5678);
-    $this->assertRequest('get', '/users/1234/challenges/5678');
+    $user = new TestUser(1234);
+    $user->shoes()->find(5678);
+    $this->assertRequest('get', '/users/1234/shoes/5678');
   }
 
   public function testNestedInstanceMethod()
   {
     Castle_RequestTransport::setResponse(200, array('id' => 1));
-    $user = new Castle_User(1234);
-    $challenge = $user->challenges()->find(1);
-    $challenge->verify('response');
-    $this->assertRequest('post', '/users/1234/challenges/1/verify');
+    $user = new TestUser(1234);
+    $shoe = $user->shoes()->find(1);
+    $shoe->walk('response');
+    $this->assertRequest('post', '/users/1234/shoes/1/walk');
   }
 
   public function testBelongsToWithIdAttribute()
   {
-    $challenge = new Castle_Challenge(array('id' => 1, 'pairing_id' => 2));
-    $pairing = $challenge->pairing();
-    $this->assertInstanceOf('Castle_Pairing', $pairing);
-    $this->assertEquals(2, $pairing->id);
+    $house = new TestShoe(array('id' => 1, 'user_id' => 2));
+    $user = $house->user();
+    $this->assertInstanceOf('TestUser', $user);
+    $this->assertEquals(2, $user->id);
   }
 
   public function testBelongsToWithObject()
   {
-    $challenge = new Castle_Challenge(array('id' => 1, 'pairing' => array('id' => 2)));
-    $pairing = $challenge->pairing();
-    $this->assertInstanceOf('Castle_Pairing', $pairing);
-    $this->assertEquals(2, $pairing->id);
+    $house = new TestShoe(array('id' => 1, 'user' => array('id' => 2)));
+    $user = $house->user();
+    $this->assertInstanceOf('TestUser', $user);
+    $this->assertEquals(2, $user->id);
   }
 
   public function testBelongsToWithoutId()
   {
-    $challenge = new Castle_Challenge(array('id' => 1));
-    $pairing = $challenge->pairing();
-    $this->assertNull($pairing);
+    $house = new TestShoe(array('id' => 1));
+    $user = $house->user();
+    $this->assertNull($user);
   }
 
   public function testHasOne()
   {
     $userData = array(
       'id' => 1,
-      'session' => array('id' => 1)
+      'shoe' => array('id' => 1)
     );
-    $user = new Castle_User($userData);
-    $session = $user->hasOne('Castle_Session');
-    $this->assertEquals(1, $session->id);
-    $session->save();
-    $this->assertRequest('put', '/users/1/session');
+    $user = new TestUser($userData);
+    $shoe = $user->hasOne('TestShoe');
+    $this->assertEquals(1, $shoe->id);
+    $shoe->save();
+    $this->assertRequest('put', '/users/1/shoe');
   }
 
   public function testHasManyForSingleResourceInstanceMethod()
   {
-    $user = new Castle_User(1);
-    $challenge = $user->challenges()->verify(1, 'response');
-    $this->assertRequest('post', '/users/1/challenges/1/verify');
+    $user = new TestUser(1);
+    $user->shoes()->walk(1, 'response');
+    $this->assertRequest('post', '/users/1/shoes/1/walk');
   }
 
 
   public function testEscapeUrl()
   {
-    $user = new Castle_User('Hofbräuhaus / München');
+    $user = new TestUser('Hofbräuhaus / München');
     $user->fetch();
     $request = Castle_RequestTransport::getLastRequest();
     $this->assertStringEndsWith('Hofbr%C3%A4uhaus%20%2F%20M%C3%BCnchen', $request['url']);

@@ -37,24 +37,10 @@ class CastleRequestTest extends \Castle_TestCase
   /**
    * @dataProvider exampleSessionToken
    */
-  public function testRequestContent($sessionToken)
-  {
-    Castle::getTokenStore()->setSession($sessionToken);
-    Castle::authorize();
-
-    $this->assertRequest('post', '/heartbeat', array('Content-Length' => '0'));
-    $request = Castle_RequestTransport::getLastRequest();
-    $this->assertEquals($request['body'], '');
-  }
-
-  /**
-   * @dataProvider exampleSessionToken
-   */
   public function testRequestContextIp($sessionToken)
   {
-    Castle::getTokenStore()->setSession($sessionToken);
-    Castle::authorize();
-    $this->assertRequest('post', '/heartbeat', array('X-Castle-Ip' => '8.8.8.8'));
+    Castle::track(array('name' => '$login.failed'));
+    $this->assertRequest('post', '/events', array('X-Castle-Ip' => '8.8.8.8'));
   }
 
   /**
@@ -62,10 +48,9 @@ class CastleRequestTest extends \Castle_TestCase
    */
   public function testRequestContextForwardedIp($sessionToken)
   {
-    Castle::getTokenStore()->setSession($sessionToken);
     $_SERVER['HTTP_X_FORWARDED_FOR'] = '1.1.1.1';
-    Castle::authorize();
-    $this->assertRequest('post', '/heartbeat', array('X-Castle-Ip' => '1.1.1.1'));
+    Castle::track(array('name' => '$login.failed'));
+    $this->assertRequest('post', '/events', array('X-Castle-Ip' => '1.1.1.1'));
   }
 
   /**
@@ -75,8 +60,8 @@ class CastleRequestTest extends \Castle_TestCase
   {
     Castle::getTokenStore()->setSession($sessionToken);
     $_SERVER['HTTP_X_REAL_IP'] = '2.2.2.2';
-    Castle::authorize();
-    $this->assertRequest('post', '/heartbeat', array('X-Castle-Ip' => '2.2.2.2'));
+    Castle::track(array('name' => '$login.failed'));
+    $this->assertRequest('post', '/events', array('X-Castle-Ip' => '2.2.2.2'));
   }
 
   /**
@@ -90,20 +75,6 @@ class CastleRequestTest extends \Castle_TestCase
       'user_id' => '1'
     ));
     $this->assertRequest('post', '/events', array('X-Castle-Headers' => '{"User-Agent":"TestAgent"}'));
-  }
-
-  /**
-   * @dataProvider exampleSessionToken
-   */
-  public function testRequestClearsSessionOnUserUnauthorized($sessionToken)
-  {
-    $Store = Castle::getTokenStore();
-    $Store->setSession($sessionToken);
-    Castle_RequestTransport::setResponse(419);
-    try {
-      Castle::authorize();
-    } catch (Exception $e) { }
-    $this->assertEmpty($Store->getSession());
   }
 
   /**
