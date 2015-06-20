@@ -64,6 +64,14 @@ class Castle_Request
     return null;
   }
 
+  public static function getUserAgent()
+  {
+    if (array_key_exists('HTTP_USER_AGENT', $_SERVER)) {
+      return $_SERVER['HTTP_USER_AGENT'];
+    }
+    return null;
+  }
+
   public function handleApiError($response, $status)
   {
     $type = $response['type'];
@@ -134,7 +142,7 @@ class Castle_Request
     $requestHeaders = json_encode(self::getHeaders());
     $headers = array(
       'X-Castle-Cookie-Id: ' . $cookies->read('__cid'),
-      'X-Castle-User-Agent: ' . $_SERVER['HTTP_USER_AGENT'],
+      'X-Castle-User-Agent: ' . self::getUserAgent(),
       'X-Castle-Headers: ' . $requestHeaders,
       'X-Castle-Ip: ' . self::getIp(),
       'X-Castle-Client-User-Agent: ' . $client,
