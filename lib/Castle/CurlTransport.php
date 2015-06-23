@@ -8,6 +8,11 @@ class Castle_RequestTransport
   public $rError;
   public $rMessage;
 
+  public static function caCerts()
+  {
+    return dirname(__FILE__) . '/../../certs/ca-certs.crt';
+  }
+
   private function setResponse($curl)
   {
     $response = curl_exec($curl);
@@ -61,7 +66,7 @@ class Castle_RequestTransport
       $curlOptions[CURLOPT_POSTFIELDS] = $body;
     }
 
-    $curlOptions[CURLOPT_CAINFO] = Castle::$caCerts;
+    $curlOptions[CURLOPT_CAINFO] = self::caCerts();
     $curlOptions[CURLOPT_URL] = $url;
     $curlOptions[CURLOPT_USERPWD] = ":" . Castle::getApiKey();
     $curlOptions[CURLOPT_RETURNTRANSFER] = true;
