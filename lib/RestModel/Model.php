@@ -1,6 +1,11 @@
 <?php
 
-class RestModel
+namespace Castle\RestModel;
+
+use Castle\Errors\CastleException;
+use Castle\Request;
+
+class Model
 {
   protected $attributes   = array();
 
@@ -46,7 +51,7 @@ class RestModel
       $path = isset($path) ? '/'.$path : $path;
       $url = $this->getResourcePath($path);
     }
-    $request = new Castle_Request();
+    $request = new Request();
     list($response, $request) = $request->send($method, $url, $params);
     return $response;
   }
@@ -87,7 +92,7 @@ class RestModel
     }
   }
 
-  public function setParent(RestModel $parent)
+  public function setParent(Model $parent)
   {
     $this->parent = $parent;
   }
@@ -178,7 +183,7 @@ class RestModel
       $attrName = self::pluralize($attrName);
     }
     $items = $this->getAttribute($attrName);
-    $resource = new Castle_Resource($model, $items);
+    $resource = new Resource($model, $items);
     $resource->setParent($this);
     return $resource;
   }
@@ -215,7 +220,7 @@ class RestModel
     $method = array_key_exists($this->idAttribute, $this->attributes) ? 'put' : 'post';
     $response = $this->request($method, null, $this->attributes);
     if (!is_array($response)) {
-      throw new Castle_Error('Invalid response');
+      throw new CastleException('Invalid response');
     }
     $this->setAttributes($response);
     return $this;
@@ -266,26 +271,26 @@ class RestModel
 
   public static function all($params=null)
   {
-    $instance = new Castle_Resource(get_called_class());
+    $instance = new Resource(get_called_class());
     return $instance->all($params);
   }
 
   public static function create($attributes=null)
   {
-    $instance = new Castle_Resource(get_called_class());
+    $instance = new Resource(get_called_class());
     return $instance->create($attributes);
   }
 
 
   public static function destroy($id)
   {
-    $instance = new Castle_Resource(get_called_class());
+    $instance = new Resource(get_called_class());
     return $instance->destroy($id);
   }
 
   public static function find($id)
   {
-    $instance = new Castle_Resource(get_called_class());
+    $instance = new Resource(get_called_class());
     return $instance->find($id);
   }
 }

@@ -1,6 +1,10 @@
 <?php
 
-class Castle_Request
+namespace Castle;
+
+use Castle\Errors as Errors;
+
+class Request
 {
   public static function apiUrl($url='')
   {
@@ -78,27 +82,27 @@ class Castle_Request
     $msg  = $response['message'];
     switch ($status) {
       case 400:
-        throw new Castle_BadRequest($msg, $type, $status);
+        throw new Errors\BadRequest($msg, $type, $status);
       case 401:
-        throw new Castle_UnauthorizedError($msg, $type, $status);
+        throw new Errors\UnauthorizedError($msg, $type, $status);
       case 403:
-        throw new Castle_ForbiddenError($msg, $type, $status);
+        throw new Errors\ForbiddenError($msg, $type, $status);
       case 404:
-        throw new Castle_NotFoundError($msg, $type, $status);
+        throw new Errors\NotFoundError($msg, $type, $status);
       case 419:
         /* Clear session since this error means that is is invalid or removed */
         Castle::getTokenStore()->setSession();
-        throw new Castle_UserUnauthorizedError($msg, $type, $status);
+        throw new Errors\UserUnauthorizedError($msg, $type, $status);
       case 422:
-        throw new Castle_InvalidParametersError($msg, $type, $status);
+        throw new Errors\InvalidParametersError($msg, $type, $status);
       default:
-        throw new Castle_ApiError($msg, $type, $status);
+        throw new Errors\ApiError($msg, $type, $status);
     }
   }
 
   public function handleRequestError($request)
   {
-    throw new Castle_RequestError("$request->rError: $request->rMessage");
+    throw new Errors\RequestError("$request->rError: $request->rMessage");
   }
 
   public function handleResponse($request)
@@ -109,7 +113,7 @@ class Castle_Request
 
     $response = json_decode($request->rBody, true);
     if (!empty($request->rBody) && $response === null) {
-      throw new Castle_ApiError('Invalid response from API', 'api_error', $request->rStatus);
+      throw new Errors\ApiError('Invalid response from API', 'api_error', $request->rStatus);
     }
 
     if ($request->rStatus < 200 || $request->rStatus >= 300) {
@@ -128,7 +132,7 @@ class Castle_Request
   {
     $key = Castle::getApiKey();
     if (empty($key)) {
-      throw new Castle_ConfigurationError();
+      throw new Errors\ConfigurationError();
     }
   }
 
@@ -156,7 +160,7 @@ class Castle_Request
       $headers[]= 'X-Castle-Session-Token: '.$session;
     }
 
-    $request = new Castle_RequestTransport();
+    $request = new RequestTransport();
     $request->send($method, self::apiUrl($url), $body, $headers);
 
     return $this->handleResponse($request);

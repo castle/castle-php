@@ -1,5 +1,7 @@
 <?php
 
+namespace Castle;
+
 abstract class Castle
 {
   public static $apiKey;
