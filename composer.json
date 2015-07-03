@@ -21,7 +21,7 @@
     ],
     "autoload": {
         "classmap": [
-            "test/TestCase.php"
+            "test"
         ],
         "psr-4": {
             "Castle\\": "lib"
