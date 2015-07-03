@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit colors="true" bootstrap="test/Castle.php">
+<phpunit colors="true" bootstrap="test/TestCase.php">
   <testsuites>
     <testsuite name="Test Suite">
       <directory>./test</directory>
