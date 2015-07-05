@@ -1,6 +1,6 @@
 <?php
 
-namespace Castle\Errors;
+namespace Castle\Errors\Api;
 
 class BadRequest extends ApiError
 {
