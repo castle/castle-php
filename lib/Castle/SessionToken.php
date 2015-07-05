@@ -1,12 +1,16 @@
 <?php
 
-class Castle_SessionToken
+namespace Castle;
+
+use Castle\Models\User;
+
+class SessionToken
 {
   protected $jwt;
 
   public function __construct($token)
   {
-    $this->jwt = new Castle_JWT($token);
+    $this->jwt = new JWT($token);
   }
 
   public function __toString()
@@ -21,7 +25,7 @@ class Castle_SessionToken
 
   public function getUser()
   {
-    return new Castle_User('$current');
+    return new User('$current');
   }
 
   public function hasDefaultPairing()

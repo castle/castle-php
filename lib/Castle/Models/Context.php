@@ -1,6 +1,8 @@
 <?php
 
-class Castle_Context extends RestModel
+namespace Castle\Models;
+
+class Context extends RestModel
 {
   public function location()
   {

@@ -21,11 +21,15 @@ To get started, add the following to your PHP script:
 ```php
 require_once("/path/to/castle-php/lib/Castle.php");
 ```
+or
 
+```php
+require("/vendor/autoloader.php");
+```
 Configure the library with your Castle API secret.
 
 ```php
-Castle::setApiKey('YOUR_API_SECRET');
+Castle\Castle::setApiKey('YOUR_API_SECRET');
 ```
 
 ## Include the JavaScript snippet
@@ -38,7 +42,7 @@ Before you add start using castle-php, make sure that you have included the Cast
 
 **Track successful logins**
 ```php
-Castle::track(array(
+Castle\Castle::track(array(
   'name' => '$login.succeeded',
   'user_id' => $user->id
 ));
@@ -47,7 +51,7 @@ Castle::track(array(
 
 **Track failed logins**
 ```php
-Castle::track(array(
+Castle\Castle::track(array(
   'name' => '$login.failed',
   'details' => array(
     '$login' => 'johan@castle.io'
@@ -81,20 +85,20 @@ Event names and detail properties that have semantic meaning are prefixed `$`, a
 ## Errors
 Whenever something unexpected happens, an exception is thrown to indicate what went wrong.
 
-| Name                             | Description     |
-|:---------------------------------|:----------------|
-| `Castle_Error`                  | A generic error |
-| `Castle_RequestError`           | A request failed. Probably due to a network error |
-| `Castle_ApiError`               | An unexpected error for the Castle API |
-| `Castle_SecurityError`          | The session signature doesn't match, either it has been tampered with or the Castle API key has been changed. |
-| `Castle_ConfigurationError`     | The Castle secret API key has not been set |
-| `Castle_UnauthorizedError`      | Wrong Castle API secret key |
-| `Castle_ChallengeRequiredError` | You need to prompt the user for Two-step verification |
-| `Castle_BadRequest`             | The request was invalid. For example if a challenge is created without the user having MFA enabled. |
-| `Castle_ForbiddenError`         | The user has entered the wrong code too many times and a new challenge has to be requested. |
-| `Castle_NotFoundError`          | The resource requestd was not found. For example if a session has been revoked. |
-| `Castle_UserUnauthorizedError`  | The user is locked or has entered the wrong credentials |
-| `Castle_InvalidParametersError` | One or more of the supplied parameters are incorrect. Check the response for more information. |
+| Name                                   | Description     |
+|:---------------------------------------|:----------------|
+| `Castle\Errors\CastleException`        | A generic error |
+| `Castle\Errors\RequestError`           | A request failed. Probably due to a network error |
+| `Castle\Errors\ApiError`               | An unexpected error for the Castle API |
+| `Castle\Errors\SecurityError`          | The session signature doesn't match, either it has been tampered with or the Castle API key has been changed. |
+| `Castle\Errors\ConfigurationError`     | The Castle secret API key has not been set |
+| `Castle\Errors\UnauthorizedError`      | Wrong Castle API secret key |
+| `Castle\Errors\ChallengeRequiredError` | You need to prompt the user for Two-step verification |
+| `Castle\Errors\BadRequest`             | The request was invalid. For example if a challenge is created without the user having MFA enabled. |
+| `Castle\Errors\ForbiddenError`         | The user has entered the wrong code too many times and a new challenge has to be requested. |
+| `Castle\Errors\NotFoundError`          | The resource requestd was not found. For example if a session has been revoked. |
+| `Castle\Errors\UserUnauthorizedError`  | The user is locked or has entered the wrong credentials |
+| `Castle\Errors\InvalidParametersError` | One or more of the supplied parameters are incorrect. Check the response for more information. |
 
 
 

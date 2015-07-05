@@ -1,6 +1,8 @@
 <?php
 
-class Castle_Resource
+namespace Castle\RestModel;
+
+class Resource
 {
   protected $parent = null;
 

@@ -1,6 +1,10 @@
 <?php
 
-class Castle_JWT
+namespace Castle;
+
+use Castle\Errors\SecurityError;
+
+class JWT
 {
   function __construct($token=null)
   {
@@ -9,7 +13,7 @@ class Castle_JWT
     if (is_string($token)) {
       $jwt = explode(".", $token);
       if (count($jwt) != 3) {
-        throw new Castle_SecurityError('Invalid JWT');
+        throw new SecurityError('Invalid JWT');
       }
       list($this->_header, $this->_body, $this->_signature) = $jwt;
       $this->isValid();
@@ -58,7 +62,7 @@ class Castle_JWT
   {
     $headers = $this->getHeader();
     if (!array_key_exists('exp', $headers)) {
-      throw new Castle_SecurityError('Invalid JWT. Has no expiry time');
+      throw new SecurityError('Invalid JWT. Has no expiry time');
     }
     date_default_timezone_set('UTC');
     return time() > intval($headers['exp']);
@@ -74,7 +78,7 @@ class Castle_JWT
       return true;
     }
     else {
-      throw new Castle_SecurityError('Signature verification failed');
+      throw new SecurityError('Signature verification failed');
     }
   }
 

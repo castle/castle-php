@@ -1,6 +1,8 @@
 <?php
 
-class Castle_Event extends RestModel
+namespace Castle\Models;
+
+class Event extends RestModel
 {
   public function context()
   {

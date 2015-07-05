@@ -1,5 +1,8 @@
 <?php
-interface Castle_iSessionStore
+
+namespace Castle;
+
+interface iSessionStore
 {
   public function getSession();
   public function setSession($value);
@@ -12,7 +15,7 @@ interface Castle_iSessionStore
  * in turn point to any source. This option give you an option to
  * use any store, such as Redis or Memcached to store your Castle tokens.
  */
-class Castle_TokenStore implements Castle_iSessionStore
+class TokenStore implements iSessionStore
 {
   protected $sessionKey       = '_ubt';
   protected $store            = null;

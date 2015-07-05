@@ -1,5 +1,7 @@
 <?php
 
+namespace Castle;
+
 abstract class Castle
 {
   public static $apiKey;
@@ -8,9 +10,7 @@ abstract class Castle
 
   public static $apiVersion = 'v1';
 
-  public static $tokenStore = 'Castle_TokenStore';
-
-  public static $cookieStore = 'Castle_CookieStore';
+  public static $tokenStore = 'Castle\TokenStore';
 
   public static $scrubHeaders = array('Cookie');
 
@@ -38,12 +38,12 @@ abstract class Castle
 
   public static function getCookieStore()
   {
-    return new self::$cookieStore;
+    return new CookieStore();
   }
 
   public static function getTokenStore()
   {
-    return new self::$tokenStore(self::getCookieStore());
+    return new TokenStore(self::getCookieStore());
   }
 
   public static function setTokenStore($serializerClass)
@@ -59,7 +59,7 @@ abstract class Castle
    */
   public static function track(Array $attributes)
   {
-    $request = new Castle_Request();
+    $request = new Request();
     $request->send('post', '/events', $attributes);
   }
 }

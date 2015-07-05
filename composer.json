@@ -11,13 +11,21 @@
             "email": "team@castle.io",
             "homepage": "https://castle.io",
             "role": "Developer"
+        },
+        {
+            "name": "tankerkiller125",
+            "email": "tanker@javaportals.io",
+            "homepage": "http://tankerkiller125.cu.cc",
+            "role": "Contributor"
         }
     ],
     "autoload": {
         "classmap": [
-            "lib/Castle",
-            "lib/RestModel"
-        ]
+            "test"
+        ],
+        "psr-4": {
+            "Castle\\": "lib"
+        }
     },
     "repositories": [
         {
