@@ -48,6 +48,9 @@ class RestModel
     }
     $request = new Castle_Request();
     list($response, $request) = $request->send($method, $url, $params);
+    if ($request->rStatus == 204) {
+      $response = array();
+    }
     return $response;
   }
 

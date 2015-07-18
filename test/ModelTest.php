@@ -118,6 +118,11 @@ class CastleModelTest extends Castle_TestCase
     $this->assertRequest('post', '/users');
   }
 
+  public function testCreateWithEmptyResponse() {
+    Castle_RequestTransport::setResponse(204, null);
+    TestUser::create();
+  }
+
   /**
    * @dataProvider exampleUser
    */
