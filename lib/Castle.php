@@ -25,6 +25,7 @@ require(dirname(__FILE__) . '/RestModel/Model.php');
 require(dirname(__FILE__) . '/Castle/Models/Account.php');
 require(dirname(__FILE__) . '/Castle/Models/Context.php');
 require(dirname(__FILE__) . '/Castle/Models/Event.php');
+require(dirname(__FILE__) . '/Castle/Models/Verification.php');
 require(dirname(__FILE__) . '/Castle/Models/User.php');
 require(dirname(__FILE__) . '/Castle/JWT.php');
 require(dirname(__FILE__) . '/Castle/CurlTransport.php');
