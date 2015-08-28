@@ -23,7 +23,13 @@
     "type": "git",
     "url": "git://github.com/castle/castle-php.git"
   },
-  "author": "",
+  "author": "castle.io",
+  "contributers": [
+    "Sebastian Wallin <sebastian.wallin@gmail.com> (http://wallin.io)",
+    "Johan Brissmyr (https://userbin.com)",
+    "brunov25",
+    "Nicolaj Rørvig <me@javaportals.io> (https://javaportals.io)"
+    ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/castle/castle-php/issues"
