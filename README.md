@@ -68,6 +68,9 @@ Event names and detail properties that have semantic meaning are prefixed `$`, a
 - `$challenge.requested`: Record when a user is prompted with additional verification, such as two-factor authentication or a captcha.
 - `$challenge.succeeded`: Record when additional verification was successful.
 - `$challenge.failed`: Record when additional verification failed.
+- `$email_change.requested`: An attempt was made to change a user’s email.
+- `$email_change.succeeded`: The user completed all of the steps in the email address change process and the email was successfully changed.
+- `$email_change.failed`: Use to record when a user failed to change their email address.
 - `$password_reset.requested`: An attempt was made to reset a user’s password.
 - `$password_reset.succeeded`: The user completed all of the steps in the password reset process and the password was successfully reset. Password resets **do not** required knowledge of the current password.
 - `$password_reset.failed`: Use to record when a user failed to reset their password.
