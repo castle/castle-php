@@ -32,6 +32,25 @@ Castle::setApiKey('YOUR_API_SECRET');
 
 Before you add start using castle-php, make sure that you have included the Castle javascript snippet on every page in your app. See the [documentation](https://castle.io/docs/php/getting_started) for more information on how that's done.
 
+## Identifying users
+
+Call `identify` when a user logs in or updates their information.
+
+```ruby
+Castle::identify($user->id, array(
+  'created_at' => $user->created_at,
+  'email' => $user->email,
+  'name' => $user->name,
+  'custom_attributes' => array(
+    'company_name' => 'Acme',
+    'age' => 28
+  )
+));
+```
+
+Read more about the available fields in the [API docs](https://api.castle.io/docs#users).
+
+
 ## Tracking user behavior
 
 `track` lets you record the security-related actions your users perform. The more actions you track, the more accurate Castle is in identifying fraudsters. We recommend that you at least track `$login.succeeded` and `$login.failed`:

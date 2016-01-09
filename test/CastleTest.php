@@ -61,4 +61,11 @@ class CastleTest extends Castle_TestCase
     Castle::track(array('name' => '$login.failed'));
     $this->assertRequest('post', '/events');
   }
+
+  public function testIdentify()
+  {
+    Castle_RequestTransport::setResponse(204, '');
+    Castle::identify(1, array('name' => 'John Doe'));
+    $this->assertRequest('put', '/users/1');
+  }
 }

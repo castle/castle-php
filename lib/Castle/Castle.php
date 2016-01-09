@@ -52,6 +52,19 @@ abstract class Castle
   }
 
   /**
+   * Updates user information. Call when a user logs in or updates their information.
+   * @param  String $user_id  Id of the user
+   * @param  Array  $attributes Additional user properties
+   * @return  None
+   */
+  public static function identify($user_id, Array $attributes)
+  {
+    $user = new Castle_User($user_id);
+    $user->setAttributes($attributes);
+    $user->save();
+  }
+
+  /**
    * Track a security event
    * @param  Array  $attributes An array of attributes to track. The 'name' key
    *                            is required
