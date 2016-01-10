@@ -32,6 +32,7 @@ require(dirname(__FILE__) . '/../lib/RestModel/Model.php');
 require(dirname(__FILE__) . '/../lib/Castle/Models/Account.php');
 require(dirname(__FILE__) . '/../lib/Castle/Models/Context.php');
 require(dirname(__FILE__) . '/../lib/Castle/Models/Event.php');
+require(dirname(__FILE__) . '/../lib/Castle/Models/Label.php');
 require(dirname(__FILE__) . '/../lib/Castle/Models/User.php');
 require(dirname(__FILE__) . '/../lib/Castle/JWT.php');
 require(dirname(__FILE__) . '/TestTransport.php');
