@@ -14,7 +14,7 @@ abstract class Castle
 
   public static $scrubHeaders = array('Cookie');
 
-  const VERSION = '1.1.0';
+  const VERSION = '1.2.3';
 
   public static function getApiKey()
   {
@@ -49,6 +49,27 @@ abstract class Castle
   public static function setTokenStore($serializerClass)
   {
     self::$tokenStore = $serializerClass;
+  }
+
+
+  /**
+   * Get the current risk score for a user
+   * @param  String $user_id  Id of the user
+   * @return None
+   */
+  public static function authenticate($user_id)
+  {
+    $auth = new Castle_Authentication(Array('user_id' => $user_id));
+    $auth->save();
+  }
+
+  public static function authentications($id = null)
+  {
+    $auth = new Castle_Authentication();
+    if (isset($id)) {
+      $auth->setId($id);
+    }
+    return $auth;
   }
 
   /**

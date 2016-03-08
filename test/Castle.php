@@ -30,6 +30,7 @@ require(dirname(__FILE__) . '/CookieStore.php');
 require(dirname(__FILE__) . '/../lib/RestModel/Resource.php');
 require(dirname(__FILE__) . '/../lib/RestModel/Model.php');
 require(dirname(__FILE__) . '/../lib/Castle/Models/Account.php');
+require(dirname(__FILE__) . '/../lib/Castle/Models/Authentication.php');
 require(dirname(__FILE__) . '/../lib/Castle/Models/Context.php');
 require(dirname(__FILE__) . '/../lib/Castle/Models/Event.php');
 require(dirname(__FILE__) . '/../lib/Castle/Models/Label.php');

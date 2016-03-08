@@ -68,4 +68,18 @@ class CastleTest extends Castle_TestCase
     Castle::identify(1, array('name' => 'John Doe'));
     $this->assertRequest('put', '/users/1');
   }
+
+  public function testAuthenticate()
+  {
+    Castle_RequestTransport::setResponse(200, '{}');
+    Castle::authenticate(1);
+    $this->assertRequest('post', '/authentications');
+  }
+
+  public function testApprove()
+  {
+    Castle_RequestTransport::setResponse(200, '{}');
+    Castle::authentications(1)->approve();
+    $this->assertRequest('post', '/authentications/1/approve');
+  }
 }
