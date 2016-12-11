@@ -53,36 +53,15 @@ abstract class Castle
 
 
   /**
-   * Get the current risk score for a user
-   * @param  String $user_id  Id of the user
-   * @return None
+   * Authenticate an action
+   * @param  String $attributes 'user_id' and 'name' are required
+   * @return Castle_Authenticate
    */
-  public static function authenticate($user_id)
+  public static function authenticate(Array $attributes)
   {
-    $auth = new Castle_Authentication(Array('user_id' => $user_id));
+    $auth = new Castle_Authenticate($attributes);
     $auth->save();
-  }
-
-  public static function authentications($id = null)
-  {
-    $auth = new Castle_Authentication();
-    if (isset($id)) {
-      $auth->setId($id);
-    }
     return $auth;
-  }
-
-  /**
-   * Updates user information. Call when a user logs in or updates their information.
-   * @param  String $user_id  Id of the user
-   * @param  Array  $attributes Additional user properties
-   * @return  None
-   */
-  public static function identify($user_id, Array $attributes)
-  {
-    $user = new Castle_User($user_id);
-    $user->setAttributes($attributes);
-    $user->save();
   }
 
   /**

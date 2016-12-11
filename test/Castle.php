@@ -24,17 +24,12 @@ abstract class Castle_TestCase extends \PHPUnit_Framework_TestCase
 
 require(dirname(__FILE__) . '/../lib/Castle/Castle.php');
 require(dirname(__FILE__) . '/../lib/Castle/Errors.php');
-require(dirname(__FILE__) . '/../lib/Castle/SessionToken.php');
 require(dirname(__FILE__) . '/../lib/Castle/TokenStore.php');
 require(dirname(__FILE__) . '/CookieStore.php');
 require(dirname(__FILE__) . '/../lib/RestModel/Resource.php');
 require(dirname(__FILE__) . '/../lib/RestModel/Model.php');
-require(dirname(__FILE__) . '/../lib/Castle/Models/Account.php');
+require(dirname(__FILE__) . '/../lib/Castle/Models/Authenticate.php');
 require(dirname(__FILE__) . '/../lib/Castle/Models/Authentication.php');
 require(dirname(__FILE__) . '/../lib/Castle/Models/Context.php');
-require(dirname(__FILE__) . '/../lib/Castle/Models/Event.php');
-require(dirname(__FILE__) . '/../lib/Castle/Models/Label.php');
-require(dirname(__FILE__) . '/../lib/Castle/Models/User.php');
-require(dirname(__FILE__) . '/../lib/Castle/JWT.php');
 require(dirname(__FILE__) . '/TestTransport.php');
 require(dirname(__FILE__) . '/../lib/Castle/Request.php');
