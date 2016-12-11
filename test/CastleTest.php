@@ -30,7 +30,7 @@ class CastleTest extends Castle_TestCase
   {
     Castle_RequestTransport::setResponse(201, '{ "status": "approve" }');
     $auth = Castle::authenticate(Array(
-      'user_id' => $user_id,
+      'user_id' => '1',
       'name' => '$login.failed'
     ));
     $this->assertRequest('post', '/authenticate');
