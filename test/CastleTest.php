@@ -36,4 +36,13 @@ class CastleTest extends Castle_TestCase
     $this->assertRequest('post', '/authenticate');
     $this->assertEquals($auth->status, 'approve');
   }
+
+  public function testIdentify()
+  {
+    Castle_RequestTransport::setResponse(204);
+    $auth = Castle::identify('1', Array(
+      'traits' => Array('name' => 'Kalle Jularbo')
+    ));
+    $this->assertRequest('post', '/identify');
+  }
 }
