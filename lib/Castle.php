@@ -23,6 +23,5 @@ require(dirname(__FILE__) . '/RestModel/Resource.php');
 require(dirname(__FILE__) . '/RestModel/Model.php');
 require(dirname(__FILE__) . '/Castle/Models/Context.php');
 require(dirname(__FILE__) . '/Castle/Models/Authenticate.php');
-require(dirname(__FILE__) . '/Castle/Models/Authentication.php');
 require(dirname(__FILE__) . '/Castle/CurlTransport.php');
 require(dirname(__FILE__) . '/Castle/Request.php');
