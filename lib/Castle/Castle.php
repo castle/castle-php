@@ -88,6 +88,6 @@ abstract class Castle
   public static function track(Array $attributes)
   {
     $request = new Castle_Request();
-    $request->send('post', '/events', $attributes);
+    $request->send('post', '/track', $attributes);
   }
 }

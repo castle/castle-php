@@ -40,7 +40,7 @@ class CastleRequestTest extends \Castle_TestCase
   public function testRequestContextIp($sessionToken)
   {
     Castle::track(array('name' => '$login.failed'));
-    $this->assertRequest('post', '/events', array('X-Castle-Ip' => '8.8.8.8'));
+    $this->assertRequest('post', '/track', array('X-Castle-Ip' => '8.8.8.8'));
   }
 
   /**
@@ -50,7 +50,7 @@ class CastleRequestTest extends \Castle_TestCase
   {
     $_SERVER['HTTP_X_FORWARDED_FOR'] = '1.1.1.1';
     Castle::track(array('name' => '$login.failed'));
-    $this->assertRequest('post', '/events', array('X-Castle-Ip' => '1.1.1.1'));
+    $this->assertRequest('post', '/track', array('X-Castle-Ip' => '1.1.1.1'));
   }
 
   /**
@@ -61,7 +61,7 @@ class CastleRequestTest extends \Castle_TestCase
     Castle::getTokenStore()->setSession($sessionToken);
     $_SERVER['HTTP_X_REAL_IP'] = '2.2.2.2';
     Castle::track(array('name' => '$login.failed'));
-    $this->assertRequest('post', '/events', array('X-Castle-Ip' => '2.2.2.2'));
+    $this->assertRequest('post', '/track', array('X-Castle-Ip' => '2.2.2.2'));
   }
 
   /**
@@ -74,7 +74,7 @@ class CastleRequestTest extends \Castle_TestCase
       'name' => '$login.succeeded',
       'user_id' => '1'
     ));
-    $this->assertRequest('post', '/events', array('X-Castle-Headers' => '{"User-Agent":"TestAgent"}'));
+    $this->assertRequest('post', '/track', array('X-Castle-Headers' => '{"User-Agent":"TestAgent"}'));
   }
 
   /**
