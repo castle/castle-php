@@ -45,4 +45,12 @@ class CastleTest extends Castle_TestCase
     ));
     $this->assertRequest('post', '/identify');
   }
+
+  public function testReview()
+  {
+    Castle_RequestTransport::setResponse(200, '{ "id": "123553", "reviewed": true, "user_id" : "1234546", "context": {} }');
+    $review = Castle::fetchReview('123553');
+    $this->assertRequest('get', '/reviews/123553');
+    $this->assertEquals($review->id, '123553');
+  }
 }

@@ -64,6 +64,16 @@ abstract class Castle
     return $auth;
   }
 
+  /**
+   * Authenticate an action
+   * @param  String $attributes 'user_id' and 'name' are required
+   * @return Castle_Authenticate
+   */
+  public static function fetchReview(String $id)
+  {
+    return Castle_Review::find($id);
+  }
+
    /**
    * Updates user information. Call when a user logs in or updates their information.
    * @param  String $user_id  Id of the user
