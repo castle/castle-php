@@ -14,7 +14,7 @@ abstract class Castle
 
   public static $scrubHeaders = array('Cookie');
 
-  const VERSION = '1.3.0';
+  const VERSION = '1.4.0';
 
   public static function getApiKey()
   {
@@ -62,6 +62,16 @@ abstract class Castle
     $auth = new Castle_Authenticate($attributes);
     $auth->save();
     return $auth;
+  }
+
+  /**
+   * Authenticate an action
+   * @param  String $attributes 'user_id' and 'name' are required
+   * @return Castle_Authenticate
+   */
+  public static function fetchReview($id)
+  {
+    return Castle_Review::find($id);
   }
 
    /**
