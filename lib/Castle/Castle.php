@@ -69,7 +69,7 @@ abstract class Castle
    * @param  String $attributes 'user_id' and 'name' are required
    * @return Castle_Authenticate
    */
-  public static function fetchReview(String $id)
+  public static function fetchReview($id)
   {
     return Castle_Review::find($id);
   }
