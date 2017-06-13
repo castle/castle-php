@@ -8,6 +8,7 @@ class CastleRequestTest extends \Castle_TestCase
     $_SERVER['HTTP_USER_AGENT'] = 'TestAgent';
     $_SERVER['REMOTE_ADDR'] = '8.8.8.8';
     Castle::setApiKey('secretkey');
+    Castle::setUseWhitelist(false);
   }
 
   public function setUp()
@@ -75,6 +76,27 @@ class CastleRequestTest extends \Castle_TestCase
       'user_id' => '1'
     ));
     $this->assertRequest('post', '/track', array('X-Castle-Headers' => '{"User-Agent":"TestAgent"}'));
+  }
+
+  /**
+   *
+   */
+  public function testWhitelistHeaders()
+  {
+    $_SERVER['HTTP_AWESOME_HEADER'] = '14M4W350M3';
+
+    Castle::setUseWhitelist(true);
+    Castle::$whitelistHeaders[] = 'Awesome-Header';
+
+    Castle::track(array(
+      'name' => '$login.succeeded',
+      'user_id' => '1'
+    ));
+    $this->assertRequest(
+      'post',
+      '/track',
+      array('X-Castle-Headers' => '{"User-Agent":"TestAgent","Awesome-Header":"14M4W350M3"}')
+    );
   }
 
   /**
