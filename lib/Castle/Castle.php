@@ -2,6 +2,11 @@
 
 abstract class Castle
 {
+  const VERSION = '1.4.1';
+
+  const HEADER_COOKIE = 'Cookie';
+  const HEADER_USER_AGENT = 'User-Agent';
+
   public static $apiKey;
 
   public static $apiBase = 'https://api.castle.io';
@@ -12,9 +17,10 @@ abstract class Castle
 
   public static $cookieStore = 'Castle_CookieStore';
 
-  public static $scrubHeaders = array('Cookie');
+  public static $scrubHeaders = array(self::HEADER_COOKIE);
 
-  const VERSION = '1.4.0';
+  private static $useWhitelist = false;
+  public static $whitelistHeaders = array(self::HEADER_USER_AGENT);
 
   public static function getApiKey()
   {
@@ -24,6 +30,20 @@ abstract class Castle
   public static function setApiKey($apiKey)
   {
     self::$apiKey = $apiKey;
+  }
+
+  public static function getUseWhitelist()
+  {
+    return self::$useWhitelist;
+  }
+
+  public static function setUseWhitelist($use)
+  {
+    // Force User-Agent to be present in whitelist if it is not.
+    if ($use && !in_array(self::HEADER_USER_AGENT, self::$whitelistHeaders)) {
+      self::$whitelistHeaders[] = self::HEADER_USER_AGENT;
+    }
+    self::$useWhitelist = $use;
   }
 
   public static function getApiVersion()
