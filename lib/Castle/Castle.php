@@ -44,8 +44,8 @@ abstract class Castle
     // If any options are invalid.
     if (count($invalidOpts)) {
       // Throw an exception listing all invalid options.
-      throw new Exception('These cURL options cannot valid:' .
-                          join(',', $invalidOpts));
+      throw new Castle_CurlOptionError('These cURL options cannot valid:' .
+                                       join(',', $invalidOpts));
     }
     // May seem odd, but one may want the option of stripping them out, and so
     // would probably simply use error_log instead of throw.

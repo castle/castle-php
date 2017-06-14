@@ -20,6 +20,11 @@ class Castle_ConfigurationError extends Castle_Error
 
 }
 
+class Castle_CurlOptionError extends Castle_Error
+{
+
+}
+
 class Castle_ApiError extends Castle_Error
 {
   public function __construct($msg, $type = null, $status = null)

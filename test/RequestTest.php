@@ -8,6 +8,7 @@ class CastleRequestTest extends \Castle_TestCase
     $_SERVER['HTTP_USER_AGENT'] = 'TestAgent';
     $_SERVER['REMOTE_ADDR'] = '8.8.8.8';
     Castle::setApiKey('secretkey');
+    Castle::setCurlOpts(array());
     Castle::setUseWhitelist(false);
   }
 
@@ -97,6 +98,20 @@ class CastleRequestTest extends \Castle_TestCase
       '/track',
       array('X-Castle-Headers' => '{"User-Agent":"TestAgent","Awesome-Header":"14M4W350M3"}')
     );
+  }
+
+  /**
+   * @expectedException Castle_CurlOptionError
+   */
+  public function testCastleCurlOptions()
+  {
+    // Will not throw.
+    Castle::setCurlOpts(array(CURLOPT_CONNECTTIMEOUT => 1,
+                              CURLOPT_CONNECTTIMEOUT_MS => 1000,
+                              CURLOPT_TIMEOUT => 1,
+                              CURLOPT_TIMEOUT_MS => 1000));
+    // Will throw.
+    Castle::setCurlOpts(array(CURLOPT_USERAGENT => "BadBrowser/6.6.6b"));
   }
 
   /**
