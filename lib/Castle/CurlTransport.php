@@ -66,6 +66,7 @@ class Castle_RequestTransport
       $curlOptions[CURLOPT_POSTFIELDS] = $body;
     }
 
+    // Set our default options.
     $curlOptions[CURLOPT_CAINFO] = self::caCerts();
     $curlOptions[CURLOPT_URL] = $url;
     $curlOptions[CURLOPT_USERPWD] = ":" . Castle::getApiKey();
@@ -76,8 +77,11 @@ class Castle_RequestTransport
     $curlOptions[CURLOPT_HTTPHEADER] = $headers;
     $curlOptions[CURLOPT_HEADER] = true;
 
-    curl_setopt_array($curl, $curlOptions);
+    // Merge user defined options.
+    $userOptions = Castle::getCurlOpts();
+    $curlOptions = $userOptions + $curlOptions;
 
+    curl_setopt_array($curl, $curlOptions);
     $this->setResponse($curl);
 
     curl_close($curl);

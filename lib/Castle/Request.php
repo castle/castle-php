@@ -143,8 +143,10 @@ class Castle_Request
     $body = empty($params) ? null : json_encode($params);
     $cookies = Castle::getCookieStore();
     $requestHeaders = json_encode(self::getHeaders());
+    $cookieId = $cookies->read('__cid');
+
     $headers = array(
-      'X-Castle-Cookie-Id: ' . $cookies->read('__cid'),
+      'X-Castle-Cookie-Id: ' . $cookieId != null ? $cookieId : '_',
       'X-Castle-User-Agent: ' . self::getUserAgent(),
       'X-Castle-Headers: ' . $requestHeaders,
       'X-Castle-Ip: ' . self::getIp(),

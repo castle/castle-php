@@ -2,7 +2,7 @@
 
 abstract class Castle
 {
-  const VERSION = '1.4.1';
+  const VERSION = '1.4.2';
 
   const HEADER_COOKIE = 'Cookie';
   const HEADER_USER_AGENT = 'User-Agent';
@@ -22,6 +22,12 @@ abstract class Castle
   private static $useWhitelist = false;
   public static $whitelistHeaders = array(self::HEADER_USER_AGENT);
 
+  private static $curlOpts = array();
+  private static $validCurlOpts = array(CURLOPT_CONNECTTIMEOUT,
+                                        CURLOPT_CONNECTTIMEOUT_MS,
+                                        CURLOPT_TIMEOUT,
+                                        CURLOPT_TIMEOUT_MS);
+
   public static function getApiKey()
   {
     return self::$apiKey;
@@ -30,6 +36,25 @@ abstract class Castle
   public static function setApiKey($apiKey)
   {
     self::$apiKey = $apiKey;
+  }
+
+  public static function setCurlOpts($curlOpts)
+  {
+    $invalidOpts = array_diff(array_keys($curlOpts), self::$validCurlOpts);
+    // If any options are invalid.
+    if (count($invalidOpts)) {
+      // Throw an exception listing all invalid options.
+      throw new Castle_CurlOptionError('These cURL options are not allowed:' .
+                                       join(',', $invalidOpts));
+    }
+    // May seem odd, but one may want the option of stripping them out, and so
+    // would probably simply use error_log instead of throw.
+    self::$curlOpts = array_diff($curlOpts, array_flip($invalidOpts));
+  }
+
+  public static function getCurlOpts()
+  {
+    return self::$curlOpts;
   }
 
   public static function getUseWhitelist()
