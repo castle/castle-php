@@ -5,6 +5,7 @@ class CastleRequestTest extends \Castle_TestCase
 
   public static function setUpBeforeClass()
   {
+    $_SERVER = array();
     $_SERVER['HTTP_USER_AGENT'] = 'TestAgent';
     $_SERVER['REMOTE_ADDR'] = '8.8.8.8';
     Castle::setApiKey('secretkey');
@@ -14,6 +15,7 @@ class CastleRequestTest extends \Castle_TestCase
 
   public function setUp()
   {
+    $_COOKIE = array();
     $_SESSION = array();
   }
 
@@ -114,6 +116,49 @@ class CastleRequestTest extends \Castle_TestCase
     Castle::setCurlOpts(array(CURLOPT_USERAGENT => "BadBrowser/6.6.6b"));
   }
 
+  public function testGetCID()
+  {
+    $cookies = Castle::getCookieStore();
+    $cookies->write('__cid', 'invalid');
+
+    Castle::track(array(
+      'name' => '$login.succeeded',
+      'user_id' => '1'
+    ));
+
+    $this->assertRequest(
+      'post',
+      '/track',
+      array('X-Castle-Cookie-Id' => '_')
+    );
+
+    $cookies->write('__cid', ' \t\n\r\0\x0B');
+
+    Castle::track(array(
+      'name' => '$login.succeeded',
+      'user_id' => '1'
+    ));
+
+    $this->assertRequest(
+      'post',
+      '/track',
+      array('X-Castle-Cookie-Id' => '_')
+    );
+
+    $cookies->write('__cid', '85B126D3-C706-4DBA-A352-883EFBCA9203');
+
+    Castle::track(array(
+      'name' => '$login.succeeded',
+      'user_id' => '1'
+    ));
+
+    $this->assertRequest(
+      'post',
+      '/track',
+      array('X-Castle-Cookie-Id' => '85B126D3-C706-4DBA-A352-883EFBCA9203')
+    );
+  }
+
   /**
    * @expectedException Castle_ApiError
    */
@@ -180,5 +225,6 @@ class CastleRequestTest extends \Castle_TestCase
     $this->assertTrue($this->headersContains('X-Castle-Ip'));
     $this->assertTrue($this->headersContains('X-Castle-User-Agent'));
     $this->assertTrue($this->headersContains('X-Castle-Headers'));
+    $this->assertTrue($this->headersContains('X-Castle-Cookie-Id'));
   }
 }
