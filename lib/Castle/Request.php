@@ -75,6 +75,34 @@ class Castle_Request
     return null;
   }
 
+  public static function getCID()
+  {
+    $cid = Castle::getCookieStore()->read('__cid');
+
+    // If the cookie is specifically not defined or not set in the cookie jar
+    // we'll return the special value '?'. This doesn't have any effect on
+    // functionality.
+    if (empty($cid)) {
+      $cid = '?';
+    }
+
+    $cid = preg_replace('/\s/', '', $cid);
+
+    // If we end up with an empty/invalid cid, we'll set it to the special
+    // value '_' to indicate there was a value but it was not valid.
+    if (empty($cid) ||
+        !self::isValidUUID($cid)) {
+      $cid = '_';
+    }
+
+    return $cid;
+  }
+
+  public static function isValidUUID($uuid)
+  {
+    return (preg_match('/^\{?[0-9a-f]{8}\-?[0-9a-f]{4}\-?[0-9a-f]{4}\-?[0-9a-f]{4}\-?[0-9a-f]{12}\}?$/i', $uuid) === 1);
+  }
+
   public function handleApiError($response, $status)
   {
     $type = $response['type'];
@@ -141,12 +169,10 @@ class Castle_Request
 
     $client = self::clientUserAgent();
     $body = empty($params) ? null : json_encode($params);
-    $cookies = Castle::getCookieStore();
     $requestHeaders = json_encode(self::getHeaders());
-    $cookieId = $cookies->read('__cid');
 
     $headers = array(
-      'X-Castle-Cookie-Id: ' . $cookieId != null ? $cookieId : '_',
+      'X-Castle-Cookie-Id: ' . self::getCID(),
       'X-Castle-User-Agent: ' . self::getUserAgent(),
       'X-Castle-Headers: ' . $requestHeaders,
       'X-Castle-Ip: ' . self::getIp(),
