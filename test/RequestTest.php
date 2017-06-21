@@ -119,6 +119,8 @@ class CastleRequestTest extends \Castle_TestCase
   public function testGetCID()
   {
     $cookies = Castle::getCookieStore();
+
+    // alphanumeric, should pass, even if not valid.
     $cookies->write('__cid', 'invalid');
 
     Castle::track(array(
@@ -129,10 +131,11 @@ class CastleRequestTest extends \Castle_TestCase
     $this->assertRequest(
       'post',
       '/track',
-      array('X-Castle-Cookie-Id' => '_')
+      array('X-Castle-Cookie-Id' => 'invalid')
     );
 
-    $cookies->write('__cid', ' \t\n\r\0\x0B');
+    // entirely whitespace, should get set to '_'.
+    $cookies->write('__cid', " \t\n\r\0\x0B");
 
     Castle::track(array(
       'name' => '$login.succeeded',
@@ -145,7 +148,8 @@ class CastleRequestTest extends \Castle_TestCase
       array('X-Castle-Cookie-Id' => '_')
     );
 
-    $cookies->write('__cid', '85B126D3-C706-4DBA-A352-883EFBCA9203');
+    $testUUID = '85B126D3-C706-4DBA-A352-883EFBCA9203';
+    $cookies->write('__cid', $testUUID);
 
     Castle::track(array(
       'name' => '$login.succeeded',
@@ -155,7 +159,7 @@ class CastleRequestTest extends \Castle_TestCase
     $this->assertRequest(
       'post',
       '/track',
-      array('X-Castle-Cookie-Id' => '85B126D3-C706-4DBA-A352-883EFBCA9203')
+      array('X-Castle-Cookie-Id' => $testUUID)
     );
   }
 

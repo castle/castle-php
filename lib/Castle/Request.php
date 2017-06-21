@@ -86,21 +86,15 @@ class Castle_Request
       $cid = '?';
     }
 
-    $cid = preg_replace('/\s/', '', $cid);
+    $cid = preg_replace("/[[:cntrl:][:space:]]/", '', $cid);
 
     // If we end up with an empty/invalid cid, we'll set it to the special
     // value '_' to indicate there was a value but it was not valid.
-    if (empty($cid) ||
-        !self::isValidUUID($cid)) {
+    if (empty($cid)) {
       $cid = '_';
     }
 
     return $cid;
-  }
-
-  public static function isValidUUID($uuid)
-  {
-    return (preg_match('/^\{?[0-9a-f]{8}\-?[0-9a-f]{4}\-?[0-9a-f]{4}\-?[0-9a-f]{4}\-?[0-9a-f]{12}\}?$/i', $uuid) === 1);
   }
 
   public function handleApiError($response, $status)
