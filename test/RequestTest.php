@@ -163,7 +163,7 @@ class CastleRequestTest extends \Castle_TestCase
     $this->assertRequest(
       'post',
       '/track',
-      array('X-Castle-Client-Id' => NULL)
+      array('X-Castle-Client-Id' => '')
     );
   }
 

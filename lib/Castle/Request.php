@@ -80,7 +80,8 @@ class Castle_Request
     if (array_key_exists('HTTP_X_CASTLE_DEVICE_ID', $_SERVER)) {
       return $_SERVER['HTTP_X_CASTLE_DEVICE_ID'];
     } else {
-      return Castle::getCookieStore()->read('__cid');
+      $cid = Castle::getCookieStore()->read('__cid');
+      return empty($cid) ? '' : $cid;
     }
   }
 
