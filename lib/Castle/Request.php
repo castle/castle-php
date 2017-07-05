@@ -75,26 +75,13 @@ class Castle_Request
     return null;
   }
 
-  public static function getCID()
+  public static function getClientId()
   {
-    $cid = Castle::getCookieStore()->read('__cid');
-
-    // If the cookie is specifically not defined or not set in the cookie jar
-    // we'll return the special value '?'. This doesn't have any effect on
-    // functionality.
-    if (empty($cid)) {
-      $cid = '?';
+    if (array_key_exists('HTTP_X_CASTLE_DEVICE_ID', $_SERVER)) {
+      return $_SERVER['HTTP_X_CASTLE_DEVICE_ID'];
+    } else {
+      return Castle::getCookieStore()->read('__cid');
     }
-
-    $cid = preg_replace("/[[:cntrl:][:space:]]/", '', $cid);
-
-    // If we end up with an empty/invalid cid, we'll set it to the special
-    // value '_' to indicate there was a value but it was not valid.
-    if (empty($cid)) {
-      $cid = '_';
-    }
-
-    return $cid;
   }
 
   public function handleApiError($response, $status)
@@ -166,7 +153,7 @@ class Castle_Request
     $requestHeaders = json_encode(self::getHeaders());
 
     $headers = array(
-      'X-Castle-Cookie-Id: ' . self::getCID(),
+      'X-Castle-Client-Id: ' . self::getClientId(),
       'X-Castle-User-Agent: ' . self::getUserAgent(),
       'X-Castle-Headers: ' . $requestHeaders,
       'X-Castle-Ip: ' . self::getIp(),
