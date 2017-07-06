@@ -75,13 +75,25 @@ class Castle_Request
     return null;
   }
 
-  public static function getClientId()
-  {
+  public static function normalize($cid) {
+    $cid = preg_replace("/[[:cntrl:][:space:]]/", '', $cid);
+
+    // If we end up with an empty/invalid cid, we'll set it to the special
+    // value '_' to indicate there was a value but it was not valid.
+    // This is to prevent curl from removing empty headers
+    return empty($cid) ? '_' : $cid;
+  }
+
+  public static function getClientId() {
     if (array_key_exists('HTTP_X_CASTLE_DEVICE_ID', $_SERVER)) {
-      return $_SERVER['HTTP_X_CASTLE_DEVICE_ID'];
+      return self::normalize($_SERVER['HTTP_X_CASTLE_DEVICE_ID']);
+    } else if (Castle::getCookieStore()->hasKey('__cid')) {
+      return self::normalize(Castle::getCookieStore()->read('__cid'));
     } else {
-      $cid = Castle::getCookieStore()->read('__cid');
-      return empty($cid) ? '' : $cid;
+      // If the client_id is neither send in the header nor cookie
+      // we'll return the special value '?'. This doesn't have any effect on
+      // functionality. This is to prevent curl from removing empty headers
+      return '?';
     }
   }
 

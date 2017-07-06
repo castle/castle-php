@@ -2,6 +2,7 @@
 interface Castle_iCookieStore
 {
   public function destroy($key);
+  public function hasKey($key);
   public function read($key);
   public function write($key, $data);
 }
@@ -19,12 +20,15 @@ class Castle_CookieStore implements Castle_iCookieStore
     }
   }
 
+  public function hasKey($key)
+  {
+    return isset($_COOKIE) && array_key_exists($key, $_COOKIE);
+    return true;
+  }
+
   public function read($key)
   {
-    if (isset($_COOKIE) && array_key_exists($key, $_COOKIE)) {
-      return $_COOKIE[$key];
-    }
-    return null;
+    return self::hasKey($key) ? $_COOKIE[$key] : null;
   }
 
   public function write($key, $data)

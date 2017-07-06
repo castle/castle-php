@@ -135,6 +135,25 @@ class CastleRequestTest extends \Castle_TestCase
     );
   }
 
+  public function testGetClientIDInvalidFromCookie()
+  {
+    $cookies = Castle::getCookieStore();
+
+    $testInvalidID = " \t\n\r\0\x0B";
+    $cookies->write('__cid', $testInvalidID);
+
+    Castle::track(array(
+      'name' => '$login.succeeded',
+      'user_id' => '1'
+    ));
+
+    $this->assertRequest(
+      'post',
+      '/track',
+      array('X-Castle-Client-Id' => '_')
+    );
+  }
+
   public function testGetClientIDFromHeader()
   {
     $testUUID = '85B126D3-C706-4DBA-A352-883EFBCA9203';
@@ -152,6 +171,23 @@ class CastleRequestTest extends \Castle_TestCase
     );
   }
 
+   public function testGetClientIDInvalidFromHeader()
+  {
+    $testInvalidID = " \t\n\r\0\x0B";
+    $_SERVER['HTTP_X_CASTLE_DEVICE_ID'] = $testInvalidID;
+
+    Castle::track(array(
+      'name' => '$login.succeeded',
+      'user_id' => '1'
+    ));
+
+    $this->assertRequest(
+      'post',
+      '/track',
+      array('X-Castle-Client-Id' => '_')
+    );
+  }
+
     public function testGetClientIDNoClientID()
   {
 
@@ -163,7 +199,7 @@ class CastleRequestTest extends \Castle_TestCase
     $this->assertRequest(
       'post',
       '/track',
-      array('X-Castle-Client-Id' => '')
+      array('X-Castle-Client-Id' => '?')
     );
   }
 
