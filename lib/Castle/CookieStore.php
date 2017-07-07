@@ -23,7 +23,6 @@ class Castle_CookieStore implements Castle_iCookieStore
   public function hasKey($key)
   {
     return isset($_COOKIE) && array_key_exists($key, $_COOKIE);
-    return true;
   }
 
   public function read($key)
