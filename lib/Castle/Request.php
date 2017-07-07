@@ -85,8 +85,8 @@ class Castle_Request
   }
 
   public static function getClientId() {
-    if (array_key_exists('HTTP_X_CASTLE_DEVICE_ID', $_SERVER)) {
-      return self::normalize($_SERVER['HTTP_X_CASTLE_DEVICE_ID']);
+    if (array_key_exists('HTTP_X_CASTLE_CLIENT_ID', $_SERVER)) {
+      return self::normalize($_SERVER['HTTP_X_CASTLE_CLIENT_ID']);
     } else if (Castle::getCookieStore()->hasKey('__cid')) {
       return self::normalize(Castle::getCookieStore()->read('__cid'));
     } else {

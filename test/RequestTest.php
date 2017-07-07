@@ -157,7 +157,7 @@ class CastleRequestTest extends \Castle_TestCase
   public function testGetClientIDFromHeader()
   {
     $testUUID = '85B126D3-C706-4DBA-A352-883EFBCA9203';
-    $_SERVER['HTTP_X_CASTLE_DEVICE_ID'] = $testUUID;
+    $_SERVER['HTTP_X_CASTLE_CLIENT_ID'] = $testUUID;
 
     Castle::track(array(
       'name' => '$login.succeeded',
@@ -174,7 +174,7 @@ class CastleRequestTest extends \Castle_TestCase
    public function testGetClientIDInvalidFromHeader()
   {
     $testInvalidID = " \t\n\r\0\x0B";
-    $_SERVER['HTTP_X_CASTLE_DEVICE_ID'] = $testInvalidID;
+    $_SERVER['HTTP_X_CASTLE_CLIENT_ID'] = $testInvalidID;
 
     Castle::track(array(
       'name' => '$login.succeeded',
