@@ -46,10 +46,6 @@ Whenever something unexpected happens, an exception is thrown to indicate what w
 | `Castle_UserUnauthorizedError`  | The user is locked or has entered the wrong credentials |
 | `Castle_InvalidParametersError` | One or more of the supplied parameters are incorrect. Check the response for more information. |
 
-## Running test suite
-Execute `vendor/bin/phpunit test` to run the full test suite
-
-
 
 
 
