@@ -116,37 +116,9 @@ class CastleRequestTest extends \Castle_TestCase
     Castle::setCurlOpts(array(CURLOPT_USERAGENT => "BadBrowser/6.6.6b"));
   }
 
-  public function testGetCID()
+  public function testGetClientIDFromCookie()
   {
     $cookies = Castle::getCookieStore();
-
-    // alphanumeric, should pass, even if not valid.
-    $cookies->write('__cid', 'invalid');
-
-    Castle::track(array(
-      'name' => '$login.succeeded',
-      'user_id' => '1'
-    ));
-
-    $this->assertRequest(
-      'post',
-      '/track',
-      array('X-Castle-Cookie-Id' => 'invalid')
-    );
-
-    // entirely whitespace, should get set to '_'.
-    $cookies->write('__cid', " \t\n\r\0\x0B");
-
-    Castle::track(array(
-      'name' => '$login.succeeded',
-      'user_id' => '1'
-    ));
-
-    $this->assertRequest(
-      'post',
-      '/track',
-      array('X-Castle-Cookie-Id' => '_')
-    );
 
     $testUUID = '85B126D3-C706-4DBA-A352-883EFBCA9203';
     $cookies->write('__cid', $testUUID);
@@ -159,7 +131,75 @@ class CastleRequestTest extends \Castle_TestCase
     $this->assertRequest(
       'post',
       '/track',
-      array('X-Castle-Cookie-Id' => $testUUID)
+      array('X-Castle-Client-Id' => $testUUID)
+    );
+  }
+
+  public function testGetClientIDInvalidFromCookie()
+  {
+    $cookies = Castle::getCookieStore();
+
+    $testInvalidID = " \t\n\r\0\x0B";
+    $cookies->write('__cid', $testInvalidID);
+
+    Castle::track(array(
+      'name' => '$login.succeeded',
+      'user_id' => '1'
+    ));
+
+    $this->assertRequest(
+      'post',
+      '/track',
+      array('X-Castle-Client-Id' => '_')
+    );
+  }
+
+  public function testGetClientIDFromHeader()
+  {
+    $testUUID = '85B126D3-C706-4DBA-A352-883EFBCA9203';
+    $_SERVER['HTTP_X_CASTLE_CLIENT_ID'] = $testUUID;
+
+    Castle::track(array(
+      'name' => '$login.succeeded',
+      'user_id' => '1'
+    ));
+
+    $this->assertRequest(
+      'post',
+      '/track',
+      array('X-Castle-Client-Id' => $testUUID)
+    );
+  }
+
+   public function testGetClientIDInvalidFromHeader()
+  {
+    $testInvalidID = " \t\n\r\0\x0B";
+    $_SERVER['HTTP_X_CASTLE_CLIENT_ID'] = $testInvalidID;
+
+    Castle::track(array(
+      'name' => '$login.succeeded',
+      'user_id' => '1'
+    ));
+
+    $this->assertRequest(
+      'post',
+      '/track',
+      array('X-Castle-Client-Id' => '_')
+    );
+  }
+
+    public function testGetClientIDNoClientID()
+  {
+
+    Castle::track(array(
+      'name' => '$login.succeeded',
+      'user_id' => '1'
+    ));
+
+    $this->assertRequest(
+      'post',
+      '/track',
+      array('X-Castle-Client-Id' => '?')
     );
   }
 
@@ -229,6 +269,6 @@ class CastleRequestTest extends \Castle_TestCase
     $this->assertTrue($this->headersContains('X-Castle-Ip'));
     $this->assertTrue($this->headersContains('X-Castle-User-Agent'));
     $this->assertTrue($this->headersContains('X-Castle-Headers'));
-    $this->assertTrue($this->headersContains('X-Castle-Cookie-Id'));
+    $this->assertTrue($this->headersContains('X-Castle-Client-Id'));
   }
 }

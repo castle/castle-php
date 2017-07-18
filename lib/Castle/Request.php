@@ -75,26 +75,26 @@ class Castle_Request
     return null;
   }
 
-  public static function getCID()
-  {
-    $cid = Castle::getCookieStore()->read('__cid');
-
-    // If the cookie is specifically not defined or not set in the cookie jar
-    // we'll return the special value '?'. This doesn't have any effect on
-    // functionality.
-    if (empty($cid)) {
-      $cid = '?';
-    }
-
+  public static function normalize($cid) {
     $cid = preg_replace("/[[:cntrl:][:space:]]/", '', $cid);
 
     // If we end up with an empty/invalid cid, we'll set it to the special
     // value '_' to indicate there was a value but it was not valid.
-    if (empty($cid)) {
-      $cid = '_';
-    }
+    // This is to prevent curl from removing empty headers
+    return empty($cid) ? '_' : $cid;
+  }
 
-    return $cid;
+  public static function getClientId() {
+    if (array_key_exists('HTTP_X_CASTLE_CLIENT_ID', $_SERVER)) {
+      return self::normalize($_SERVER['HTTP_X_CASTLE_CLIENT_ID']);
+    } else if (Castle::getCookieStore()->hasKey('__cid')) {
+      return self::normalize(Castle::getCookieStore()->read('__cid'));
+    } else {
+      // If the client_id is neither send in the header nor cookie
+      // we'll return the special value '?'. This doesn't have any effect on
+      // functionality. This is to prevent curl from removing empty headers
+      return '?';
+    }
   }
 
   public function handleApiError($response, $status)
@@ -166,7 +166,7 @@ class Castle_Request
     $requestHeaders = json_encode(self::getHeaders());
 
     $headers = array(
-      'X-Castle-Cookie-Id: ' . self::getCID(),
+      'X-Castle-Client-Id: ' . self::getClientId(),
       'X-Castle-User-Agent: ' . self::getUserAgent(),
       'X-Castle-Headers: ' . $requestHeaders,
       'X-Castle-Ip: ' . self::getIp(),
