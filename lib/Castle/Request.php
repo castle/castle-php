@@ -97,8 +97,9 @@ class Castle_Request
     }
   }
 
-  public static function getRequestContextArray($body) {
+  public static function getRequestContextArray($params) {
     $requestHeaders = json_encode(self::getHeaders());
+    $body = empty($params) ? null : json_encode($params);
     return array(
       'clientId' => self::getClientId(),
       'ip' => self::getIp(),
@@ -165,13 +166,17 @@ class Castle_Request
 
   public function send($method, $url, $params=null)
   {
+    $context = Castle_RequestContext::build(
+      self::getRequestContextArray($params)
+    );
+
+    return $this->sendWithContext($method, $url, $context);
+  }
+
+  public function sendWithContext($method, $url, $context)
+  {
     $this->preFlightCheck();
 
-    $body = empty($params) ? null : json_encode($params);
-
-    $context = Castle_RequestContext::build(
-      self::getRequestContextArray($body)
-    );
 
     $request = new Castle_RequestTransport();
     $request->send($method, self::apiUrl($url), $context);
