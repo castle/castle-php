@@ -110,10 +110,6 @@ class Castle_Request
         throw new Castle_ForbiddenError($msg, $type, $status);
       case 404:
         throw new Castle_NotFoundError($msg, $type, $status);
-      case 419:
-        /* Clear session since this error means that is is invalid or removed */
-        Castle::getTokenStore()->setSession();
-        throw new Castle_UserUnauthorizedError($msg, $type, $status);
       case 422:
         throw new Castle_InvalidParametersError($msg, $type, $status);
       default:
@@ -174,12 +170,6 @@ class Castle_Request
       'Content-Type: application/json',
       'Content-Length: ' . strlen($body)
     );
-
-    // Check if there is a current session and pass it along
-    $session = Castle::getTokenStore()->getSession();
-    if (isset($session)) {
-      $headers[]= 'X-Castle-Session-Token: '.$session;
-    }
 
     $request = new Castle_RequestTransport();
     $request->send($method, self::apiUrl($url), $body, $headers);

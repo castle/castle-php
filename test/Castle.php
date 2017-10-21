@@ -24,7 +24,6 @@ abstract class Castle_TestCase extends \PHPUnit_Framework_TestCase
 
 require(dirname(__FILE__) . '/../lib/Castle/Castle.php');
 require(dirname(__FILE__) . '/../lib/Castle/Errors.php');
-require(dirname(__FILE__) . '/../lib/Castle/TokenStore.php');
 require(dirname(__FILE__) . '/CookieStore.php');
 require(dirname(__FILE__) . '/../lib/RestModel/Resource.php');
 require(dirname(__FILE__) . '/../lib/RestModel/Model.php');

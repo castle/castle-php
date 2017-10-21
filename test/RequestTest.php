@@ -33,36 +33,21 @@ class CastleRequestTest extends \Castle_TestCase
     return false;
   }
 
-  public function exampleSessionToken()
-  {
-    return array(array('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImlzcyI6InVzZXItMjQxMiIsInN1YiI6IlMyb2R4UmVabkdxaHF4UGFRN1Y3a05rTG9Ya0daUEZ6IiwiYXVkIjoiODAwMDAwMDAwMDAwMDAwIiwiZXhwIjoxMzk5NDc5Njc1LCJpYXQiOjEzOTk0Nzk2NjUsImp0aSI6MH0.eyJjaGFsbGVuZ2UiOnsiaWQiOiJUVENqd3VyM3lwbTRUR1ZwWU43cENzTXFxOW9mWEVBSCIsInR5cGUiOiJvdHBfYXV0aGVudGljYXRvciJ9fQ.LT9mUzJEbsizbFxcpMo3zbms0aCDBzfgMbveMGSi1-s'));
-  }
-
-  /**
-   * @dataProvider exampleSessionToken
-   */
-  public function testRequestContextIp($sessionToken)
+  public function testRequestContextIp()
   {
     Castle::track(array('name' => '$login.failed'));
     $this->assertRequest('post', '/track', array('X-Castle-Ip' => '8.8.8.8'));
   }
 
-  /**
-   * @dataProvider exampleSessionToken
-   */
-  public function testRequestContextForwardedIp($sessionToken)
+  public function testRequestContextForwardedIp()
   {
     $_SERVER['HTTP_X_FORWARDED_FOR'] = '1.1.1.1';
     Castle::track(array('name' => '$login.failed'));
     $this->assertRequest('post', '/track', array('X-Castle-Ip' => '1.1.1.1'));
   }
 
-  /**
-   * @dataProvider exampleSessionToken
-   */
-  public function testRequestContextRealIp($sessionToken)
+  public function testRequestContextRealIp()
   {
-    Castle::getTokenStore()->setSession($sessionToken);
     $_SERVER['HTTP_X_REAL_IP'] = '2.2.2.2';
     Castle::track(array('name' => '$login.failed'));
     $this->assertRequest('post', '/track', array('X-Castle-Ip' => '2.2.2.2'));
@@ -239,16 +224,6 @@ class CastleRequestTest extends \Castle_TestCase
   public function testForbiddenRequest()
   {
     Castle_RequestTransport::setResponse(403);
-    $req = new Castle_Request();
-    $req->send('GET', '/users');
-  }
-
-  /**
-   * @expectedException Castle_UserUnauthorizedError
-   */
-  public function testUserUnauthorizedRequest()
-  {
-    Castle_RequestTransport::setResponse(419);
     $req = new Castle_Request();
     $req->send('GET', '/users');
   }
