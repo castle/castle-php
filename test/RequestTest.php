@@ -242,7 +242,6 @@ class CastleRequestTest extends \Castle_TestCase
     $req = new Castle_Request();
     $raw = $req->send('POST', '/events');
     $this->assertTrue($this->headersContains('X-Castle-Ip'));
-    $this->assertTrue($this->headersContains('X-Castle-User-Agent'));
     $this->assertTrue($this->headersContains('X-Castle-Headers'));
     $this->assertTrue($this->headersContains('X-Castle-Client-Id'));
   }

@@ -31,4 +31,5 @@ require(dirname(__FILE__) . '/../lib/Castle/Models/Authenticate.php');
 require(dirname(__FILE__) . '/../lib/Castle/Models/Review.php');
 require(dirname(__FILE__) . '/../lib/Castle/Models/Context.php');
 require(dirname(__FILE__) . '/TestTransport.php');
+require(dirname(__FILE__) . '/../lib/Castle/RequestContext.php');
 require(dirname(__FILE__) . '/../lib/Castle/Request.php');

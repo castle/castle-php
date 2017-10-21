@@ -42,7 +42,7 @@ class Castle_RequestTransport
     }
   }
 
-  public function send($method, $url, $body=null, $headers=array()) {
+  public function send($method, $url, $context) {
     $curl = curl_init();
     $method = strtolower($method);
     switch($method) {
@@ -62,8 +62,8 @@ class Castle_RequestTransport
         throw new Castle_RequestError();
     }
     $curlOptions = array();
-    if (!empty($body)) {
-      $curlOptions[CURLOPT_POSTFIELDS] = $body;
+    if (!empty($context->body)) {
+      $curlOptions[CURLOPT_POSTFIELDS] = $context->body;
     }
 
     // Set our default options.
@@ -74,7 +74,7 @@ class Castle_RequestTransport
     $curlOptions[CURLOPT_USERAGENT] = "Castle/v1 PHPBindings/".Castle::VERSION;
     $curlOptions[CURLOPT_CONNECTTIMEOUT] = 3;
     $curlOptions[CURLOPT_TIMEOUT] = 10;
-    $curlOptions[CURLOPT_HTTPHEADER] = $headers;
+    $curlOptions[CURLOPT_HTTPHEADER] = $context->toRequestHeaders();
     $curlOptions[CURLOPT_HEADER] = true;
 
     // Merge user defined options.

@@ -97,6 +97,16 @@ class Castle_Request
     }
   }
 
+  public static function getRequestContextArray($body) {
+    $requestHeaders = json_encode(self::getHeaders());
+    return array(
+      'clientId' => self::getClientId(),
+      'ip' => self::getIp(),
+      'headers' => $requestHeaders,
+      'body' => $body
+    );
+  }
+
   public function handleApiError($response, $status)
   {
     $type = $response['type'];
@@ -157,22 +167,14 @@ class Castle_Request
   {
     $this->preFlightCheck();
 
-    $client = self::clientUserAgent();
     $body = empty($params) ? null : json_encode($params);
-    $requestHeaders = json_encode(self::getHeaders());
 
-    $headers = array(
-      'X-Castle-Client-Id: ' . self::getClientId(),
-      'X-Castle-User-Agent: ' . self::getUserAgent(),
-      'X-Castle-Headers: ' . $requestHeaders,
-      'X-Castle-Ip: ' . self::getIp(),
-      'X-Castle-Client-User-Agent: ' . $client,
-      'Content-Type: application/json',
-      'Content-Length: ' . strlen($body)
+    $context = Castle_RequestContext::build(
+      self::getRequestContextArray($body)
     );
 
     $request = new Castle_RequestTransport();
-    $request->send($method, self::apiUrl($url), $body, $headers);
+    $request->send($method, self::apiUrl($url), $context);
 
     return $this->handleResponse($request);
   }
