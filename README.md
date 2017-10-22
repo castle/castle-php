@@ -39,25 +39,22 @@ worker. In this case you can build the request context manually.
 #### Example
 
 ```php
-// While in a web request context, collect the information needed to send the
-// request. The following call will return a associative array, which can be
-// serialized:
-
+// While in a web request context, extract the information needed to send the
+// request.
 $params = array(
   'event' => '$login.succeeded',
   'user_id' => '12345'
 );
 $contextJson = Castle_RequestContext::extractJson($params);
 
-// Now, serialize and push this data to your async worker, eg.
+// Now, push this data to your async worker, eg.
 $castleWorker->perform($contextJson);
 ```
 
 In your worker code (ie. non web environment):
 
 ```php
-// Deserialize the data and build the RequestContext object
-
+// Build the RequestContext object from the JSON data
 $context = Castle_RequestContext::fromJson($json);
 
 // Send the request to Castle
