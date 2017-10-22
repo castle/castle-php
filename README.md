@@ -47,10 +47,10 @@ $params = array(
   'event' => '$login.succeeded',
   'user_id' => '12345'
 );
-$context = Castle_RequestContext::extract($params);
+$contextJson = Castle_RequestContext::extractJson($params);
 
 // Now, serialize and push this data to your async worker, eg.
-$castleWorker->perform($context->toJson());
+$castleWorker->perform($contextJson);
 ```
 
 In your worker code (ie. non web environment):

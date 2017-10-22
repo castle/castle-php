@@ -31,6 +31,7 @@ class Castle_RequestContext
     ));
   }
 
+  # Instantiate a request context from an associative array.
   public static function build(array $properties) {
     $instance = new self();
     foreach ($properties as $key => $value){
@@ -39,19 +40,6 @@ class Castle_RequestContext
       }
     }
     return $instance;
-  }
-
-  // Build an array with data necessary to create a request context
-  public static function buildArray($params)
-  {
-    $requestHeaders = json_encode(self::getHeaders());
-    $body = empty($params) ? null : json_encode($params);
-    return array(
-      'clientId' => self::getClientId(),
-      'ip' => self::getIp(),
-      'headers' => $requestHeaders,
-      'body' => $body
-    );
   }
 
   public static function clientUserAgent()
@@ -72,10 +60,30 @@ class Castle_RequestContext
   // Build a request context automatically from PHP globals
   public static function extract($params)
   {
-    $contextData = self::buildArray($params);
+    $contextData = self::extractArray($params);
     return self::build($contextData);
   }
 
+  // Build an array with data necessary to create a request context
+  public static function extractArray($params)
+  {
+    $requestHeaders = json_encode(self::getHeaders());
+    $body = empty($params) ? null : json_encode($params);
+    return array(
+      'clientId' => self::getClientId(),
+      'ip' => self::getIp(),
+      'headers' => $requestHeaders,
+      'body' => $body
+    );
+  }
+
+  // Extract request context data and return the JSON serialized version of it
+  public static function extractJson($params) {
+    $contextData = self::extractArray($params);
+    return json_encode($contextData);
+  }
+
+  // Build an instance of the request context based on serialized JSON data
   public static function fromJson($json)
   {
     $contextData = json_decode($json, true);
