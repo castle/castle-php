@@ -22,15 +22,6 @@ class Castle_RequestContext
     );
   }
 
-  public function toJson() {
-    return json_encode(array(
-      'clientId' => $this->clientId,
-      'ip' => $this->ip,
-      'headers' => $this->header,
-      'body' => $this->body
-    ));
-  }
-
   # Instantiate a request context from an associative array.
   public static function build(array $properties) {
     $instance = new self();
