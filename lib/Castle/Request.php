@@ -53,11 +53,6 @@ class Castle_Request
       $this->handleApiError($response, $request->rStatus);
     }
 
-    // Update the local session if it was updated by Castle
-    if (array_key_exists('X-Castle-Set-Session-Token', $request->rHeaders)) {
-      Castle::setSessionToken($request->rHeaders['X-Castle-Set-Session-Token']);
-    }
-
     return array($response, $request);
   }
 
