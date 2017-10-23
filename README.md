@@ -58,7 +58,7 @@ In your worker code (ie. non web environment):
 $context = Castle_RequestContext::fromJson($json);
 
 // Send the request to Castle
-$request = new Castle_RequestTransport();
+$request = new Castle_Request();
 $request->sendWithContext('/track', $context);
 
 ```
