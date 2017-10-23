@@ -2,86 +2,26 @@
 
 class Castle_RequestContext
 {
-  public $clientId;
-
-  public $headers;
-
-  public $ip;
-
-  public $body;
-
-  public function toRequestHeaders() {
-    $client = self::clientUserAgent();
+  # Extract a request context from the $Server environment.
+  public static function extract() {
     return array(
-      'X-Castle-Client-Id: ' . $this->clientId,
-      'X-Castle-Headers: ' . $this->headers,
-      'X-Castle-Ip: ' . $this->ip,
-      'X-Castle-Client-User-Agent: ' . $client,
-      'Content-Type: application/json',
-      'Content-Length: ' . strlen($this->body)
+      'clientId' => self::extractClientId(),
+      'ip' => self::extractIp(),
+      'headers' => self::extractHeaders(),
+      'user_agent' => self::extractUserAgent(),
+      'library' => array(
+        'name' => 'castle-php',
+        'version' => Castle::VERSION
+      )
     );
   }
 
-  # Instantiate a request context from an associative array.
-  public static function build(array $properties) {
-    $instance = new self();
-    foreach ($properties as $key => $value){
-      if ( property_exists ( $instance , $key ) ){
-        $instance->$key = $value;
-      }
-    }
-    return $instance;
+  # Extract a request context from the $Server environment as JSON.
+  public static function extractJSON() {
+    return json_encode(self::extract());
   }
 
-  public static function clientUserAgent()
-  {
-    $langVersion = phpversion();
-    $uname = php_uname();
-    $userAgent = array(
-      'bindings_version' => Castle::VERSION,
-      'lang' => 'php',
-      'lang_version' => $langVersion,
-      'platform' => PHP_OS,
-      'publisher' => 'castle',
-      'uname' => $uname
-    );
-    return json_encode($userAgent);
-  }
-
-  // Build a request context automatically from PHP globals
-  public static function extract($params)
-  {
-    $contextData = self::extractArray($params);
-    return self::build($contextData);
-  }
-
-  // Build an array with data necessary to create a request context
-  public static function extractArray($params)
-  {
-    $requestHeaders = json_encode(self::getHeaders());
-    $body = empty($params) ? null : json_encode($params);
-    return array(
-      'clientId' => self::getClientId(),
-      'ip' => self::getIp(),
-      'headers' => $requestHeaders,
-      'body' => $body
-    );
-  }
-
-  // Extract request context data and return the JSON serialized version of it
-  public static function extractJson($params) {
-    $contextData = self::extractArray($params);
-    return json_encode($contextData);
-  }
-
-  // Build an instance of the request context based on serialized JSON data
-  public static function fromJson($json)
-  {
-    $contextData = json_decode($json, true);
-    return self::build($contextData);
-  }
-
-  public static function getHeaders()
+  public static function extractHeaders()
   {
     $headers = array();
     foreach ($_SERVER as $key => $val) {
@@ -105,7 +45,7 @@ class Castle_RequestContext
     return $headers;
   }
 
-  public static function getIp()
+  public static function extractIp()
   {
     if (array_key_exists('HTTP_X_FORWARDED_FOR', $_SERVER)) {
       $parts = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
@@ -120,7 +60,7 @@ class Castle_RequestContext
     return null;
   }
 
-  public static function getUserAgent()
+  public static function extractUserAgent()
   {
     if (array_key_exists('HTTP_USER_AGENT', $_SERVER)) {
       return $_SERVER['HTTP_USER_AGENT'];
@@ -128,7 +68,7 @@ class Castle_RequestContext
     return null;
   }
 
-  public static function getClientId()
+  public static function extractClientId()
   {
     if (array_key_exists('HTTP_X_CASTLE_CLIENT_ID', $_SERVER)) {
       return self::normalize($_SERVER['HTTP_X_CASTLE_CLIENT_ID']);

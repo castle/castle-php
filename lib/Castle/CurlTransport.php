@@ -1,5 +1,5 @@
 <?php
-
+# Content-Type: application/json',
 class Castle_RequestTransport
 {
   public $rBody;

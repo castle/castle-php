@@ -8,48 +8,44 @@ class CastleRequestContextTest extends \Castle_TestCase
     $_SERVER = array();
     $_SERVER['HTTP_USER_AGENT'] = 'TestAgent';
     $_SERVER['REMOTE_ADDR'] = '8.8.8.8';
-    Castle::setApiKey('secretkey');
-    Castle::setCurlOpts(array());
-    Castle::setUseWhitelist(false);
+    $_SERVER['HTTP_X_CASTLE_CLIENT_ID'] = '1ccf8dee-904b-4d20-8a88-55ded468bcc5';
   }
 
-  public function exampleJson() {
-    return array(array('{"clientId":"?","ip":"8.8.8.8","headers":"{\"User-Agent\":\"TestAgent\"}","body":"{\"user_id\":1}"}'));
+  public function contextProvider() {
+    return array(array(array(
+        'clientId' => '1ccf8dee-904b-4d20-8a88-55ded468bcc5',
+        'ip' => '8.8.8.8',
+        'headers' => array(
+          'User-Agent' => 'TestAgent',
+          'X-Castle-Client-Id' => '1ccf8dee-904b-4d20-8a88-55ded468bcc5'
+        ),
+        'user_agent' => 'TestAgent',
+        'library' => array(
+          'name' => 'castle-php',
+          'version' => Castle::VERSION
+        )
+      )));
   }
 
-  public function testBuild() {
-    $instance = Castle_RequestContext::build(array(
-      'ip' => '8.8.8.8',
-      'clientId' => 'abcd',
-      'headers' => '{}',
-      'body' => '{}'
-    ));
-
-    $this->assertEquals($instance->ip, '8.8.8.8');
-    $this->assertEquals($instance->clientId, 'abcd');
-    $this->assertEquals($instance->headers, '{}');
-    $this->assertEquals($instance->body, '{}');
+  public function contextJsonProvider() {
+    return array(array('{"clientId":"1ccf8dee-904b-4d20-8a88-55ded468bcc5","ip":"8.8.8.8","headers":{"User-Agent":"TestAgent","X-Castle-Client-Id":"1ccf8dee-904b-4d20-8a88-55ded468bcc5"},"user_agent":"TestAgent","library":{"name":"castle-php","version":"1.4.4"}}'));
   }
 
   /**
-   * @dataProvider exampleJson
+   * @dataProvider contextProvider
+   */
+  public function testExtract($expected) {
+    $actual = Castle_RequestContext::extract();
+    $this->assertEquals($expected, $actual);
+  }
+
+
+  /**
+   * @dataProvider contextJsonProvider
    */
   public function testExtractJson($expected) {
-    $json = Castle_RequestContext::extractJson(array('user_id' => 1));
-
-    $this->assertEquals($json, $expected);
-  }
-
-  /**
-   * @dataProvider exampleJson
-   */
-  public function testFromJson($json) {
-    $instance = Castle_RequestContext::fromJson($json);
-
-    $this->assertEquals($instance->ip, '8.8.8.8');
-    $this->assertEquals($instance->clientId, '?');
-    $this->assertEquals($instance->headers, '{"User-Agent":"TestAgent"}');
-    $this->assertEquals($instance->body, '{"user_id":1}');
+    $actual = Castle_RequestContext::extractJson();
+    $this->assertEquals($expected, $actual);
   }
 
 }
