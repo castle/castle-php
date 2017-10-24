@@ -1,5 +1,5 @@
 <?php
-# Content-Type: application/json',
+
 class Castle_RequestTransport
 {
   public $rBody;
@@ -42,7 +42,7 @@ class Castle_RequestTransport
     }
   }
 
-  public function send($method, $url, $context) {
+  public function send($method, $url, $payload) {
     $curl = curl_init();
     $method = strtolower($method);
     switch($method) {
@@ -62,8 +62,8 @@ class Castle_RequestTransport
         throw new Castle_RequestError();
     }
     $curlOptions = array();
-    if (!empty($context->body)) {
-      $curlOptions[CURLOPT_POSTFIELDS] = $context->body;
+    if (!empty($payload)) {
+      $curlOptions[CURLOPT_POSTFIELDS] = $payload;
     }
 
     // Set our default options.
@@ -71,10 +71,9 @@ class Castle_RequestTransport
     $curlOptions[CURLOPT_URL] = $url;
     $curlOptions[CURLOPT_USERPWD] = ":" . Castle::getApiKey();
     $curlOptions[CURLOPT_RETURNTRANSFER] = true;
-    $curlOptions[CURLOPT_USERAGENT] = "Castle/v1 PHPBindings/".Castle::VERSION;
     $curlOptions[CURLOPT_CONNECTTIMEOUT] = 3;
     $curlOptions[CURLOPT_TIMEOUT] = 10;
-    $curlOptions[CURLOPT_HTTPHEADER] = $context->toRequestHeaders();
+    $curlOptions[CURLOPT_HTTPHEADER] = array('Content-Type' => 'application/json');
     $curlOptions[CURLOPT_HEADER] = true;
 
     // Merge user defined options.
