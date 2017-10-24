@@ -64,20 +64,27 @@ class Castle_Request
     }
   }
 
-  public function send($method, $url, $params=null)
-  {
-    $context = Castle_RequestContext::extract($params);
+  public function send($method, $url, $payload = 's') {
+    if ( self::shouldHaveContext($url) && !array_key_exists('context', $payload)) {
+      $payload['context'] = Castle_RequestContext::extract();
+    }
 
-    return $this->sendWithContext($url, $context, $method);
+    return $this->sendWithContext($url, $payload, $method);
   }
 
-  public function sendWithContext($url, $context, $method = 'post')
+  private function shouldHaveContext($url) {
+    $WITH_CONTEXT = ['/identify', '/track', '/authenticate'];
+
+    return in_array($url, $WITH_CONTEXT);
+  }
+
+  public function sendWithContext($url, $payload, $method = 'post')
   {
     $this->preFlightCheck();
 
 
     $request = new Castle_RequestTransport();
-    $request->send($method, self::apiUrl($url), $context);
+    $request->send($method, self::apiUrl($url), $payload);
 
     return $this->handleResponse($request);
   }
