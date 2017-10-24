@@ -8,7 +8,10 @@ class CastleRequestContextTest extends \Castle_TestCase
     $_SERVER = array();
     $_SERVER['HTTP_USER_AGENT'] = 'TestAgent';
     $_SERVER['REMOTE_ADDR'] = '8.8.8.8';
-    $_SERVER['HTTP_X_CASTLE_CLIENT_ID'] = '1ccf8dee-904b-4d20-8a88-55ded468bcc5';
+  }
+
+   public function setUp() {
+    $_COOKIE = array();
   }
 
   public function contextProvider() {
@@ -35,6 +38,8 @@ class CastleRequestContextTest extends \Castle_TestCase
    * @dataProvider contextProvider
    */
   public function testExtract($expected) {
+    $_SERVER['HTTP_X_CASTLE_CLIENT_ID'] = '1ccf8dee-904b-4d20-8a88-55ded468bcc5';
+
     $actual = Castle_RequestContext::extract();
     $this->assertEquals($expected, $actual);
   }
@@ -44,7 +49,61 @@ class CastleRequestContextTest extends \Castle_TestCase
    * @dataProvider contextJsonProvider
    */
   public function testExtractJson($expected) {
+    $_SERVER['HTTP_X_CASTLE_CLIENT_ID'] = '1ccf8dee-904b-4d20-8a88-55ded468bcc5';
+
     $actual = Castle_RequestContext::extractJson();
+    $this->assertEquals($expected, $actual);
+  }
+
+  public function testExtractClientIDFromCookie() {
+    $expected = $testUUID = '85B126D3-C706-4DBA-A352-883EFBCA9203';
+
+    $cookies = Castle::getCookieStore();
+    $cookies->write('__cid', $testUUID);
+
+    $actual = Castle_RequestContext::extractClientId();
+
+    $this->assertEquals($expected, $actual);
+  }
+
+  public function testExtractClientIDInvalidFromCookie() {
+    $expected = '_';
+    $testInvalidID = " \t\n\r\0\x0B";
+
+    $cookies = Castle::getCookieStore();
+    $cookies->write('__cid', $testInvalidID);
+
+    $actual = Castle_RequestContext::extractClientId();
+
+    $this->assertEquals($expected, $actual);
+  }
+
+  public function testExtractClientIDFromHeader() {
+    $expected = $testUUID = '85B126D3-C706-4DBA-A352-883EFBCA9203';
+
+    $_SERVER['HTTP_X_CASTLE_CLIENT_ID'] = $testUUID;
+
+    $actual = Castle_RequestContext::extractClientId();
+
+    $this->assertEquals($expected, $actual);
+  }
+
+   public function testGetClientIDInvalidFromHeader() {
+    $expected = '_';
+    $testInvalidID = " \t\n\r\0\x0B";
+
+    $_SERVER['HTTP_X_CASTLE_CLIENT_ID'] = $testInvalidID;
+
+    $actual = Castle_RequestContext::extractClientId();
+
+    $this->assertEquals($expected, $actual);
+  }
+
+    public function testGetClientIDNoClientID() {
+    $expected = '?';
+
+    $actual = Castle_RequestContext::extractClientId();
+
     $this->assertEquals($expected, $actual);
   }
 
