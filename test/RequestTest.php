@@ -24,69 +24,6 @@ class CastleRequestTest extends \Castle_TestCase
     Castle_RequestTransport::setResponse();
   }
 
-  public function headersContains($keyword)
-  {
-    $request = Castle_RequestTransport::getLastRequest();
-    if (!empty($request)) {
-      return array_key_exists($keyword, $request['headers']);
-    }
-    return false;
-  }
-
-  public function testRequestContextIp()
-  {
-    Castle::track(array('name' => '$login.failed'));
-    $this->assertRequest('post', '/track', array('X-Castle-Ip' => '8.8.8.8'));
-  }
-
-  public function testRequestContextForwardedIp()
-  {
-    $_SERVER['HTTP_X_FORWARDED_FOR'] = '1.1.1.1';
-    Castle::track(array('name' => '$login.failed'));
-    $this->assertRequest('post', '/track', array('X-Castle-Ip' => '1.1.1.1'));
-  }
-
-  public function testRequestContextRealIp()
-  {
-    $_SERVER['HTTP_X_REAL_IP'] = '2.2.2.2';
-    Castle::track(array('name' => '$login.failed'));
-    $this->assertRequest('post', '/track', array('X-Castle-Ip' => '2.2.2.2'));
-  }
-
-  /**
-   *
-   */
-  public function testRequestContextHeaders()
-  {
-    $_SERVER['HTTP_COOKIE'] = 'Should not be sent';
-    Castle::track(array(
-      'name' => '$login.succeeded',
-      'user_id' => '1'
-    ));
-    $this->assertRequest('post', '/track', array('X-Castle-Headers' => '{"User-Agent":"TestAgent"}'));
-  }
-
-  /**
-   *
-   */
-  public function testWhitelistHeaders()
-  {
-    $_SERVER['HTTP_AWESOME_HEADER'] = '14M4W350M3';
-
-    Castle::setUseWhitelist(true);
-    Castle::$whitelistHeaders[] = 'Awesome-Header';
-
-    Castle::track(array(
-      'name' => '$login.succeeded',
-      'user_id' => '1'
-    ));
-    $this->assertRequest(
-      'post',
-      '/track',
-      array('X-Castle-Headers' => '{"User-Agent":"TestAgent","Awesome-Header":"14M4W350M3"}')
-    );
-  }
-
   /**
    * @expectedException Castle_CurlOptionError
    */
@@ -151,13 +88,5 @@ class CastleRequestTest extends \Castle_TestCase
     Castle_RequestTransport::setResponse(422);
     $req = new Castle_Request();
     $req->send('GET', '/users');
-  }
-
-  public function testRequestHeaders() {
-    $req = new Castle_Request();
-    $raw = $req->send('POST', '/events');
-    $this->assertTrue($this->headersContains('X-Castle-Ip'));
-    $this->assertTrue($this->headersContains('X-Castle-Headers'));
-    $this->assertTrue($this->headersContains('X-Castle-Client-Id'));
   }
 }

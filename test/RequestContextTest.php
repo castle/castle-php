@@ -133,4 +133,33 @@ class CastleRequestContextTest extends \Castle_TestCase
   }
 
 
+  /**
+   * dataProvider headersProvider
+   */
+  public function testExtractHeadersWithoutCookie() {
+    $expected = array('User-Agent' => 'TestAgent');
+    $_SERVER['HTTP_COOKIE'] = 'Should not be included';
+
+    $actual = Castle_RequestContext::extractHeaders();
+
+    $this->assertEquals($expected, $actual);
+  }
+
+  /**
+   *
+   */
+  public function testWhitelistHeaders() {
+    $expected = array(
+        'User-Agent' => 'TestAgent',
+        'Awesome-Header' => '14M4W350M3'
+      );
+    $_SERVER['HTTP_AWESOME_HEADER'] = '14M4W350M3';
+
+    Castle::setUseWhitelist(true);
+    Castle::$whitelistHeaders[] = 'Awesome-Header';
+
+    $actual = Castle_RequestContext::extractHeaders();
+
+    $this->assertEquals($expected, $actual);
+  }
 }
