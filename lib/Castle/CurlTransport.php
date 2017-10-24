@@ -73,7 +73,7 @@ class Castle_RequestTransport
     $curlOptions[CURLOPT_RETURNTRANSFER] = true;
     $curlOptions[CURLOPT_CONNECTTIMEOUT] = 3;
     $curlOptions[CURLOPT_TIMEOUT] = 10;
-    $curlOptions[CURLOPT_HTTPHEADER] = array('Content-Type' => 'application/json');
+    $curlOptions[CURLOPT_HTTPHEADER] = array('Content-Type: application/json');
     $curlOptions[CURLOPT_HEADER] = true;
 
     // Merge user defined options.
