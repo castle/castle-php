@@ -88,7 +88,7 @@ class CastleRequestContextTest extends \Castle_TestCase
     $this->assertEquals($expected, $actual);
   }
 
-   public function testGetClientIDInvalidFromHeader() {
+  public function testExtractClientIDInvalidFromHeader() {
     $expected = '_';
     $testInvalidID = " \t\n\r\0\x0B";
 
@@ -99,12 +99,38 @@ class CastleRequestContextTest extends \Castle_TestCase
     $this->assertEquals($expected, $actual);
   }
 
-    public function testGetClientIDNoClientID() {
+  public function testExtractClientIDNoClientID() {
     $expected = '?';
 
     $actual = Castle_RequestContext::extractClientId();
 
     $this->assertEquals($expected, $actual);
   }
+
+  public function testExtractIp() {
+    $expected = '8.8.8.8';
+    $actual = Castle_RequestContext::extractIp();
+
+    $this->assertEquals($expected, $actual);
+  }
+
+  public function testExtractIpFromForwardedIp() {
+    $expected = '1.1.1.1';
+    $_SERVER['HTTP_X_FORWARDED_FOR'] = $expected;
+
+    $actual = Castle_RequestContext::extractIp();
+
+    $this->assertEquals($expected, $actual);
+  }
+
+  public function testExtractIpFromRealIp() {
+    $expected = '2.2.2.2';
+    $_SERVER['HTTP_X_REAL_IP'] = $expected;
+
+    $actual = Castle_RequestContext::extractIp();
+
+    $this->assertEquals($expected, $actual);
+  }
+
 
 }
