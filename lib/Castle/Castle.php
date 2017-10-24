@@ -125,15 +125,22 @@ abstract class Castle
    * @param  Array  $traits   Additional user properties
    * @return  None
    */
-  public static function identify($user_id, Array $traits)
-  {
+  public static function identify($attributes) {
+    if(func_num_args() == 1) {
+      $request = new Castle_Request();
+      $request->send('post', '/identify', $attributes);
+    } else {
+      call_user_func_array('self::legacyIdentify', func_get_args());
+    }
+  }
+
+  private static function legacyIdentify($user_id, Array $traits) {
     $request = new Castle_Request();
     $request->send('post', '/identify', Array(
       'user_id' => $user_id,
       'traits' => $traits
     ));
   }
-
   /**
    * Track a security event
    * @param  Array  $attributes An array of attributes to track. The 'name' key
