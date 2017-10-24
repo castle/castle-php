@@ -63,7 +63,7 @@ class Castle_RequestTransport
     }
     $curlOptions = array();
     if (!empty($payload)) {
-      $curlOptions[CURLOPT_POSTFIELDS] = $payload;
+      $curlOptions[CURLOPT_POSTFIELDS] = json_encode($payload);
     }
 
     // Set our default options.
