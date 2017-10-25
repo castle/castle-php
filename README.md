@@ -28,6 +28,40 @@ Configure the library with your Castle API secret.
 Castle::setApiKey('YOUR_API_SECRET');
 ```
 
+## Request context
+
+By default, Castle extracts all the necessary information, such as IP and request
+headers, from the PHP globals in order to build and send the requests to the
+Castle API. However in some cases you want to track data to Castle from a context
+where these globals are not available, eg. when tracking async in a background
+worker. In this case you can build the request context manually.
+
+#### Example
+
+```php
+// While in a web request context, extract the information needed to send the
+// request.
+$context = Castle_RequestContext::extractJson();
+$event = array(
+	'user_id' => 1,
+	'name' => '$login.succeeded'
+);
+
+// Now, push this data to your async worker, eg.
+$castleWorker->perform($event, $context);
+```
+
+In your worker code (ie. non web environment):
+
+```php
+// Pass the context to track, identify or authenticate
+Castle::track(array(
+  'name' => $event['name'],
+  'user_id' => $event['user_id'],
+  'context' => json_decode($context)
+));
+```
+
 ## Errors
 Whenever something unexpected happens, an exception is thrown to indicate what went wrong.
 

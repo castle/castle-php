@@ -12,10 +12,11 @@ class Castle_RequestTransport
 
   private static $lastRequest = array();
 
-  public function send($method, $url, $body=null, $headers=array()) {
+  public function send($method, $url, $payload) {
     if (empty(self::$params)) {
       self::setResponse(200, '{}');
     }
+    $headers = array('Content-Type' => 'application/json');
     $headers_array = array();
     foreach ($headers as $header) {
       preg_match('#(.*?)\:\s(.*)#', $header, $matches);
@@ -23,7 +24,7 @@ class Castle_RequestTransport
         $headers_array[$matches[1]] = $matches[2];
       }
     }
-    $body = empty($body) ? null : json_decode($body, true);
+    $body = empty($payload) ? null : $payload;
     self::$lastRequest[]= array(
       'method'  => $method,
       'headers' => $headers_array,

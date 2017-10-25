@@ -42,7 +42,7 @@ class Castle_RequestTransport
     }
   }
 
-  public function send($method, $url, $body=null, $headers=array()) {
+  public function send($method, $url, $payload) {
     $curl = curl_init();
     $method = strtolower($method);
     switch($method) {
@@ -62,7 +62,10 @@ class Castle_RequestTransport
         throw new Castle_RequestError();
     }
     $curlOptions = array();
-    if (!empty($body)) {
+
+    $body = empty($payload) ? null : json_encode($payload);
+
+    if ($body) {
       $curlOptions[CURLOPT_POSTFIELDS] = $body;
     }
 
@@ -71,10 +74,12 @@ class Castle_RequestTransport
     $curlOptions[CURLOPT_URL] = $url;
     $curlOptions[CURLOPT_USERPWD] = ":" . Castle::getApiKey();
     $curlOptions[CURLOPT_RETURNTRANSFER] = true;
-    $curlOptions[CURLOPT_USERAGENT] = "Castle/v1 PHPBindings/".Castle::VERSION;
     $curlOptions[CURLOPT_CONNECTTIMEOUT] = 3;
     $curlOptions[CURLOPT_TIMEOUT] = 10;
-    $curlOptions[CURLOPT_HTTPHEADER] = $headers;
+    $curlOptions[CURLOPT_HTTPHEADER] = array(
+      'Content-Type: application/json',
+      'Content-Length: ' . strlen($body)
+    );
     $curlOptions[CURLOPT_HEADER] = true;
 
     // Merge user defined options.

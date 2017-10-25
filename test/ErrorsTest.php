@@ -49,15 +49,6 @@ class CastleErrorTest extends Castle_TestCase
   }
 
   /**
-   * @expectedException Castle_UserUnauthorizedError
-   */
-  public function testUserUnauthorized()
-  {
-    Castle_RequestTransport::setResponse(419);
-    $this->request->send('GET', '/test');
-  }
-
-  /**
    * @expectedException Castle_InvalidParametersError
    */
   public function testInvalidParameters()

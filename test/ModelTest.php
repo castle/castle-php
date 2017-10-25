@@ -100,14 +100,6 @@ class CastleModelTest extends Castle_TestCase
     $this->assertEquals($user->getResourcePath(), '/users/1');
   }
 
-  // public function testConstructorSetsReference()
-  // {
-  //   $attributes = array('id' => 1);
-  //   $model = new Castle_Model($attributes);
-  //   $attributes['id'] = 2;
-  //   $this->assertEquals($model->id, $attributes['id']);
-  // }
-
   /**
    * @dataProvider exampleUser
    */
