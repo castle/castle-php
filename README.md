@@ -62,13 +62,6 @@ Castle::track(array(
 ));
 ```
 
-
-// Send the request to Castle
-$request = new Castle_Request();
-$request->sendWithContext('/track', $context);
-
-```
-
 ## Errors
 Whenever something unexpected happens, an exception is thrown to indicate what went wrong.
 
