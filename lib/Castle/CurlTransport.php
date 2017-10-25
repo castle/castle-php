@@ -62,8 +62,11 @@ class Castle_RequestTransport
         throw new Castle_RequestError();
     }
     $curlOptions = array();
-    if (!empty($payload)) {
-      $curlOptions[CURLOPT_POSTFIELDS] = json_encode($payload);
+
+    $body = empty($payload) ? null : json_encode($payload);
+
+    if ($body) {
+      $curlOptions[CURLOPT_POSTFIELDS] = $body;
     }
 
     // Set our default options.
@@ -73,7 +76,10 @@ class Castle_RequestTransport
     $curlOptions[CURLOPT_RETURNTRANSFER] = true;
     $curlOptions[CURLOPT_CONNECTTIMEOUT] = 3;
     $curlOptions[CURLOPT_TIMEOUT] = 10;
-    $curlOptions[CURLOPT_HTTPHEADER] = array('Content-Type: application/json');
+    $curlOptions[CURLOPT_HTTPHEADER] = array(
+      'Content-Type: application/json',
+      'Content-Length: ' . strlen($body)
+    );
     $curlOptions[CURLOPT_HEADER] = true;
 
     // Merge user defined options.
