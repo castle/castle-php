@@ -2,7 +2,7 @@
 
 abstract class Castle
 {
-  const VERSION = '1.4.4';
+  const VERSION = '1.6.0';
 
   const HEADER_COOKIE = 'Cookie';
   const HEADER_USER_AGENT = 'User-Agent';
