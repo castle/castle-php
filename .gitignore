@@ -1,8 +1,6 @@
 .DS_Store
-
 composer.phar
 package-lock.json
 composer.lock
 /node_modules/
 /vendor/
-

@@ -1,30 +1,30 @@
 {
-    "name": "castle/castle-php",
-    "description": "PHP bindings for Castle",
-    "type": "library",
-    "keywords": ["real-time user account monitoring"],
-    "homepage": "https://github.com/castle/castle-php",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Castle",
-            "email": "team@castle.io",
-            "homepage": "https://castle.io",
-            "role": "Developer"
-        }
-    ],
-    "autoload": {
-        "classmap": [
-            "lib/Castle",
-            "lib/RestModel"
-        ]
-    },
-    "require": {
-        "php": ">=5.6.0"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "*",
-        "phpunit/phpcov": "*",
-        "satooshi/php-coveralls": "*"
+  "name": "castle/castle-php",
+  "description": "PHP bindings for Castle",
+  "type": "library",
+  "keywords": ["real-time user account monitoring"],
+  "homepage": "https://github.com/castle/castle-php",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Castle",
+      "email": "team@castle.io",
+      "homepage": "https://castle.io",
+      "role": "Developer"
     }
+  ],
+  "autoload": {
+    "classmap": [
+      "lib/Castle",
+      "lib/RestModel"
+    ]
+  },
+  "require": {
+    "php": ">=5.6.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "*",
+    "phpunit/phpcov": "*",
+    "satooshi/php-coveralls": "*"
+  }
 }
