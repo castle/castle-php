@@ -1,6 +1,6 @@
 <?php
 
-abstract class Castle_TestCase extends \PHPUnit_Framework_TestCase
+abstract class Castle_TestCase extends \PHPUnit\Framework\TestCase
 {
   public function setUp()
   {
