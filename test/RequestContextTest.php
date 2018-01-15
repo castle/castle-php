@@ -3,14 +3,13 @@
 class CastleRequestContextTest extends \Castle_TestCase
 {
 
-  public static function setUpBeforeClass()
-  {
-    $_SERVER = array();
+  public static function setUpBeforeClass() {
     $_SERVER['HTTP_USER_AGENT'] = 'TestAgent';
     $_SERVER['REMOTE_ADDR'] = '8.8.8.8';
+    unset($_SERVER['HTTP_X_FORWARDED_FOR']);
   }
 
-   public function setUp() {
+  public function setUp() {
     $_COOKIE = array();
   }
 
@@ -56,6 +55,7 @@ class CastleRequestContextTest extends \Castle_TestCase
   }
 
   public function testExtractClientIDFromCookie() {
+    unset($_SERVER['HTTP_X_CASTLE_CLIENT_ID']);
     $expected = $testUUID = '85B126D3-C706-4DBA-A352-883EFBCA9203';
 
     $cookies = Castle::getCookieStore();
@@ -67,6 +67,7 @@ class CastleRequestContextTest extends \Castle_TestCase
   }
 
   public function testExtractClientIDInvalidFromCookie() {
+    unset($_SERVER['HTTP_X_CASTLE_CLIENT_ID']);
     $expected = '_';
     $testInvalidID = " \t\n\r\0\x0B";
 
@@ -100,8 +101,8 @@ class CastleRequestContextTest extends \Castle_TestCase
   }
 
   public function testExtractClientIDNoClientID() {
+    unset($_SERVER['HTTP_X_CASTLE_CLIENT_ID']);
     $expected = '?';
-
     $actual = Castle_RequestContext::extractClientId();
 
     $this->assertEquals($expected, $actual);
@@ -126,6 +127,7 @@ class CastleRequestContextTest extends \Castle_TestCase
   public function testExtractIpFromRealIp() {
     $expected = '2.2.2.2';
     $_SERVER['HTTP_X_REAL_IP'] = $expected;
+    unset($_SERVER['HTTP_X_FORWARDED_FOR']);
 
     $actual = Castle_RequestContext::extractIp();
 
@@ -139,7 +141,8 @@ class CastleRequestContextTest extends \Castle_TestCase
   public function testExtractHeadersWithoutCookie() {
     $expected = array('User-Agent' => 'TestAgent');
     $_SERVER['HTTP_COOKIE'] = 'Should not be included';
-
+    unset($_SERVER['HTTP_X_REAL_IP']);
+    unset($_SERVER['HTTP_X_CASTLE_CLIENT_ID']);
     $actual = Castle_RequestContext::extractHeaders();
 
     $this->assertEquals($expected, $actual);

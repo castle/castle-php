@@ -113,6 +113,8 @@ class CastleModelTest extends Castle_TestCase
   public function testCreateWithEmptyResponse() {
     Castle_RequestTransport::setResponse(204, null);
     TestUser::create();
+    $this->assertEquals(true, true);
+
   }
 
   /**
