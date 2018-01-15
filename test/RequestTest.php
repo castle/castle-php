@@ -5,7 +5,6 @@ class CastleRequestTest extends \Castle_TestCase
 
   public static function setUpBeforeClass()
   {
-    $_SERVER = array();
     $_SERVER['HTTP_USER_AGENT'] = 'TestAgent';
     $_SERVER['REMOTE_ADDR'] = '8.8.8.8';
     Castle::setApiKey('secretkey');

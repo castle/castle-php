@@ -5,7 +5,6 @@ class CastleErrorTest extends Castle_TestCase
 
   public function setUp()
   {
-    $_SERVER = array();
     $_SERVER['HTTP_USER_AGENT'] = 'TestAgent';
     $_SERVER['REMOTE_ADDR'] = '8.8.8.8';
     Castle_RequestTransport::reset();
