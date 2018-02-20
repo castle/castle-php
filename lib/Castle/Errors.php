@@ -10,11 +10,6 @@ class Castle_RequestError extends Castle_Error
 
 }
 
-class Castle_SecurityError extends Castle_Error
-{
-
-}
-
 class Castle_ConfigurationError extends Castle_Error
 {
 
@@ -40,13 +35,7 @@ class Castle_BadRequest extends Castle_ApiError
 
 }
 
-
 class Castle_UnauthorizedError extends Castle_ApiError
-{
-
-}
-
-class Castle_ChallengeRequiredError extends Castle_ApiError
 {
 
 }
@@ -57,11 +46,6 @@ class Castle_ForbiddenError extends Castle_ApiError
 }
 
 class Castle_NotFoundError extends Castle_ApiError
-{
-
-}
-
-class Castle_UserUnauthorizedError extends Castle_ApiError
 {
 
 }

@@ -70,14 +70,11 @@ Whenever something unexpected happens, an exception is thrown to indicate what w
 | `Castle_Error`                  | A generic error |
 | `Castle_RequestError`           | A request failed. Probably due to a network error |
 | `Castle_ApiError`               | An unexpected error for the Castle API |
-| `Castle_SecurityError`          | The session signature doesn't match, either it has been tampered with or the Castle API key has been changed. |
 | `Castle_ConfigurationError`     | The Castle secret API key has not been set |
 | `Castle_UnauthorizedError`      | Wrong Castle API secret key |
-| `Castle_ChallengeRequiredError` | You need to prompt the user for Two-step verification |
 | `Castle_BadRequest`             | The request was invalid. For example if a challenge is created without the user having MFA enabled. |
 | `Castle_ForbiddenError`         | The user has entered the wrong code too many times and a new challenge has to be requested. |
 | `Castle_NotFoundError`          | The resource requestd was not found. For example if a session has been revoked. |
-| `Castle_UserUnauthorizedError`  | The user is locked or has entered the wrong credentials |
 | `Castle_InvalidParametersError` | One or more of the supplied parameters are incorrect. Check the response for more information. |
 
 ## Running test suite
