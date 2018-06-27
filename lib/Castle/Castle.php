@@ -134,6 +134,15 @@ abstract class Castle
     }
   }
 
+  public static function impersonate($attributes) {
+      $request = new Castle_Request();
+      if(isset($attributes['reset'])) {
+        $request->send('delete', '/impersonate', $attributes);
+      } else {
+        $request->send('post', '/impersonate', $attributes);
+      }
+  }
+
   private static function legacyIdentify($user_id, Array $traits) {
     $request = new Castle_Request();
     $request->send('post', '/identify', Array(

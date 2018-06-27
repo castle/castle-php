@@ -73,7 +73,7 @@ class Castle_Request
   }
 
   private function shouldHaveContext($url) {
-    $WITH_CONTEXT = ['/identify', '/track', '/authenticate'];
+    $WITH_CONTEXT = ['/identify', '/track', '/authenticate', '/impersonate'];
 
     return in_array($url, $WITH_CONTEXT);
   }

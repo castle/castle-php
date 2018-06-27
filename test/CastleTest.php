@@ -56,6 +56,20 @@ class CastleTest extends Castle_TestCase
     $this->assertRequest('post', '/identify');
   }
 
+  public function testImpersonate()
+  {
+      Castle_RequestTransport::setResponse(204, '');
+      Castle::impersonate(array('user_id' => '1'));
+      $this->assertRequest('post', '/impersonate');
+  }
+
+  public function testImpersonateReset()
+  {
+      Castle_RequestTransport::setResponse(204, '');
+      Castle::impersonate(array('user_id' => '1', 'reset' => true));
+      $this->assertRequest('delete', '/impersonate');
+  }
+
   public function testReview()
   {
     Castle_RequestTransport::setResponse(200, '{ "id": "123553", "reviewed": true, "user_id" : "1234546", "context": {} }');
