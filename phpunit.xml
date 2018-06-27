@@ -6,16 +6,16 @@
     </testsuite>
   </testsuites>
   <logging>
-      <log type="coverage-php" target="build/cov/coverage.cov"/>
       <log type="coverage-clover" target="build/logs/clover.xml"/>
   </logging>
   <filter>
-      <blacklist>
-          <directory suffix=".php">./vendor</directory>
-          <directory suffix=".php">./test</directory>
-      </blacklist>
       <whitelist processUncoveredFilesFromWhitelist="true">
-          <directory suffix=".php">./src</directory>
+          <directory suffix=".php">./lib/Castle</directory>
+          <directory suffix=".php">./lib/RestModel</directory>
+          <exclude>
+            <file>./lib/Castle/CookieStore.php</file>
+            <file>./lib/Castle/CurlTransport.php</file>
+          </exclude>
       </whitelist>
   </filter>
 </phpunit>
