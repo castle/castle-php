@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/castle/castle-php.png)](https://travis-ci.org/castle/castle-php)
 [![Code Climate](https://codeclimate.com/github/castle/castle-php.png)](https://codeclimate.com/github/castle/castle-php)
-[![Coverage Status](https://coveralls.io/repos/castle/castle-php/badge.png?branch=master)](https://coveralls.io/r/castle/castle-php?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/castle/castle-php/badge.svg?branch=fix%2Fcode-coverage)](https://coveralls.io/github/castle/castle-php?branch=fix%2Fcode-coverage)
 
 # PHP SDK for Castle
 
