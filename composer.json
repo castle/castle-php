@@ -24,7 +24,6 @@
   },
   "require-dev": {
     "phpunit/phpunit": "*",
-    "phpunit/phpcov": "*",
-    "satooshi/php-coveralls": "*"
+    "php-coveralls/php-coveralls": "*"
   }
 }
