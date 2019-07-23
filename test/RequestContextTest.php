@@ -15,7 +15,7 @@ class CastleRequestContextTest extends \Castle_TestCase
 
   public function contextProvider() {
     return array(array(array(
-        'clientId' => '1ccf8dee-904b-4d20-8a88-55ded468bcc5',
+        'client_id' => '1ccf8dee-904b-4d20-8a88-55ded468bcc5',
         'ip' => '8.8.8.8',
         'headers' => array(
           'User-Agent' => 'TestAgent',
