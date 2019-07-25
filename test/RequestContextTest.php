@@ -9,7 +9,8 @@ class CastleRequestContextTest extends \Castle_TestCase
     unset($_SERVER['HTTP_X_FORWARDED_FOR']);
   }
 
-  public function setUp() {
+  public function setUp(): void
+  {
     $_COOKIE = array();
   }
 
