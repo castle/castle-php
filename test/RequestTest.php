@@ -12,7 +12,7 @@ class CastleRequestTest extends \Castle_TestCase
     Castle::setUseWhitelist(false);
   }
 
-  public function setUp()
+  public function setUp(): void
   {
     $_COOKIE = array();
     $_SESSION = array();
