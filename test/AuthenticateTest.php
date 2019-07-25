@@ -2,7 +2,7 @@
 
 class CastleAuthenticateTest extends Castle_TestCase
 {
-  public function tearDown()
+  public function tearDown(): void
   {
     Castle_RequestTransport::reset();
     Castle_RequestTransport::setResponse(200, '');
