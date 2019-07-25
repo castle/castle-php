@@ -3,7 +3,7 @@
 class CastleErrorTest extends Castle_TestCase
 {
 
-  public function setUp()
+  public function setUp(): void
   {
     $_SERVER['HTTP_USER_AGENT'] = 'TestAgent';
     $_SERVER['REMOTE_ADDR'] = '8.8.8.8';
