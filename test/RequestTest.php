@@ -3,7 +3,7 @@
 class CastleRequestTest extends \Castle_TestCase
 {
 
-  public static function setUpBeforeClass()
+  public static function setUpBeforeClass(): void
   {
     $_SERVER['HTTP_USER_AGENT'] = 'TestAgent';
     $_SERVER['REMOTE_ADDR'] = '8.8.8.8';
@@ -12,13 +12,13 @@ class CastleRequestTest extends \Castle_TestCase
     Castle::setUseWhitelist(false);
   }
 
-  public function setUp()
+  public function setUp(): void
   {
     $_COOKIE = array();
     $_SESSION = array();
   }
 
-  public function tearDown()
+  public function tearDown(): void
   {
     Castle_RequestTransport::setResponse();
   }

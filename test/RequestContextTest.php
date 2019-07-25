@@ -3,13 +3,13 @@
 class CastleRequestContextTest extends \Castle_TestCase
 {
 
-  public static function setUpBeforeClass() {
+  public static function setUpBeforeClass(): void {
     $_SERVER['HTTP_USER_AGENT'] = 'TestAgent';
     $_SERVER['REMOTE_ADDR'] = '8.8.8.8';
     unset($_SERVER['HTTP_X_FORWARDED_FOR']);
   }
 
-  public function setUp() {
+  public function setUp(): void {
     $_COOKIE = array();
   }
 
