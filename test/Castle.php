@@ -2,7 +2,7 @@
 
 abstract class Castle_TestCase extends \PHPUnit\Framework\TestCase
 {
-  public function setUp()
+  public function setUp(): void
   {
     Castle::setApiKey('secret');
   }
