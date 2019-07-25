@@ -8,7 +8,7 @@ class CastleTest extends Castle_TestCase
     Castle::setApiKey('secretkey');
   }
 
-  public function setUp()
+  public function setUp(): void
   {
     $_SESSION = array();
     $_COOKIE = array();
