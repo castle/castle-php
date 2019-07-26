@@ -5,7 +5,7 @@ class Castle_RequestContext
   # Extract a request context from the $Server environment.
   public static function extract() {
     return array(
-      'clientId' => self::extractClientId(),
+      'client_id' => self::extractClientId(),
       'ip' => self::extractIp(),
       'headers' => self::extractHeaders(),
       'user_agent' => self::extractUserAgent(),
