@@ -36,6 +36,19 @@ Castle API. However in some cases you want to track data to Castle from a contex
 where these globals are not available, eg. when tracking async in a background
 worker. In this case you can build the request context manually.
 
+### Origin IP Address
+By default, the SDK extracts the contextual client IP address from headers in the following priority:
+1. `X-Forwarded-For`
+2. `X-Real-Ip`
+3. `REMOTE_ADDR`
+
+If the true client IP address is not specified in the above headers, you can manually set the IP address like so:
+
+```php
+Castle_RequestContext['ip'] = '1.1.1.1'
+$context = Castle_RequestContext::extractJson();
+```
+
 #### Example
 
 ```php
