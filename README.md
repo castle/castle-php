@@ -33,7 +33,7 @@ Castle::setApiKey('YOUR_API_SECRET');
 Set preferred connection and request timeouts:
 valid options for setting are:
 - `CURLOPT_CONNECTTIMEOUT`
-- `CURLOPT_CONNETTIMEOUT_MS`
+- `CURLOPT_CONNECTTIMEOUT_MS`
 - `CURLOPT_TIMEOUT`
 - `CURLOPT_TIMEOUT_MS`
 
@@ -110,8 +110,3 @@ Whenever something unexpected happens, an exception is thrown to indicate what w
 
 ## Running test suite
 Execute `vendor/bin/phpunit test` to run the full test suite
-
-
-
-
-
