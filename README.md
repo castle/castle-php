@@ -28,6 +28,24 @@ Configure the library with your Castle API secret.
 Castle::setApiKey('YOUR_API_SECRET');
 ```
 
+## Optional Configurations
+
+Set preferred connection and request timeouts:
+valid options for setting are:
+- `CURLOPT_CONNECTTIMEOUT`
+- `CURLOPT_CONNECTTIMEOUT_MS`
+- `CURLOPT_TIMEOUT`
+- `CURLOPT_TIMEOUT_MS`
+
+```php
+Castle::setCurlOpts($curlOpts)
+```
+
+Set a specified list of request headers to include with event context (optional, not recommended):
+```php
+Castle::setUseWhitelist($headers)
+```
+
 ## Request context
 
 By default, Castle extracts all the necessary information, such as IP and request
@@ -92,8 +110,3 @@ Whenever something unexpected happens, an exception is thrown to indicate what w
 
 ## Running test suite
 Execute `vendor/bin/phpunit test` to run the full test suite
-
-
-
-
-
