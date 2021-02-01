@@ -13,7 +13,7 @@
 Obtain the latest version of the Castle PHP bindings with:
 
 ```bash
-git clone https://github.com/castle/castle-php
+git clone --single-branch --branch master https://github.com/castle/castle-php
 ```
 
 To get started, add the following to your PHP script:
