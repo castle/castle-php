@@ -43,7 +43,7 @@ Castle::setCurlOpts($curlOpts)
 
 Set a specified list of request headers to include with event context (optional, not recommended):
 ```php
-Castle::setUseWhitelist($headers)
+Castle::setUseAllowlist($headers)
 ```
 
 ## Request context
