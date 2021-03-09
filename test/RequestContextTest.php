@@ -151,15 +151,15 @@ class CastleRequestContextTest extends \Castle_TestCase
   /**
    *
    */
-  public function testWhitelistHeaders() {
+  public function testAllowlistHeaders() {
     $expected = array(
         'User-Agent' => 'TestAgent',
         'Awesome-Header' => '14M4W350M3'
       );
     $_SERVER['HTTP_AWESOME_HEADER'] = '14M4W350M3';
 
-    Castle::setUseWhitelist(true);
-    Castle::$whitelistHeaders[] = 'Awesome-Header';
+    Castle::setUseAllowlist(true);
+    Castle::$allowlistedHeaders[] = 'Awesome-Header';
 
     $actual = Castle_RequestContext::extractHeaders();
 

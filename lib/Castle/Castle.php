@@ -19,8 +19,8 @@ abstract class Castle
 
   public static $scrubHeaders = array(self::HEADER_COOKIE);
 
-  private static $useWhitelist = false;
-  public static $whitelistHeaders = array(self::HEADER_USER_AGENT);
+  private static $useAllowlist = false;
+  public static $allowlistedHeaders = array(self::HEADER_USER_AGENT);
 
   private static $curlOpts = array();
   private static $validCurlOpts = array(CURLOPT_CONNECTTIMEOUT,
@@ -57,18 +57,18 @@ abstract class Castle
     return self::$curlOpts;
   }
 
-  public static function getUseWhitelist()
+  public static function getUseAllowlist()
   {
-    return self::$useWhitelist;
+    return self::$useAllowlist;
   }
 
-  public static function setUseWhitelist($use)
+  public static function setUseAllowlist($use)
   {
-    // Force User-Agent to be present in whitelist if it is not.
-    if ($use && !in_array(self::HEADER_USER_AGENT, self::$whitelistHeaders)) {
-      self::$whitelistHeaders[] = self::HEADER_USER_AGENT;
+    // Force User-Agent to be present in allowlisted if it is not.
+    if ($use && !in_array(self::HEADER_USER_AGENT, self::$allowlistedHeaders)) {
+      self::$allowlistedHeaders[] = self::HEADER_USER_AGENT;
     }
-    self::$useWhitelist = $use;
+    self::$useAllowlist = $use;
   }
 
   public static function getApiVersion()

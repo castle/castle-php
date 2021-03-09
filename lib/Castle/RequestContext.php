@@ -33,10 +33,10 @@ class Castle_RequestContext
         } else {
           $name = ucfirst($name);
         }
-        // If using whitelist, only use headers *PRESENT* in it.
+        // If using allowlist, only use headers *PRESENT* in it.
         // If using scrublist, only use headers *NOT* present in it.
-        if (Castle::getUseWhitelist() ?
-              in_array($name, Castle::$whitelistHeaders) :
+        if (Castle::getUseAllowlist() ?
+              in_array($name, Castle::$allowlistedHeaders) :
               !in_array($name, Castle::$scrubHeaders)) {
           $headers[$name] = $val;
         }
