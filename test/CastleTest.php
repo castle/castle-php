@@ -37,25 +37,6 @@ class CastleTest extends Castle_TestCase
     $this->assertEquals($auth->status, 'approve');
   }
 
-  public function testLegacyIdentify()
-  {
-    Castle_RequestTransport::setResponse(204);
-    $auth = Castle::identify('1', Array(
-      'traits' => Array('event' => 'Kalle Jularbo')
-    ));
-    $this->assertRequest('post', '/identify');
-  }
-
-  public function testIdentify()
-  {
-    Castle_RequestTransport::setResponse(204);
-    $auth = Castle::identify(Array(
-      'user_id' => 1,
-      'traits' => Array('event' => 'Kalle Jularbo')
-    ));
-    $this->assertRequest('post', '/identify');
-  }
-
   public function testImpersonate()
   {
       Castle_RequestTransport::setResponse(204, '');

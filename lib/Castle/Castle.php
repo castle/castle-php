@@ -119,21 +119,6 @@ abstract class Castle
     return Castle_Review::find($id);
   }
 
-   /**
-   * Updates user information. Call when a user logs in or updates their information.
-   * @param  String $user_id  Id of the user
-   * @param  Array  $traits   Additional user properties
-   * @return  None
-   */
-  public static function identify($attributes) {
-    if(func_num_args() == 1) {
-      $request = new Castle_Request();
-      $request->send('post', '/identify', $attributes);
-    } else {
-      call_user_func_array('self::legacyIdentify', func_get_args());
-    }
-  }
-
   public static function impersonate($attributes) {
       $request = new Castle_Request();
       if(isset($attributes['reset'])) {
@@ -143,13 +128,6 @@ abstract class Castle
       }
   }
 
-  private static function legacyIdentify($user_id, Array $traits) {
-    $request = new Castle_Request();
-    $request->send('post', '/identify', Array(
-      'user_id' => $user_id,
-      'traits' => $traits
-    ));
-  }
   /**
    * Track a security event
    * @param  Array  $attributes An array of attributes to track. The 'event' key

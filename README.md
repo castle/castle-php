@@ -85,7 +85,7 @@ $castleWorker->perform($event, $context);
 In your worker code (ie. non web environment):
 
 ```php
-// Pass the context to track, identify or authenticate
+// Pass the context to track or authenticate
 Castle::track(array(
   'event' => $event['event'],
   'user_id' => $event['user_id'],
