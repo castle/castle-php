@@ -75,7 +75,7 @@ $context = Castle_RequestContext::extractJson();
 $context = Castle_RequestContext::extractJson();
 $event = array(
 	'user_id' => 1,
-	'event' => '$login.succeeded'
+	'event' => '$login'
 );
 
 // Now, push this data to your async worker, eg.
