@@ -109,16 +109,6 @@ abstract class Castle
     return $auth;
   }
 
-  /**
-   * Authenticate an action
-   * @param  String $attributes 'user_id' and 'event' are required
-   * @return Castle_Authenticate
-   */
-  public static function fetchReview($id)
-  {
-    return Castle_Review::find($id);
-  }
-
   public static function impersonate($attributes) {
       $request = new Castle_Request();
       if(isset($attributes['reset'])) {
