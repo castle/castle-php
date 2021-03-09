@@ -75,7 +75,7 @@ $context = Castle_RequestContext::extractJson();
 $context = Castle_RequestContext::extractJson();
 $event = array(
 	'user_id' => 1,
-	'name' => '$login.succeeded'
+	'event' => '$login.succeeded'
 );
 
 // Now, push this data to your async worker, eg.
@@ -87,7 +87,7 @@ In your worker code (ie. non web environment):
 ```php
 // Pass the context to track, identify or authenticate
 Castle::track(array(
-  'name' => $event['name'],
+  'event' => $event['event'],
   'user_id' => $event['user_id'],
   'context' => json_decode($context)
 ));
