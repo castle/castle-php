@@ -99,7 +99,7 @@ abstract class Castle
 
   /**
    * Authenticate an action
-   * @param  String $attributes 'user_id' and 'name' are required
+   * @param  String $attributes 'user_id' and 'event' are required
    * @return Castle_Authenticate
    */
   public static function authenticate(Array $attributes)
@@ -111,7 +111,7 @@ abstract class Castle
 
   /**
    * Authenticate an action
-   * @param  String $attributes 'user_id' and 'name' are required
+   * @param  String $attributes 'user_id' and 'event' are required
    * @return Castle_Authenticate
    */
   public static function fetchReview($id)
@@ -152,7 +152,7 @@ abstract class Castle
   }
   /**
    * Track a security event
-   * @param  Array  $attributes An array of attributes to track. The 'name' key
+   * @param  Array  $attributes An array of attributes to track. The 'event' key
    *                            is required
    * @return None
    */
