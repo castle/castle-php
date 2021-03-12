@@ -65,6 +65,8 @@ class Castle_Request
   }
 
   public function send($method, $url, $payload = 's') {
+    $options = Castle_Options::extract();
+    $payload = $options + $payload;
     if ( self::shouldHaveContext($url) && !array_key_exists('context', $payload)) {
       $payload['context'] = Castle_RequestContext::extract();
     }
