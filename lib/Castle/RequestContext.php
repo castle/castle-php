@@ -8,7 +8,6 @@ class Castle_RequestContext
       'client_id' => self::extractClientId(),
       'ip' => self::extractIp(),
       'headers' => self::extractHeaders(),
-      'user_agent' => self::extractUserAgent(),
       'library' => array(
         'name' => 'castle-php',
         'version' => Castle::VERSION
@@ -56,14 +55,6 @@ class Castle_RequestContext
     }
     if (array_key_exists('REMOTE_ADDR', $_SERVER)) {
       return $_SERVER['REMOTE_ADDR'];
-    }
-    return null;
-  }
-
-  public static function extractUserAgent()
-  {
-    if (array_key_exists('HTTP_USER_AGENT', $_SERVER)) {
-      return $_SERVER['HTTP_USER_AGENT'];
     }
     return null;
   }

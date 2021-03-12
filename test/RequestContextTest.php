@@ -21,7 +21,6 @@ class CastleRequestContextTest extends \Castle_TestCase
           'User-Agent' => 'TestAgent',
           'X-Castle-Client-Id' => '1ccf8dee-904b-4d20-8a88-55ded468bcc5'
         ),
-        'user_agent' => 'TestAgent',
         'library' => array(
           'name' => 'castle-php',
           'version' => Castle::VERSION
@@ -30,7 +29,7 @@ class CastleRequestContextTest extends \Castle_TestCase
   }
 
   public function contextJsonProvider() {
-    return array(array('{"client_id":"1ccf8dee-904b-4d20-8a88-55ded468bcc5","ip":"8.8.8.8","headers":{"User-Agent":"TestAgent","X-Castle-Client-Id":"1ccf8dee-904b-4d20-8a88-55ded468bcc5"},"user_agent":"TestAgent","library":{"name":"castle-php","version":"2.1.0"}}'));
+    return array(array('{"client_id":"1ccf8dee-904b-4d20-8a88-55ded468bcc5","ip":"8.8.8.8","headers":{"User-Agent":"TestAgent","X-Castle-Client-Id":"1ccf8dee-904b-4d20-8a88-55ded468bcc5"},"library":{"name":"castle-php","version":"2.1.0"}}'));
   }
 
   /**
