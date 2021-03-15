@@ -2,13 +2,8 @@
 
 class Castle_Context extends RestModel
 {
-  public function location()
+  public function library()
   {
-    return $this->hasOne('RestModel', 'location');
-  }
-
-  public function userAgent()
-  {
-    return $this->hasOne('RestModel', 'user_agent');
+    return $this->hasOne('RestModel', 'library');
   }
 }
