@@ -26,6 +26,41 @@ class CastleTest extends Castle_TestCase
     $this->assertRequest('post', '/track');
   }
 
+  public function testFilter()
+  {
+    Castle_RequestTransport::setResponse(204, '');
+    Castle::filter(Array(
+      'request_token' => '7e51335b-f4bc-4bc7-875d-b713fb61eb23-bf021a3022a1a302',
+      'name' => '$registration',
+      'user' => Array('id' => 'abc', 'email' => 'user@foobar.io')
+    ));
+    $this->assertRequest('post', '/filter');
+  }
+
+  public function testLog()
+  {
+    Castle_RequestTransport::setResponse(204, '');
+    Castle::log(Array(
+      'request_token' => '7e51335b-f4bc-4bc7-875d-b713fb61eb23-bf021a3022a1a302',
+      'name' => '$login',
+      'status' => '$failed',
+      'user' => Array('id' => 'abc', 'email' => 'user@foobar.io')
+    ));
+    $this->assertRequest('post', '/log');
+  }
+
+  public function testRisk()
+  {
+    Castle_RequestTransport::setResponse(204, '');
+    Castle::risk(Array(
+      'request_token' => '7e51335b-f4bc-4bc7-875d-b713fb61eb23-bf021a3022a1a302',
+      'name' => '$login',
+      'status' => '$succeeded',
+      'user' => Array('id' => 'abc', 'email' => 'user@foobar.io')
+    ));
+    $this->assertRequest('post', '/risk');
+  }
+
   public function testAuthenticate()
   {
     Castle_RequestTransport::setResponse(201, '{ "status": "approve" }');

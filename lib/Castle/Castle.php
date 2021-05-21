@@ -161,4 +161,41 @@ abstract class Castle
     $request = new Castle_Request();
     $request->send('post', '/track', $attributes);
   }
+
+
+  /**
+   * Filter an action
+   * @param  String $attributes 'name', and 'user' object with 'id' are required
+   * @return Castle_Log
+   */
+  public static function filter(Array $attributes)
+  {
+    $filter = new Castle_Filter($attributes);
+    $filter->save();
+    return $filter;
+  }
+
+  /**
+   * Log events
+   * @param  String $attributes 'name', 'status' and 'user' object with 'id' are required
+   * @return Castle_Log
+   */
+  public static function log(Array $attributes)
+  {
+    $log = new Castle_Log($attributes);
+    $log->save();
+    return $log;
+  }
+
+  /**
+   * Risk
+   * @param  String $attributes 'name', 'status' and 'user' object with 'id' are required
+   * @return Castle_Risk
+   */
+  public static function risk(Array $attributes)
+  {
+    $risk = new Castle_Risk($attributes);
+    $risk->save();
+    return $risk;
+  }
 }
