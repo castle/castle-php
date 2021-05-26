@@ -110,3 +110,7 @@ Whenever something unexpected happens, an exception is thrown to indicate what w
 
 ## Running test suite
 Execute `vendor/bin/phpunit test` to run the full test suite
+
+## Documentation
+
+[Official Castle docs](https://castle.io/docs)
