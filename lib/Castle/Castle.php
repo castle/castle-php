@@ -165,37 +165,42 @@ abstract class Castle
 
   /**
    * Filter an action
-   * @param  String $attributes 'name', and 'user' object with 'id' are required
+   * @param  String $attributes 'request_token', 'event', 'context' are required, 'user' with 'id' and 'properties' are optional
    * @return Castle_Log
    */
   public static function filter(Array $attributes)
   {
-    $filter = new Castle_Filter($attributes);
-    $filter->save();
-    return $filter;
+    $request = new Castle_Request();
+    list($response, $request) = $request->send('post', '/filter', $attributes);
+    if ($request->rStatus == 204) {
+      $response = array();
+    }
+    return $response;
   }
 
   /**
    * Log events
-   * @param  String $attributes 'name', 'status' and 'user' object with 'id' are required
+   * @param  String $attributes 'request_token', 'event', 'status' and 'user' object with 'id' are required
    * @return Castle_Log
    */
   public static function log(Array $attributes)
   {
-    $log = new Castle_Log($attributes);
-    $log->save();
-    return $log;
+    $request = new Castle_Request();
+    $request->send('post', '/log', $attributes);
   }
 
   /**
    * Risk
-   * @param  String $attributes 'name', 'status' and 'user' object with 'id' are required
+   * @param  String $attributes 'request_token', 'event', 'context', 'user' with 'id' are required, 'status', 'properties' are optional
    * @return Castle_Risk
    */
   public static function risk(Array $attributes)
   {
-    $risk = new Castle_Risk($attributes);
-    $risk->save();
-    return $risk;
+    $request = new Castle_Request();
+    list($response, $request) = $request->send('post', '/risk', $attributes);
+    if ($request->rStatus == 204) {
+      $response = array();
+    }
+    return $response;
   }
 }
