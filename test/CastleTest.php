@@ -16,7 +16,7 @@ class CastleTest extends Castle_TestCase
 
   public function testSetApiKey()
   {
-    $this->assertContains('secretkey', Castle::getApiKey());
+    $this->assertEquals('secretkey', Castle::getApiKey());
   }
 
   public function testTrack()

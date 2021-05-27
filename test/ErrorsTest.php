@@ -11,57 +11,51 @@ class CastleErrorTest extends Castle_TestCase
     $this->request = new Castle_Request();
   }
 
-  /**
-   * @expectedException Castle_BadRequest
-   */
   public function testBadRequest()
   {
     Castle_RequestTransport::setResponse(400);
+
+    $this->expectException(Castle_BadRequest::class);
     $this->request->send('GET', '/test');
   }
 
-  /**
-   * @expectedException Castle_UnauthorizedError
-   */
   public function testUnauthorized()
   {
     Castle_RequestTransport::setResponse(401);
+
+    $this->expectException(Castle_UnauthorizedError::class);
     $this->request->send('GET', '/test');
   }
 
-  /**
-   * @expectedException Castle_ForbiddenError
-   */
   public function testForbidden()
   {
     Castle_RequestTransport::setResponse(403);
+
+    $this->expectException(Castle_ForbiddenError::class);
     $this->request->send('GET', '/test');
   }
 
-  /**
-   * @expectedException Castle_NotFoundError
-   */
   public function testNotFound()
   {
     Castle_RequestTransport::setResponse(404);
+
+    $this->expectException(Castle_NotFoundError::class);
     $this->request->send('GET', '/test');
   }
 
-  /**
-   * @expectedException Castle_InvalidParametersError
-   */
   public function testInvalidParameters()
   {
     Castle_RequestTransport::setResponse(422);
+
+    $this->expectException(Castle_InvalidParametersError::class);
     $this->request->send('GET', '/test');
   }
 
-  /**
-   * @expectedException Castle_ConfigurationError
-   */
   public function testConfiguration()
   {
     Castle::setApiKey(null);
+
+    $this->expectException(Castle_ConfigurationError::class);
     $this->request->send('GET', '/test');
   }
 }
