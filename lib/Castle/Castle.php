@@ -175,7 +175,7 @@ abstract class Castle
     if ($request->rStatus == 204) {
       $response = array();
     }
-    return $response;
+    return new RestModel($response);
   }
 
   /**
@@ -201,6 +201,6 @@ abstract class Castle
     if ($request->rStatus == 204) {
       $response = array();
     }
-    return $response;
+    return new RestModel($response);
   }
 }
