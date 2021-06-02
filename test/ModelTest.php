@@ -135,8 +135,7 @@ class CastleModelTest extends Castle_TestCase
   {
     TestUser::create($user);
     $request = Castle_RequestTransport::getLastRequest();
-    $this->assertEquals($user->email, $request['email']);
-    $this->assertEquals($user->id, $request['id']);
+    $this->assertEquals($user, $request['params']);
   }
 
   /**

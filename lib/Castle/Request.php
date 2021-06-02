@@ -64,13 +64,7 @@ class Castle_Request
     }
   }
 
-  public function send($method, $url, $payload = null) {
-    if (null === $payload) {
-      $payload = [];
-    }
-    $options = Castle_Options::extract();
-    $payload = array_merge($payload, $options);
-
+  public function send($method, $url, $payload = 's') {
     if ( self::shouldHaveContext($url) && !array_key_exists('context', $payload)) {
       $payload['context'] = Castle_RequestContext::extract();
     }

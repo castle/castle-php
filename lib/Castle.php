@@ -25,4 +25,3 @@ require(dirname(__FILE__) . '/Castle/Models/Authenticate.php');
 require(dirname(__FILE__) . '/Castle/CurlTransport.php');
 require(dirname(__FILE__) . '/Castle/RequestContext.php');
 require(dirname(__FILE__) . '/Castle/Request.php');
-require(dirname(__FILE__) . '/Castle/Options.php');

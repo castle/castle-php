@@ -22,7 +22,7 @@ class CastleTest extends Castle_TestCase
   public function testTrack()
   {
     Castle_RequestTransport::setResponse(204, '');
-    Castle::track(array('event' => '$login'));
+    Castle::track(array('event' => '$login.failed'));
     $this->assertRequest('post', '/track');
   }
 
@@ -31,7 +31,7 @@ class CastleTest extends Castle_TestCase
     Castle_RequestTransport::setResponse(201, '{ "status": "approve" }');
     $auth = Castle::authenticate(Array(
       'user_id' => '1',
-      'event' => '$login'
+      'event' => '$login.failed'
     ));
     $this->assertRequest('post', '/authenticate');
     $this->assertEquals($auth->status, 'approve');
