@@ -113,4 +113,4 @@ Execute `vendor/bin/phpunit test` to run the full test suite
 
 ## Documentation
 
-[Official Castle docs](https://castle.io/docs)
+[Official Castle docs](https://docs.castle.io)
