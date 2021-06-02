@@ -9,7 +9,7 @@ class CastleRequestTest extends \Castle_TestCase
     $_SERVER['REMOTE_ADDR'] = '8.8.8.8';
     Castle::setApiKey('secretkey');
     Castle::setCurlOpts(array());
-    Castle::setUseWhitelist(false);
+    Castle::setUseAllowlist(false);
   }
 
   public function setUp(): void

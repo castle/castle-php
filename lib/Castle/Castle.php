@@ -19,8 +19,8 @@ abstract class Castle
 
   public static $scrubHeaders = array(self::HEADER_COOKIE);
 
-  private static $useWhitelist = false;
-  public static $whitelistHeaders = array(self::HEADER_USER_AGENT);
+  private static $useAllowlist = false;
+  public static $allowlistedHeaders = array(self::HEADER_USER_AGENT);
 
   private static $curlOpts = array();
   private static $validCurlOpts = array(CURLOPT_CONNECTTIMEOUT,
@@ -57,18 +57,18 @@ abstract class Castle
     return self::$curlOpts;
   }
 
-  public static function getUseWhitelist()
+  public static function getUseAllowlist()
   {
-    return self::$useWhitelist;
+    return self::$useAllowlist;
   }
 
-  public static function setUseWhitelist($use)
+  public static function setUseAllowlist($use)
   {
-    // Force User-Agent to be present in whitelist if it is not.
-    if ($use && !in_array(self::HEADER_USER_AGENT, self::$whitelistHeaders)) {
-      self::$whitelistHeaders[] = self::HEADER_USER_AGENT;
+    // Force User-Agent to be present in allowlisted if it is not.
+    if ($use && !in_array(self::HEADER_USER_AGENT, self::$allowlistedHeaders)) {
+      self::$allowlistedHeaders[] = self::HEADER_USER_AGENT;
     }
-    self::$useWhitelist = $use;
+    self::$useAllowlist = $use;
   }
 
   public static function getApiVersion()
@@ -99,7 +99,7 @@ abstract class Castle
 
   /**
    * Authenticate an action
-   * @param  String $attributes 'user_id' and 'name' are required
+   * @param  String $attributes 'user_id' and 'event' are required
    * @return Castle_Authenticate
    */
   public static function authenticate(Array $attributes)
@@ -107,31 +107,6 @@ abstract class Castle
     $auth = new Castle_Authenticate($attributes);
     $auth->save();
     return $auth;
-  }
-
-  /**
-   * Authenticate an action
-   * @param  String $attributes 'user_id' and 'name' are required
-   * @return Castle_Authenticate
-   */
-  public static function fetchReview($id)
-  {
-    return Castle_Review::find($id);
-  }
-
-   /**
-   * Updates user information. Call when a user logs in or updates their information.
-   * @param  String $user_id  Id of the user
-   * @param  Array  $traits   Additional user properties
-   * @return  None
-   */
-  public static function identify($attributes) {
-    if(func_num_args() == 1) {
-      $request = new Castle_Request();
-      $request->send('post', '/identify', $attributes);
-    } else {
-      call_user_func_array('self::legacyIdentify', func_get_args());
-    }
   }
 
   public static function impersonate($attributes) {
@@ -143,16 +118,9 @@ abstract class Castle
       }
   }
 
-  private static function legacyIdentify($user_id, Array $traits) {
-    $request = new Castle_Request();
-    $request->send('post', '/identify', Array(
-      'user_id' => $user_id,
-      'traits' => $traits
-    ));
-  }
   /**
    * Track a security event
-   * @param  Array  $attributes An array of attributes to track. The 'name' key
+   * @param  Array  $attributes An array of attributes to track. The 'event' key
    *                            is required
    * @return None
    */

@@ -22,7 +22,7 @@ require(dirname(__FILE__) . '/RestModel/Resource.php');
 require(dirname(__FILE__) . '/RestModel/Model.php');
 require(dirname(__FILE__) . '/Castle/Models/Context.php');
 require(dirname(__FILE__) . '/Castle/Models/Authenticate.php');
-require(dirname(__FILE__) . '/Castle/Models/Review.php');
 require(dirname(__FILE__) . '/Castle/CurlTransport.php');
 require(dirname(__FILE__) . '/Castle/RequestContext.php');
 require(dirname(__FILE__) . '/Castle/Request.php');
+require(dirname(__FILE__) . '/Castle/Options.php');

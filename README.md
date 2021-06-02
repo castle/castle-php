@@ -13,7 +13,7 @@
 Obtain the latest version of the Castle PHP bindings with:
 
 ```bash
-git clone https://github.com/castle/castle-php
+git clone --single-branch --branch master https://github.com/castle/castle-php
 ```
 
 To get started, add the following to your PHP script:
@@ -43,7 +43,7 @@ Castle::setCurlOpts($curlOpts)
 
 Set a specified list of request headers to include with event context (optional, not recommended):
 ```php
-Castle::setUseWhitelist($headers)
+Castle::setUseAllowlist($headers)
 ```
 
 ## Request context
@@ -75,7 +75,7 @@ $context = Castle_RequestContext::extractJson();
 $context = Castle_RequestContext::extractJson();
 $event = array(
 	'user_id' => 1,
-	'name' => '$login.succeeded'
+	'event' => '$login'
 );
 
 // Now, push this data to your async worker, eg.
@@ -85,9 +85,9 @@ $castleWorker->perform($event, $context);
 In your worker code (ie. non web environment):
 
 ```php
-// Pass the context to track, identify or authenticate
+// Pass the context to track or authenticate
 Castle::track(array(
-  'name' => $event['name'],
+  'event' => $event['event'],
   'user_id' => $event['user_id'],
   'context' => json_decode($context)
 ));
