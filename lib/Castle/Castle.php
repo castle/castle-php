@@ -129,4 +129,46 @@ abstract class Castle
     $request = new Castle_Request();
     $request->send('post', '/track', $attributes);
   }
+
+
+  /**
+   * Filter an action
+   * @param  String $attributes 'request_token', 'event', 'context' are required, 'user' with 'id' and 'properties' are optional
+   * @return Castle_Log
+   */
+  public static function filter(Array $attributes)
+  {
+    $request = new Castle_Request();
+    list($response, $request) = $request->send('post', '/filter', $attributes);
+    if ($request->rStatus == 204) {
+      $response = array();
+    }
+    return new RestModel($response);
+  }
+
+  /**
+   * Log events
+   * @param  String $attributes 'request_token', 'event', 'status' and 'user' object with 'id' are required
+   * @return Castle_Log
+   */
+  public static function log(Array $attributes)
+  {
+    $request = new Castle_Request();
+    $request->send('post', '/log', $attributes);
+  }
+
+  /**
+   * Risk
+   * @param  String $attributes 'request_token', 'event', 'context', 'user' with 'id' are required, 'status', 'properties' are optional
+   * @return Castle_Risk
+   */
+  public static function risk(Array $attributes)
+  {
+    $request = new Castle_Request();
+    list($response, $request) = $request->send('post', '/risk', $attributes);
+    if ($request->rStatus == 204) {
+      $response = array();
+    }
+    return new RestModel($response);
+  }
 }

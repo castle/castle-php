@@ -23,9 +23,6 @@ class CastleRequestTest extends \Castle_TestCase
     Castle_RequestTransport::setResponse();
   }
 
-  /**
-   * @expectedException Castle_CurlOptionError
-   */
   public function testCastleCurlOptions()
   {
     // Will not throw.
@@ -34,58 +31,51 @@ class CastleRequestTest extends \Castle_TestCase
                               CURLOPT_TIMEOUT => 1,
                               CURLOPT_TIMEOUT_MS => 1000));
     // Will throw.
+    $this->expectException(Castle_CurlOptionError::class);
     Castle::setCurlOpts(array(CURLOPT_USERAGENT => "BadBrowser/6.6.6b"));
   }
 
-
-
-  /**
-   * @expectedException Castle_ApiError
-   */
   public function testInvalidResponse()
   {
     Castle_RequestTransport::setResponse(200, '{invalid');
     $req = new Castle_Request();
+
+    $this->expectException(Castle_ApiError::class);
     $req->send('GET', '/users');
   }
 
-  /**
-   * @expectedException Castle_ApiError
-   */
   public function testApiErrorRequest()
   {
     Castle_RequestTransport::setResponse(500);
     $req = new Castle_Request();
+
+    $this->expectException(Castle_ApiError::class);
     $req->send('GET', '/users');
   }
 
-  /**
-   * @expectedException Castle_UnauthorizedError
-   */
   public function testUnauthorizedRequest()
   {
     Castle_RequestTransport::setResponse(401);
     $req = new Castle_Request();
+
+    $this->expectException(Castle_UnauthorizedError::class);
     $req->send('GET', '/users');
   }
 
-  /**
-   * @expectedException Castle_ForbiddenError
-   */
   public function testForbiddenRequest()
   {
     Castle_RequestTransport::setResponse(403);
     $req = new Castle_Request();
+
+    $this->expectException(Castle_ForbiddenError::class);
     $req->send('GET', '/users');
   }
 
-  /**
-   * @expectedException Castle_InvalidParametersError
-   */
   public function testInvalidParametersRequest()
   {
     Castle_RequestTransport::setResponse(422);
     $req = new Castle_Request();
+    $this->expectException(Castle_InvalidParametersError::class);
     $req->send('GET', '/users');
   }
 }
