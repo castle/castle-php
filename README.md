@@ -7,6 +7,11 @@
 
 **[Castle](https://castle.io) adds real-time monitoring of your authentication stack, instantly notifying you and your users on potential account hijacks.**
 
+
+## Usage
+
+See the [documentation](https://docs.castle.io) for how to use this SDK with the Castle APIs
+
 ## Getting started
 
 Obtain the latest version of the Castle PHP bindings with:
@@ -66,34 +71,8 @@ Castle_RequestContext['ip'] = '1.1.1.1'
 $context = Castle_RequestContext::extractJson();
 ```
 
-#### Example
-
-```php
-// While in a web request context, extract the information needed to send the
-// request.
-$context = Castle_RequestContext::extractJson();
-$event = array(
-	'user_id' => 1,
-	'event' => '$login.succeeded'
-);
-
-// Now, push this data to your async worker, eg.
-$castleWorker->perform($event, $context);
-```
-
-In your worker code (ie. non web environment):
-
-```php
-// Pass the context to track or authenticate
-Castle::track(array(
-  'event' => $event['event'],
-  'user_id' => $event['user_id'],
-  'context' => json_decode($context)
-));
-```
-
 ## Errors
-Whenever something unexpected happens, an exception is thrown to indicate what went wrong.
+Whenever something unexpected happens, an [exception](/lib/Castle/Errors.php) is thrown to indicate what went wrong.
 
 | Name                             | Description     |
 |:---------------------------------|:----------------|
@@ -109,7 +88,3 @@ Whenever something unexpected happens, an exception is thrown to indicate what w
 
 ## Running test suite
 Execute `vendor/bin/phpunit test` to run the full test suite
-
-## Documentation
-
-[Official Castle docs](https://docs.castle.io)
