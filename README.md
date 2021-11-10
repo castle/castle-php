@@ -5,7 +5,7 @@
 
 # PHP SDK for Castle
 
-**[Castle](https://castle.io) adds real-time monitoring of your authentication stack, instantly notifying you and your users on potential account hijacks.**
+**[Castle](https://castle.io) analyzes user behavior in web and mobile apps to stop fraud before it happens.**
 
 
 ## Usage
