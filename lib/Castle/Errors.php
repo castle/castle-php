@@ -54,3 +54,8 @@ class Castle_InvalidParametersError extends Castle_ApiError
 {
 
 }
+
+class Castle_InvalidRequestTokenError extends Castle_InvalidParametersError
+{
+
+}

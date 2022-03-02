@@ -78,4 +78,14 @@ class CastleRequestTest extends \Castle_TestCase
     $this->expectException(Castle_InvalidParametersError::class);
     $req->send('GET', '/users');
   }
+
+  public function testInvalidRequestTokenRequest()
+  {
+    Castle_RequestTransport::setResponse(
+      422, '{ "type": "invalid_request_token", "message": "" }'
+    );
+    $req = new Castle_Request();
+    $this->expectException(Castle_InvalidRequestTokenError::class);
+    $req->send('POST', '/risk');
+  }
 }

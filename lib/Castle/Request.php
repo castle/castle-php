@@ -27,7 +27,13 @@ class Castle_Request
       case 404:
         throw new Castle_NotFoundError($msg, $type, $status);
       case 422:
-        throw new Castle_InvalidParametersError($msg, $type, $status);
+        // Handle subtype errors
+        switch($type) {
+          case 'invalid_request_token':
+            throw new Castle_InvalidRequestTokenError($msg, $type, $status);
+          default:
+            throw new Castle_InvalidParametersError($msg, $type, $status);
+        }
       default:
         throw new Castle_ApiError($msg, $type, $status);
     }
