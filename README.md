@@ -85,6 +85,7 @@ Whenever something unexpected happens, an [exception](/lib/Castle/Errors.php) is
 | `Castle_ForbiddenError`         | The user has entered the wrong code too many times and a new challenge has to be requested. |
 | `Castle_NotFoundError`          | The resource requestd was not found. For example if a session has been revoked. |
 | `Castle_InvalidParametersError` | One or more of the supplied parameters are incorrect. Check the response for more information. |
+| `Castle_InvalidRequestTokenError` | The request token parameter is missing or invalid |
 
 ## Running test suite
 Execute `vendor/bin/phpunit test` to run the full test suite
