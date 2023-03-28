@@ -1,4 +1,6 @@
 # Changelog
+## 3.2.0 (2022-03-28)
+* updated ca-certs file
 
 ## 3.1.0 (2022-03-02)
 - [#47](https://github.com/castle/castle-php/pull/47)
