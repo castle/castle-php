@@ -17,6 +17,9 @@
     "classmap": [
       "lib/Castle",
       "lib/RestModel"
+    ],
+    "files": [
+      "lib/aliases.php"
     ]
   },
   "require": {

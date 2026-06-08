@@ -33,3 +33,4 @@ require(dirname(__FILE__) . '/TestTransport.php');
 require(dirname(__FILE__) . '/../lib/Castle/RequestContext.php');
 require(dirname(__FILE__) . '/../lib/Castle/Request.php');
 require(dirname(__FILE__) . '/../lib/Castle/Webhook.php');
+require(dirname(__FILE__) . '/../lib/aliases.php');

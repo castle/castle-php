@@ -6,6 +6,8 @@ class Castle_Resource
 
   protected $items  = null;
 
+  protected $model  = null;
+
   public function __construct($model, $items=null)
   {
     $this->model = $model;

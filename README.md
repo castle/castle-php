@@ -34,6 +34,36 @@ require_once 'vendor/autoload.php';
 Castle::setApiKey('YOUR_API_SECRET');
 ```
 
+## Namespaces
+
+The library is available under the `Castle\` namespace. The historic global
+class names (`Castle`, `Castle_*`, `RestModel`) remain available and behave
+identically, so existing integrations keep working without changes.
+
+```php
+use Castle\Castle;
+use Castle\Webhook;
+use Castle\WebhookVerificationError;
+
+Castle::setApiKey('YOUR_API_SECRET');
+
+$verdict = Castle::filter([
+  'request_token' => $requestToken,
+  'name' => '$registration',
+  'user' => ['id' => '1234'],
+]);
+
+try {
+  Webhook::verify();
+} catch (WebhookVerificationError $e) {
+  // reject the request
+}
+```
+
+The two styles are interchangeable — `Castle\ApiError` and `Castle_ApiError`
+refer to the same class, so `instanceof` checks and `catch` blocks work with
+either name.
+
 ## Optional Configurations
 
 Set preferred connection and request timeouts:

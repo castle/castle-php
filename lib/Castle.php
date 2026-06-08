@@ -26,3 +26,4 @@ require(dirname(__FILE__) . '/Castle/CurlTransport.php');
 require(dirname(__FILE__) . '/Castle/RequestContext.php');
 require(dirname(__FILE__) . '/Castle/Request.php');
 require(dirname(__FILE__) . '/Castle/Webhook.php');
+require(dirname(__FILE__) . '/aliases.php');

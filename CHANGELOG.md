@@ -6,7 +6,8 @@
 * added webhook signature verification: `Castle_Webhook::verify` and the `Castle_WebhookVerificationError` exception
 * the request context is now attached automatically to `risk`, `filter` and `log` requests
 * a `sent_at` timestamp is now attached automatically to `risk`, `filter` and `log` requests ([#23](https://github.com/castle/castle-php/issues/23))
-* improved PHP 8 compatibility: declared the `Castle_ApiError` properties and made API error handling tolerant of empty response bodies
+* the whole library is now available under the `Castle\` namespace (`Castle\Castle`, `Castle\Webhook`, `Castle\ApiError`, ...) while the historic global class names (`Castle`, `Castle_*`, `RestModel`) continue to work unchanged ([#40](https://github.com/castle/castle-php/issues/40))
+* improved PHP 8 compatibility: declared the `Castle_ApiError` and `Castle_Resource` properties, avoided passing `null` to `Exception`, and made API error handling tolerant of empty response bodies
 * migrated CI to GitHub Actions and now test against PHP 7.4 through 8.4
 
 ## 3.2.0 (2022-03-28)
