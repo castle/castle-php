@@ -34,7 +34,6 @@ require_once(dirname(__FILE__) . '/../lib/Castle/Errors.php');
 require_once(dirname(__FILE__) . '/CookieStore.php');
 require_once(dirname(__FILE__) . '/../lib/RestModel/Resource.php');
 require_once(dirname(__FILE__) . '/../lib/RestModel/Model.php');
-require_once(dirname(__FILE__) . '/../lib/Castle/Authenticate.php');
 require_once(dirname(__FILE__) . '/../lib/Castle/Context.php');
 require_once(dirname(__FILE__) . '/TestTransport.php');
 require_once(dirname(__FILE__) . '/../lib/Castle/RequestContext.php');

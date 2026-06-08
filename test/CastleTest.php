@@ -19,13 +19,6 @@ class CastleTest extends Castle_TestCase
     $this->assertEquals('secretkey', Castle::getApiKey());
   }
 
-  public function testTrack()
-  {
-    Castle_RequestTransport::setResponse(204, '');
-    Castle::track(array('event' => '$login.failed'));
-    $this->assertRequest('post', '/track');
-  }
-
   public function testFilter()
   {
     Castle_RequestTransport::setResponse(204, '');
@@ -59,31 +52,6 @@ class CastleTest extends Castle_TestCase
       'user' => Array('id' => 'abc', 'email' => 'user@foobar.io')
     ));
     $this->assertRequest('post', '/risk');
-  }
-
-  public function testAuthenticate()
-  {
-    Castle_RequestTransport::setResponse(201, '{ "status": "approve" }');
-    $auth = Castle::authenticate(Array(
-      'user_id' => '1',
-      'event' => '$login.failed'
-    ));
-    $this->assertRequest('post', '/authenticate');
-    $this->assertEquals($auth->status, 'approve');
-  }
-
-  public function testImpersonate()
-  {
-      Castle_RequestTransport::setResponse(204, '');
-      Castle::impersonate(array('user_id' => '1'));
-      $this->assertRequest('post', '/impersonate');
-  }
-
-  public function testImpersonateReset()
-  {
-      Castle_RequestTransport::setResponse(204, '');
-      Castle::impersonate(array('user_id' => '1', 'reset' => true));
-      $this->assertRequest('delete', '/impersonate');
   }
 
   public function testRiskIncludesContext()

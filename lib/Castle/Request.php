@@ -90,7 +90,7 @@ class Request
   }
 
   private function shouldHaveContext($url) {
-    $WITH_CONTEXT = ['/track', '/authenticate', '/impersonate', '/risk', '/filter', '/log'];
+    $WITH_CONTEXT = ['/risk', '/filter', '/log'];
 
     return in_array($url, $WITH_CONTEXT);
   }

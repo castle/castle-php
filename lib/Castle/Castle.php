@@ -100,40 +100,6 @@ abstract class Castle
 
 
   /**
-   * Authenticate an action
-   * @param  String $attributes 'user_id' and 'event' are required
-   * @return Authenticate
-   */
-  public static function authenticate(array $attributes)
-  {
-    $auth = new Authenticate($attributes);
-    $auth->save();
-    return $auth;
-  }
-
-  public static function impersonate($attributes) {
-      $request = new Request();
-      if(isset($attributes['reset'])) {
-        $request->send('delete', '/impersonate', $attributes);
-      } else {
-        $request->send('post', '/impersonate', $attributes);
-      }
-  }
-
-  /**
-   * Track a security event
-   * @param  Array  $attributes An array of attributes to track. The 'event' key
-   *                            is required
-   * @return None
-   */
-  public static function track(array $attributes)
-  {
-    $request = new Request();
-    $request->send('post', '/track', $attributes);
-  }
-
-
-  /**
    * Filter an action
    * @param  String $attributes 'request_token', 'event', 'context' are required, 'user' with 'id' and 'properties' are optional
    * @return RestModel

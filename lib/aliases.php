@@ -28,7 +28,6 @@ if (!function_exists('castle_legacy_alias_map')) {
       'Castle_CookieStore' => 'Castle\\CookieStore',
       'Castle_iCookieStore' => 'Castle\\CookieStoreInterface',
       'Castle_Webhook' => 'Castle\\Webhook',
-      'Castle_Authenticate' => 'Castle\\Authenticate',
       'Castle_Context' => 'Castle\\Context',
       'RestModel' => 'Castle\\RestModel',
       'Castle_Resource' => 'Castle\\Resource',

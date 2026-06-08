@@ -3,6 +3,7 @@
 **BREAKING CHANGES:**
 
 * the library is now defined under the `Castle\` namespace (`Castle\Castle`, `Castle\Webhook`, `Castle\RequestContext`, `Castle\ApiError`, ...), which is the canonical API ([#40](https://github.com/castle/castle-php/issues/40))
+* removed the legacy `Castle::track`, `Castle::authenticate` and `Castle::impersonate` endpoints (and the `Castle_Authenticate` model); use `Castle::risk`, `Castle::filter` and `Castle::log` instead
 
 Other changes:
 
