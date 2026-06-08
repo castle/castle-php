@@ -22,6 +22,9 @@ class Castle_CurlOptionError extends Castle_Error
 
 class Castle_ApiError extends Castle_Error
 {
+  public $type;
+  public $httpStatus;
+
   public function __construct($msg, $type = null, $status = null)
   {
     parent::__construct($msg);

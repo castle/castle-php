@@ -5,6 +5,7 @@
 * added the Privacy API: `Castle::requestUserData`, `Castle::deleteUserData`
 * added webhook signature verification: `Castle_Webhook::verify` and the `Castle_WebhookVerificationError` exception
 * the request context is now attached automatically to `risk`, `filter` and `log` requests
+* improved PHP 8 compatibility: declared the `Castle_ApiError` properties and made API error handling tolerant of empty response bodies
 
 ## 3.2.0 (2022-03-28)
 * updated ca-certs file
