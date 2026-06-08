@@ -7,7 +7,9 @@ class CastleWebhookTest extends Castle_TestCase
   public function setUp(): void
   {
     Castle::setApiKey($this->apiSecret);
-    $_SERVER = array();
+    // Keep REQUEST_TIME_FLOAT so php-timer (PHPUnit 8.5 on PHP 7.2) can still
+    // report timing after this suite resets the server globals.
+    $_SERVER = array('REQUEST_TIME_FLOAT' => microtime(true));
   }
 
   private function sign($body)
