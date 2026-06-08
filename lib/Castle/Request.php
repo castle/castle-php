@@ -80,6 +80,10 @@ class Castle_Request
       $payload['context'] = Castle_RequestContext::extract();
     }
 
+    if ( self::shouldHaveSentAt($url) && !array_key_exists('sent_at', $payload)) {
+      $payload['sent_at'] = self::generateTimestamp();
+    }
+
     return $this->sendWithContext($url, $payload, $method);
   }
 
@@ -87,6 +91,18 @@ class Castle_Request
     $WITH_CONTEXT = ['/track', '/authenticate', '/impersonate', '/risk', '/filter', '/log'];
 
     return in_array($url, $WITH_CONTEXT);
+  }
+
+  private function shouldHaveSentAt($url) {
+    $WITH_SENT_AT = ['/risk', '/filter', '/log'];
+
+    return in_array($url, $WITH_SENT_AT);
+  }
+
+  // ISO8601 timestamp (millisecond precision, UTC) marking when the request was sent.
+  public static function generateTimestamp() {
+    $date = new DateTime('now', new DateTimeZone('UTC'));
+    return $date->format('Y-m-d\TH:i:s.v\Z');
   }
 
   public function sendWithContext($url, $payload, $method = 'post')

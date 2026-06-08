@@ -123,6 +123,48 @@ class CastleTest extends Castle_TestCase
     $this->assertArrayHasKey('context', $request['params']);
   }
 
+  public function testRiskIncludesSentAt()
+  {
+    Castle_RequestTransport::setResponse(200, '{}');
+    Castle::risk(Array(
+      'request_token' => 'token',
+      'name' => '$login',
+      'user' => Array('id' => 'abc')
+    ));
+    $request = $this->assertRequest('post', '/risk');
+    $this->assertArrayHasKey('sent_at', $request['params']);
+    $this->assertMatchesRegularExpression(
+      '/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/',
+      $request['params']['sent_at']
+    );
+  }
+
+  public function testLogIncludesSentAt()
+  {
+    Castle_RequestTransport::setResponse(204, '');
+    Castle::log(Array(
+      'request_token' => 'token',
+      'name' => '$login',
+      'status' => '$succeeded',
+      'user' => Array('id' => 'abc')
+    ));
+    $request = $this->assertRequest('post', '/log');
+    $this->assertArrayHasKey('sent_at', $request['params']);
+  }
+
+  public function testSentAtIsNotOverwritten()
+  {
+    Castle_RequestTransport::setResponse(200, '{}');
+    Castle::filter(Array(
+      'request_token' => 'token',
+      'name' => '$registration',
+      'user' => Array('id' => 'abc'),
+      'sent_at' => '2020-01-01T00:00:00.000Z'
+    ));
+    $request = $this->assertRequest('post', '/filter');
+    $this->assertEquals('2020-01-01T00:00:00.000Z', $request['params']['sent_at']);
+  }
+
   public function testCreateList()
   {
     Castle_RequestTransport::setResponse(201, '{ "id": "list-id", "name": "blocklist" }');

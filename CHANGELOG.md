@@ -5,6 +5,7 @@
 * added the Privacy API: `Castle::requestUserData`, `Castle::deleteUserData`
 * added webhook signature verification: `Castle_Webhook::verify` and the `Castle_WebhookVerificationError` exception
 * the request context is now attached automatically to `risk`, `filter` and `log` requests
+* a `sent_at` timestamp is now attached automatically to `risk`, `filter` and `log` requests ([#23](https://github.com/castle/castle-php/issues/23))
 * improved PHP 8 compatibility: declared the `Castle_ApiError` properties and made API error handling tolerant of empty response bodies
 * migrated CI to GitHub Actions and now test against PHP 7.4 through 8.4
 

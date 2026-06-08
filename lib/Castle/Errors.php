@@ -25,9 +25,9 @@ class Castle_ApiError extends Castle_Error
   public $type;
   public $httpStatus;
 
-  public function __construct($msg, $type = null, $status = null)
+  public function __construct($msg = '', $type = null, $status = null)
   {
-    parent::__construct($msg);
+    parent::__construct($msg === null ? '' : $msg);
     $this->type = $type;
     $this->httpStatus = $status;
   }
