@@ -14,7 +14,7 @@
  * so a bare `instanceof Castle_Foo` only resolves once the legacy name has been
  * referenced elsewhere; prefer the namespaced names in new code.
  *
- * Works on every supported runtime (PHP 7.4 through 8.x).
+ * Works on every supported runtime (PHP 7.2 through 8.x).
  */
 
 if (!function_exists('castle_legacy_alias_map')) {
@@ -29,6 +29,7 @@ if (!function_exists('castle_legacy_alias_map')) {
       'Castle_iCookieStore' => 'Castle\\CookieStoreInterface',
       'Castle_Webhook' => 'Castle\\Webhook',
       'Castle_Context' => 'Castle\\Context',
+      'Castle_Failover' => 'Castle\\Failover',
       'RestModel' => 'Castle\\RestModel',
       'Castle_Resource' => 'Castle\\Resource',
       'Castle_Error' => 'Castle\\Error',
@@ -36,6 +37,7 @@ if (!function_exists('castle_legacy_alias_map')) {
       'Castle_ConfigurationError' => 'Castle\\ConfigurationError',
       'Castle_CurlOptionError' => 'Castle\\CurlOptionError',
       'Castle_ApiError' => 'Castle\\ApiError',
+      'Castle_InternalServerError' => 'Castle\\InternalServerError',
       'Castle_BadRequest' => 'Castle\\BadRequest',
       'Castle_UnauthorizedError' => 'Castle\\UnauthorizedError',
       'Castle_ForbiddenError' => 'Castle\\ForbiddenError',
@@ -77,6 +79,7 @@ call_user_func(function () {
     'Castle\\ConfigurationError',
     'Castle\\CurlOptionError',
     'Castle\\ApiError',
+    'Castle\\InternalServerError',
     'Castle\\BadRequest',
     'Castle\\UnauthorizedError',
     'Castle\\ForbiddenError',

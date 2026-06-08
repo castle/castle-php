@@ -12,6 +12,9 @@ class CastleTest extends Castle_TestCase
   {
     $_SESSION = array();
     $_COOKIE = array();
+    Castle_RequestTransport::reset();
+    Castle::enableTracking();
+    Castle::setFailoverStrategy('allow');
   }
 
   public function testSetApiKey()
@@ -258,5 +261,124 @@ class CastleTest extends Castle_TestCase
       'identifier_type' => '$email'
     ));
     $this->assertRequest('delete', '/privacy/users');
+  }
+
+  public function testEventsSchema()
+  {
+    Castle_RequestTransport::setResponse(200, '{ "events": [] }');
+    Castle::eventsSchema();
+    $this->assertRequest('get', '/events/schema');
+  }
+
+  public function testQueryEvents()
+  {
+    Castle_RequestTransport::setResponse(200, '{ "data": [] }');
+    Castle::queryEvents(array('filters' => array()));
+    $this->assertRequest('post', '/events/query');
+  }
+
+  public function testGroupEvents()
+  {
+    Castle_RequestTransport::setResponse(200, '{ "data": [] }');
+    Castle::groupEvents(array('filters' => array()));
+    $this->assertRequest('post', '/events/group');
+  }
+
+  public function testRiskSuccessIncludesFailoverFalse()
+  {
+    Castle_RequestTransport::setResponse(200, '{ "policy": { "action": "allow" } }');
+    $risk = Castle::risk(array(
+      'request_token' => 'token',
+      'name' => '$login',
+      'user' => array('id' => 'abc')
+    ));
+    $this->assertFalse($risk->failover);
+    $this->assertNull($risk->failover_reason);
+  }
+
+  public function testRiskFailsOverOnRequestError()
+  {
+    Castle_RequestTransport::setError();
+    $risk = Castle::risk(array(
+      'request_token' => 'token',
+      'name' => '$login',
+      'user' => array('id' => 'abc')
+    ));
+    $this->assertTrue($risk->failover);
+    $this->assertEquals('allow', $risk->action);
+    $this->assertEquals('allow', $risk->policy['action']);
+    $this->assertEquals('abc', $risk->user_id);
+    $this->assertEquals('Castle\\RequestError', $risk->failover_reason);
+  }
+
+  public function testRiskFailsOverOnServerError()
+  {
+    Castle_RequestTransport::setResponse(500, '{ "type": "server_error" }');
+    $risk = Castle::risk(array(
+      'request_token' => 'token',
+      'name' => '$login',
+      'user' => array('id' => 'abc')
+    ));
+    $this->assertTrue($risk->failover);
+    $this->assertEquals('allow', $risk->action);
+    $this->assertEquals('Castle\\InternalServerError', $risk->failover_reason);
+  }
+
+  public function testFilterFailoverUsesMatchingUserId()
+  {
+    Castle::setFailoverStrategy('deny');
+    Castle_RequestTransport::setError();
+    $filter = Castle::filter(array(
+      'request_token' => 'token',
+      'name' => '$registration',
+      'matching_user_id' => 'mu-1'
+    ));
+    $this->assertTrue($filter->failover);
+    $this->assertEquals('deny', $filter->action);
+    $this->assertEquals('mu-1', $filter->user_id);
+  }
+
+  public function testFailoverThrowStrategyReraises()
+  {
+    Castle::setFailoverStrategy('throw');
+    Castle_RequestTransport::setError();
+    $this->expectException(\Castle\RequestError::class);
+    Castle::risk(array(
+      'request_token' => 'token',
+      'name' => '$login',
+      'user' => array('id' => 'abc')
+    ));
+  }
+
+  public function testClientErrorsAreNotFailedOver()
+  {
+    Castle_RequestTransport::setResponse(422, '{ "type": "invalid_request_token" }');
+    $this->expectException(\Castle\InvalidRequestTokenError::class);
+    Castle::risk(array(
+      'request_token' => 'token',
+      'name' => '$login',
+      'user' => array('id' => 'abc')
+    ));
+  }
+
+  public function testDoNotTrackReturnsAllowWithoutRequest()
+  {
+    Castle::disableTracking();
+    $risk = Castle::risk(array(
+      'request_token' => 'token',
+      'name' => '$login',
+      'user' => array('id' => 'abc')
+    ));
+    $this->assertTrue($risk->failover);
+    $this->assertEquals('allow', $risk->action);
+    $this->assertEquals('abc', $risk->user_id);
+    $this->assertEquals('Castle is set to do not track.', $risk->failover_reason);
+    $this->assertNull(Castle_RequestTransport::getLastRequest());
+  }
+
+  public function testSetFailoverStrategyRejectsUnknown()
+  {
+    $this->expectException(\Castle\ConfigurationError::class);
+    Castle::setFailoverStrategy('bogus');
   }
 }

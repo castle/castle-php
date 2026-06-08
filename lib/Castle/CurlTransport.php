@@ -76,16 +76,23 @@ class RequestTransport
     $curlOptions[CURLOPT_URL] = $url;
     $curlOptions[CURLOPT_USERPWD] = ":" . Castle::getApiKey();
     $curlOptions[CURLOPT_RETURNTRANSFER] = true;
-    $curlOptions[CURLOPT_CONNECTTIMEOUT] = 3;
-    $curlOptions[CURLOPT_TIMEOUT] = 10;
     $curlOptions[CURLOPT_HTTPHEADER] = array(
       'Content-Type: application/json',
       'Content-Length: ' . strlen($body)
     );
     $curlOptions[CURLOPT_HEADER] = true;
 
-    // Merge user defined options.
+    // Apply the configured request timeout to both connect and overall transfer
+    // unless the caller pinned any timeout option via setCurlOpts().
     $userOptions = Castle::getCurlOpts();
+    $timeoutOpts = array(CURLOPT_CONNECTTIMEOUT, CURLOPT_CONNECTTIMEOUT_MS,
+                         CURLOPT_TIMEOUT, CURLOPT_TIMEOUT_MS);
+    if (!array_intersect(array_keys($userOptions), $timeoutOpts)) {
+      $curlOptions[CURLOPT_CONNECTTIMEOUT_MS] = Castle::getRequestTimeout();
+      $curlOptions[CURLOPT_TIMEOUT_MS] = Castle::getRequestTimeout();
+    }
+
+    // Merge user defined options.
     $curlOptions = $userOptions + $curlOptions;
 
     curl_setopt_array($curl, $curlOptions);

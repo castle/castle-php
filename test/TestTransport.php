@@ -34,6 +34,14 @@ class RequestTransport
       'url'     => $url
     );
     $params = array_pop(self::$params);
+    if (isset($params['error'])) {
+      $this->rError = $params['error'];
+      $this->rMessage = $params['message'];
+      $this->rStatus = 0;
+      $this->rBody = null;
+      $this->rHeaders = array();
+      return;
+    }
     $this->rBody = $params['body'];
     $this->rStatus = $params['code'];
     $this->rHeaders = $params['headers'];
@@ -58,6 +66,13 @@ class RequestTransport
       'body' => $body,
       'code' => $code,
       'headers' => $headers
+    );
+  }
+
+  public static function setError($errno=28, $message='Operation timed out') {
+    self::$params[]= array(
+      'error' => $errno,
+      'message' => $message
     );
   }
 }

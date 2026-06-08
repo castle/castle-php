@@ -35,6 +35,11 @@ class ApiError extends Error
   }
 }
 
+class InternalServerError extends ApiError
+{
+
+}
+
 class BadRequest extends ApiError
 {
 

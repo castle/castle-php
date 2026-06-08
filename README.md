@@ -79,8 +79,14 @@ compatibility.
 
 ## Optional Configurations
 
-Set preferred connection and request timeouts:
-valid options for setting are:
+Set the per-request timeout in milliseconds (applied to both connection and
+transfer). Defaults to `1000`:
+
+```php
+Castle::setRequestTimeout(1500);
+```
+
+For finer-grained control, set cURL options directly. Valid options are:
 - `CURLOPT_CONNECTTIMEOUT`
 - `CURLOPT_CONNECTTIMEOUT_MS`
 - `CURLOPT_TIMEOUT`
@@ -88,6 +94,13 @@ valid options for setting are:
 
 ```php
 Castle::setCurlOpts($curlOpts)
+```
+
+Set the failover strategy used when a `risk` or `filter` request cannot be
+completed (see [Failover](#failover)):
+
+```php
+Castle::setFailoverStrategy(Castle\Failover::ALLOW);
 ```
 
 Set a specified list of request headers to include with event context (optional, not recommended):
@@ -167,6 +180,59 @@ Castle::deleteUserData([
 ]);
 ```
 
+## Failover
+
+When a `risk` or `filter` request cannot be completed because of a network
+error, timeout or a `5xx` response from the Castle API, the SDK returns a
+synthetic decision instead of throwing, so your authentication flow keeps
+working. The decision is controlled by the failover strategy:
+
+```php
+Castle::setFailoverStrategy(Castle\Failover::ALLOW); // default
+// Castle\Failover::DENY
+// Castle\Failover::CHALLENGE
+// Castle\Failover::THROW  -- re-raise the underlying exception instead
+```
+
+A failed-over response carries `failover => true` and a `failover_reason`:
+
+```php
+$verdict = Castle::risk([
+  'request_token' => $requestToken,
+  'name' => '$login',
+  'user' => ['id' => '1234'],
+]);
+
+$verdict->failover;        // true when the request failed over
+$verdict->action;          // 'allow', 'deny' or 'challenge'
+$verdict->policy['action'];
+```
+
+Successful responses include `failover => false`. Client errors (`4xx`, such as
+`422 invalid_request_token`) are never failed over and always raise.
+
+## Do-not-track
+
+Disable outbound tracking calls, for example in staging or test environments.
+While disabled, `risk`, `filter` and `log` return an `allow` response without
+contacting the API:
+
+```php
+Castle::disableTracking();
+Castle::tracked();        // false
+Castle::enableTracking();
+```
+
+## Events (enterprise)
+
+Query event data:
+
+```php
+Castle::eventsSchema();
+Castle::queryEvents(['filters' => [['field' => 'name', 'op' => '$eq', 'value' => '$login']]]);
+Castle::groupEvents(['filters' => [], 'group_by' => 'name']);
+```
+
 ## Webhooks
 
 Verify the authenticity of incoming Castle webhooks. By default the raw body is
@@ -195,6 +261,7 @@ Whenever something unexpected happens, an [exception](lib/Castle/Errors.php) is 
 | `Castle_Error`                  | A generic error |
 | `Castle_RequestError`           | A request failed. Probably due to a network error |
 | `Castle_ApiError`               | An unexpected error for the Castle API |
+| `Castle_InternalServerError`    | The Castle API returned a `5xx` response (triggers failover) |
 | `Castle_ConfigurationError`     | The Castle secret API key has not been set |
 | `Castle_UnauthorizedError`      | Wrong Castle API secret key |
 | `Castle_BadRequest`             | The request was invalid. For example if a challenge is created without the user having MFA enabled. |

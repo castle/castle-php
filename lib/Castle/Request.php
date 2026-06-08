@@ -38,6 +38,9 @@ class Request
             throw new InvalidParametersError($msg, $type, $status);
         }
       default:
+        if ($status >= 500 && $status <= 599) {
+          throw new InternalServerError($msg, $type, $status);
+        }
         throw new ApiError($msg, $type, $status);
     }
   }

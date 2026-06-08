@@ -24,6 +24,26 @@ abstract class Castle
   private static $useAllowlist = false;
   public static $allowlistedHeaders = array(self::HEADER_USER_AGENT);
 
+  // Reference allowlist of headers that are safe to forward. Not applied by
+  // default; opt in with setUseAllowlist(true) and assign $allowlistedHeaders.
+  const DEFAULT_ALLOWLIST = array(
+    'Accept', 'Accept-Charset', 'Accept-Datetime', 'Accept-Encoding',
+    'Accept-Language', 'Cache-Control', 'Connection', 'Content-Length',
+    'Content-Type', 'Dnt', 'Host', 'Origin', 'Pragma', 'Referer',
+    'Sec-Fetch-Dest', 'Sec-Fetch-Mode', 'Sec-Fetch-Site', 'Sec-Fetch-User',
+    'Te', 'Upgrade-Insecure-Requests', 'User-Agent', 'X-Requested-With'
+  );
+
+  // Per-request timeout in milliseconds, applied to both connect and overall
+  // transfer, unless overridden via setCurlOpts().
+  public static $requestTimeout = 1000;
+
+  // Decision returned when a request fails over. One of the Castle\Failover
+  // strategy constants: 'allow', 'deny', 'challenge' or 'throw'.
+  public static $failoverStrategy = 'allow';
+
+  private static $doNotTrack = false;
+
   private static $curlOpts = array();
   private static $validCurlOpts = array(CURLOPT_CONNECTTIMEOUT,
                                         CURLOPT_CONNECTTIMEOUT_MS,
@@ -101,43 +121,132 @@ abstract class Castle
 
   /**
    * Filter an action
-   * @param  String $attributes 'request_token', 'event', 'context' are required, 'user' with 'id' and 'properties' are optional
+   * @param  Array $attributes 'request_token', 'event' and 'context' are required, 'user' with 'id' and 'properties' are optional
    * @return RestModel
    */
   public static function filter(array $attributes)
   {
-    $request = new Request();
-    list($response, $request) = $request->send('post', '/filter', $attributes);
-    if ($request->rStatus == 204) {
-      $response = array();
-    }
-    return new RestModel($response);
+    return self::trackingRequest('/filter', $attributes);
   }
 
   /**
    * Log events
-   * @param  String $attributes 'request_token', 'event', 'status' and 'user' object with 'id' are required
-   * @return None
+   * @param  Array $attributes 'request_token', 'event', 'status' and 'user' object with 'id' are required
+   * @return RestModel
    */
   public static function log(array $attributes)
   {
-    $request = new Request();
-    $request->send('post', '/log', $attributes);
+    return self::trackingRequest('/log', $attributes);
   }
 
   /**
    * Risk
-   * @param  String $attributes 'request_token', 'event', 'context', 'user' with 'id' are required, 'status', 'properties' are optional
+   * @param  Array $attributes 'request_token', 'event', 'context' and 'user' with 'id' are required, 'status' and 'properties' are optional
    * @return RestModel
    */
   public static function risk(array $attributes)
   {
-    $request = new Request();
-    list($response, $request) = $request->send('post', '/risk', $attributes);
-    if ($request->rStatus == 204) {
-      $response = array();
+    return self::trackingRequest('/risk', $attributes);
+  }
+
+  /**
+   * Stop sending tracking calls. While disabled, risk/filter/log return an
+   * 'allow' response without contacting the API.
+   */
+  public static function disableTracking()
+  {
+    self::$doNotTrack = true;
+  }
+
+  /**
+   * Resume sending tracking calls.
+   */
+  public static function enableTracking()
+  {
+    self::$doNotTrack = false;
+  }
+
+  public static function tracked()
+  {
+    return !self::$doNotTrack;
+  }
+
+  public static function getFailoverStrategy()
+  {
+    return self::$failoverStrategy;
+  }
+
+  public static function setFailoverStrategy($strategy)
+  {
+    if (!in_array($strategy, Failover::strategies(), true)) {
+      throw new ConfigurationError('unrecognized failover strategy');
     }
-    return new RestModel($response);
+    self::$failoverStrategy = $strategy;
+  }
+
+  public static function getRequestTimeout()
+  {
+    return self::$requestTimeout;
+  }
+
+  public static function setRequestTimeout($milliseconds)
+  {
+    self::$requestTimeout = $milliseconds;
+  }
+
+  private static function trackingRequest($path, array $attributes)
+  {
+    if (!self::tracked()) {
+      return self::doNotTrackResponse(self::failoverUserId($attributes));
+    }
+    try {
+      $request = new Request();
+      list($response, $request) = $request->send('post', $path, $attributes);
+      if ($request->rStatus == 204) {
+        $response = array();
+      }
+      $response = is_array($response) ? $response : array();
+      $response['failover'] = false;
+      $response['failover_reason'] = null;
+      return new RestModel($response);
+    } catch (RequestError $e) {
+      return self::failoverResponseOrRaise(self::failoverUserId($attributes), $e);
+    } catch (InternalServerError $e) {
+      return self::failoverResponseOrRaise(self::failoverUserId($attributes), $e);
+    }
+  }
+
+  private static function failoverResponseOrRaise($userId, $exception)
+  {
+    if (self::$failoverStrategy === Failover::THROW) {
+      throw $exception;
+    }
+    return new RestModel(Failover::prepareResponse(
+      $userId,
+      self::$failoverStrategy,
+      get_class($exception)
+    ));
+  }
+
+  private static function doNotTrackResponse($userId)
+  {
+    return new RestModel(Failover::prepareResponse(
+      $userId,
+      Failover::ALLOW,
+      'Castle is set to do not track.'
+    ));
+  }
+
+  private static function failoverUserId(array $attributes)
+  {
+    if (isset($attributes['user']) && is_array($attributes['user']) &&
+        isset($attributes['user']['id'])) {
+      return $attributes['user']['id'];
+    }
+    if (isset($attributes['matching_user_id'])) {
+      return $attributes['matching_user_id'];
+    }
+    return null;
   }
 
   /**
@@ -319,6 +428,39 @@ abstract class Castle
   public static function deleteUserData(array $attributes)
   {
     return self::sendRequest('delete', '/privacy/users', $attributes);
+  }
+
+  /**
+   * Events API (enterprise)
+   */
+
+  /**
+   * Fetch the events schema
+   * @return Array
+   */
+  public static function eventsSchema(array $attributes = array())
+  {
+    return self::sendRequest('get', '/events/schema', $attributes);
+  }
+
+  /**
+   * Query events
+   * @param  Array $attributes
+   * @return Array
+   */
+  public static function queryEvents(array $attributes)
+  {
+    return self::sendRequest('post', '/events/query', $attributes);
+  }
+
+  /**
+   * Group events
+   * @param  Array $attributes
+   * @return Array
+   */
+  public static function groupEvents(array $attributes)
+  {
+    return self::sendRequest('post', '/events/group', $attributes);
   }
 
   private static function sendRequest($method, $path, $attributes = null)

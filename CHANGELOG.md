@@ -4,9 +4,14 @@
 
 * the library is now defined under the `Castle\` namespace (`Castle\Castle`, `Castle\Webhook`, `Castle\RequestContext`, `Castle\ApiError`, ...), which is the canonical API ([#40](https://github.com/castle/castle-php/issues/40))
 * removed the legacy `Castle::track`, `Castle::authenticate` and `Castle::impersonate` endpoints (and the `Castle_Authenticate` model); use `Castle::risk`, `Castle::filter` and `Castle::log` instead
+* `Castle::risk` and `Castle::filter` now fail over to a configurable decision instead of throwing on network errors, timeouts and `5xx` responses; `Castle::log` returns the same response shape. `Castle::risk`/`filter`/`log` responses now include `failover` and `failover_reason`
+* the default request timeout is now 1000 ms (previously 10 s), applied to both connection and transfer; configure it with `Castle::setRequestTimeout`
 
 Other changes:
 
+* added a configurable failover strategy (`Castle::setFailoverStrategy` with `Castle\Failover::ALLOW`/`DENY`/`CHALLENGE`/`THROW`) and the `Castle\InternalServerError` exception for `5xx` responses
+* added do-not-track support: `Castle::disableTracking`, `Castle::enableTracking` and `Castle::tracked`
+* added the Events API: `Castle::eventsSchema`, `Castle::queryEvents`, `Castle::groupEvents`
 * the historic global class names (`Castle`, `Castle_*`, `RestModel`) are retained as aliases of their namespaced counterparts, so existing integrations keep working without changes; `catch` and `instanceof` work with either name
 * additional PHP 8 compatibility fixes: declared `Castle_Resource::$model`, and avoided passing `null` to `Exception` and `json_decode`
 
