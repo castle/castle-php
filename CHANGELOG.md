@@ -6,7 +6,7 @@
 * added webhook signature verification: `Castle_Webhook::verify` and the `Castle_WebhookVerificationError` exception
 * the request context is now attached automatically to `risk`, `filter` and `log` requests
 * improved PHP 8 compatibility: declared the `Castle_ApiError` properties and made API error handling tolerant of empty response bodies
-* migrated CI to GitHub Actions and now test against PHP 7.2 through 8.4
+* migrated CI to GitHub Actions and now test against PHP 7.4 through 8.4
 
 ## 3.2.0 (2022-03-28)
 * updated ca-certs file
