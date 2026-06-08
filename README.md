@@ -12,23 +12,25 @@
 
 See the [documentation](https://docs.castle.io) for how to use this SDK with the Castle APIs
 
+## Requirements
+
+PHP 7.2 or newer, with the `curl` and `json` extensions. The library is tested
+against PHP 7.2 through 8.4.
+
 ## Getting started
 
-Obtain the latest version of the Castle PHP bindings with:
+Install the latest version with [Composer](https://getcomposer.org):
 
 ```bash
-git clone --single-branch --branch master https://github.com/castle/castle-php
+composer require castle/castle-php
 ```
 
-To get started, add the following to your PHP script:
+Then load Composer's autoloader and configure the library with your Castle API
+secret:
 
 ```php
-require_once("/path/to/castle-php/lib/Castle.php");
-```
+require_once 'vendor/autoload.php';
 
-Configure the library with your Castle API secret.
-
-```php
 Castle::setApiKey('YOUR_API_SECRET');
 ```
 
@@ -160,4 +162,10 @@ Whenever something unexpected happens, an [exception](/lib/Castle/Errors.php) is
 | `Castle_WebhookVerificationError` | An incoming webhook could not be verified against the `X-Castle-Signature` header |
 
 ## Running test suite
-Execute `vendor/bin/phpunit test` to run the full test suite
+
+Install the dev dependencies and run the suite with:
+
+```bash
+composer install
+composer test
+```
