@@ -2,7 +2,7 @@
 
 abstract class Castle
 {
-  const VERSION = '3.2.0';
+  const VERSION = '3.3.0';
 
   const HEADER_COOKIE = 'Cookie';
   const HEADER_USER_AGENT = 'User-Agent';
@@ -170,5 +170,211 @@ abstract class Castle
       $response = array();
     }
     return new RestModel($response);
+  }
+
+  /**
+   * Lists API
+   */
+
+  /**
+   * Create a list
+   * @param  Array $attributes 'name', 'color' and 'primary_field' are required
+   * @return Array
+   */
+  public static function createList(Array $attributes)
+  {
+    return self::sendRequest('post', '/lists', $attributes);
+  }
+
+  /**
+   * Fetch all lists
+   * @return Array
+   */
+  public static function getAllLists()
+  {
+    return self::sendRequest('get', '/lists');
+  }
+
+  /**
+   * Fetch a single list
+   * @param  String $listId
+   * @return Array
+   */
+  public static function getList($listId)
+  {
+    return self::sendRequest('get', self::listPath($listId));
+  }
+
+  /**
+   * Update a list
+   * @param  String $listId
+   * @param  Array  $attributes
+   * @return Array
+   */
+  public static function updateList($listId, Array $attributes)
+  {
+    return self::sendRequest('put', self::listPath($listId), $attributes);
+  }
+
+  /**
+   * Delete a list
+   * @param  String $listId
+   * @return Array
+   */
+  public static function deleteList($listId)
+  {
+    return self::sendRequest('delete', self::listPath($listId));
+  }
+
+  /**
+   * Query lists
+   * @param  Array $attributes
+   * @return Array
+   */
+  public static function queryList(Array $attributes = array())
+  {
+    return self::sendRequest('post', '/lists/query', $attributes);
+  }
+
+  /**
+   * List Items API
+   */
+
+  /**
+   * Create a list item
+   * @param  String $listId
+   * @param  Array  $attributes 'author' and 'primary_value' are required
+   * @return Array
+   */
+  public static function createListItem($listId, Array $attributes)
+  {
+    return self::sendRequest('post', self::listItemsPath($listId), $attributes);
+  }
+
+  /**
+   * Create a batch of list items
+   * @param  String $listId
+   * @param  Array  $attributes 'items' is required
+   * @return Array
+   */
+  public static function createListItems($listId, Array $attributes)
+  {
+    return self::sendRequest('post', self::listItemsPath($listId) . '/batch', $attributes);
+  }
+
+  /**
+   * Fetch a list item
+   * @param  String $listId
+   * @param  String $itemId
+   * @return Array
+   */
+  public static function getListItem($listId, $itemId)
+  {
+    return self::sendRequest('get', self::listItemPath($listId, $itemId));
+  }
+
+  /**
+   * Update a list item
+   * @param  String $listId
+   * @param  String $itemId
+   * @param  Array  $attributes 'comment' is required
+   * @return Array
+   */
+  public static function updateListItem($listId, $itemId, Array $attributes)
+  {
+    return self::sendRequest('put', self::listItemPath($listId, $itemId), $attributes);
+  }
+
+  /**
+   * Query the items of a list
+   * @param  String $listId
+   * @param  Array  $attributes
+   * @return Array
+   */
+  public static function queryListItems($listId, Array $attributes = array())
+  {
+    return self::sendRequest('post', self::listItemsPath($listId) . '/query', $attributes);
+  }
+
+  /**
+   * Count the items of a list
+   * @param  String $listId
+   * @param  Array  $attributes
+   * @return Array
+   */
+  public static function countListItems($listId, Array $attributes = array())
+  {
+    return self::sendRequest('post', self::listItemsPath($listId) . '/count', $attributes);
+  }
+
+  /**
+   * Archive a list item
+   * @param  String $listId
+   * @param  String $itemId
+   * @return Array
+   */
+  public static function archiveListItem($listId, $itemId)
+  {
+    return self::sendRequest('delete', self::listItemPath($listId, $itemId) . '/archive');
+  }
+
+  /**
+   * Unarchive a list item
+   * @param  String $listId
+   * @param  String $itemId
+   * @return Array
+   */
+  public static function unarchiveListItem($listId, $itemId)
+  {
+    return self::sendRequest('put', self::listItemPath($listId, $itemId) . '/unarchive');
+  }
+
+  /**
+   * Privacy API
+   */
+
+  /**
+   * Request the data stored for a user
+   * @param  Array $attributes 'identifier' and 'identifier_type' are required
+   * @return Array
+   */
+  public static function requestUserData(Array $attributes)
+  {
+    return self::sendRequest('post', '/privacy/users', $attributes);
+  }
+
+  /**
+   * Delete the data stored for a user
+   * @param  Array $attributes 'identifier' and 'identifier_type' are required
+   * @return Array
+   */
+  public static function deleteUserData(Array $attributes)
+  {
+    return self::sendRequest('delete', '/privacy/users', $attributes);
+  }
+
+  private static function sendRequest($method, $path, $attributes = null)
+  {
+    $request = new Castle_Request();
+    list($response, $request) = $request->send($method, $path, $attributes);
+    if ($request->rStatus == 204) {
+      $response = array();
+    }
+    return $response;
+  }
+
+  private static function listPath($listId)
+  {
+    return '/lists/' . rawurlencode($listId);
+  }
+
+  private static function listItemsPath($listId)
+  {
+    return self::listPath($listId) . '/items';
+  }
+
+  private static function listItemPath($listId, $itemId)
+  {
+    return self::listItemsPath($listId) . '/' . rawurlencode($itemId);
   }
 }

@@ -71,6 +71,77 @@ Castle_RequestContext['ip'] = '1.1.1.1'
 $context = Castle_RequestContext::extractJson();
 ```
 
+## Lists
+
+Manage [lists](https://docs.castle.io) and their items:
+
+```php
+$list = Castle::createList([
+  'name' => 'Blocklist',
+  'color' => '$red',
+  'primary_field' => 'user.email',
+]);
+
+$lists = Castle::getAllLists();
+$list  = Castle::getList($list['id']);
+Castle::updateList($list['id'], ['name' => 'Renamed']);
+Castle::deleteList($list['id']);
+Castle::queryList(['filters' => [['field' => 'name', 'op' => '$eq', 'value' => 'Blocklist']]]);
+```
+
+List items:
+
+```php
+$item = Castle::createListItem($list['id'], [
+  'author' => 'user:123',
+  'primary_value' => 'user@example.com',
+]);
+
+Castle::getListItem($list['id'], $item['id']);
+Castle::updateListItem($list['id'], $item['id'], ['comment' => 'Flagged for review']);
+Castle::queryListItems($list['id'], ['filters' => []]);
+Castle::countListItems($list['id'], ['filters' => []]);
+Castle::archiveListItem($list['id'], $item['id']);
+Castle::unarchiveListItem($list['id'], $item['id']);
+Castle::createListItems($list['id'], ['items' => [/* ... */]]);
+```
+
+## Privacy
+
+Request or delete the data Castle stores for a user:
+
+```php
+Castle::requestUserData([
+  'identifier' => 'user@example.com',
+  'identifier_type' => '$email',
+]);
+
+Castle::deleteUserData([
+  'identifier' => 'user@example.com',
+  'identifier_type' => '$email',
+]);
+```
+
+## Webhooks
+
+Verify the authenticity of incoming Castle webhooks. By default the raw body is
+read from `php://input` and the signature from the `X-Castle-Signature` header:
+
+```php
+try {
+  Castle_Webhook::verify();
+  // handle the webhook payload
+} catch (Castle_WebhookVerificationError $e) {
+  http_response_code(404);
+}
+```
+
+The body and signature can also be passed explicitly:
+
+```php
+Castle_Webhook::verify($rawBody, $signatureHeader);
+```
+
 ## Errors
 Whenever something unexpected happens, an [exception](/lib/Castle/Errors.php) is thrown to indicate what went wrong.
 
@@ -86,6 +157,7 @@ Whenever something unexpected happens, an [exception](/lib/Castle/Errors.php) is
 | `Castle_NotFoundError`          | The resource requestd was not found. For example if a session has been revoked. |
 | `Castle_InvalidParametersError` | One or more of the supplied parameters are incorrect. Check the response for more information. |
 | `Castle_InvalidRequestTokenError` | The request token parameter is missing or invalid |
+| `Castle_WebhookVerificationError` | An incoming webhook could not be verified against the `X-Castle-Signature` header |
 
 ## Running test suite
 Execute `vendor/bin/phpunit test` to run the full test suite

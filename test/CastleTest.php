@@ -85,4 +85,168 @@ class CastleTest extends Castle_TestCase
       Castle::impersonate(array('user_id' => '1', 'reset' => true));
       $this->assertRequest('delete', '/impersonate');
   }
+
+  public function testRiskIncludesContext()
+  {
+    Castle_RequestTransport::setResponse(200, '{}');
+    Castle::risk(Array(
+      'request_token' => 'token',
+      'name' => '$login',
+      'user' => Array('id' => 'abc')
+    ));
+    $request = $this->assertRequest('post', '/risk');
+    $this->assertArrayHasKey('context', $request['params']);
+  }
+
+  public function testFilterIncludesContext()
+  {
+    Castle_RequestTransport::setResponse(200, '{}');
+    Castle::filter(Array(
+      'request_token' => 'token',
+      'name' => '$registration',
+      'user' => Array('id' => 'abc')
+    ));
+    $request = $this->assertRequest('post', '/filter');
+    $this->assertArrayHasKey('context', $request['params']);
+  }
+
+  public function testLogIncludesContext()
+  {
+    Castle_RequestTransport::setResponse(204, '');
+    Castle::log(Array(
+      'request_token' => 'token',
+      'name' => '$login',
+      'status' => '$succeeded',
+      'user' => Array('id' => 'abc')
+    ));
+    $request = $this->assertRequest('post', '/log');
+    $this->assertArrayHasKey('context', $request['params']);
+  }
+
+  public function testCreateList()
+  {
+    Castle_RequestTransport::setResponse(201, '{ "id": "list-id", "name": "blocklist" }');
+    $list = Castle::createList(Array(
+      'name' => 'blocklist',
+      'color' => '$red',
+      'primary_field' => 'user.email'
+    ));
+    $this->assertRequest('post', '/lists');
+    $this->assertEquals('list-id', $list['id']);
+  }
+
+  public function testGetAllLists()
+  {
+    Castle_RequestTransport::setResponse(200, '[{ "id": "list-id" }]');
+    $lists = Castle::getAllLists();
+    $this->assertRequest('get', '/lists');
+    $this->assertEquals('list-id', $lists[0]['id']);
+  }
+
+  public function testGetList()
+  {
+    Castle_RequestTransport::setResponse(200, '{ "id": "list-id" }');
+    Castle::getList('list-id');
+    $this->assertRequest('get', '/lists/list-id');
+  }
+
+  public function testUpdateList()
+  {
+    Castle_RequestTransport::setResponse(200, '{ "id": "list-id" }');
+    Castle::updateList('list-id', array('name' => 'renamed'));
+    $this->assertRequest('put', '/lists/list-id');
+  }
+
+  public function testDeleteList()
+  {
+    Castle_RequestTransport::setResponse(204, '');
+    Castle::deleteList('list-id');
+    $this->assertRequest('delete', '/lists/list-id');
+  }
+
+  public function testQueryList()
+  {
+    Castle_RequestTransport::setResponse(200, '{ "total_count": 0, "items": [] }');
+    Castle::queryList(array('filters' => array()));
+    $this->assertRequest('post', '/lists/query');
+  }
+
+  public function testCreateListItem()
+  {
+    Castle_RequestTransport::setResponse(201, '{ "id": "item-id" }');
+    Castle::createListItem('list-id', array(
+      'author' => 'user:123',
+      'primary_value' => 'user@example.com'
+    ));
+    $this->assertRequest('post', '/lists/list-id/items');
+  }
+
+  public function testCreateListItems()
+  {
+    Castle_RequestTransport::setResponse(201, '{ "items": [] }');
+    Castle::createListItems('list-id', array('items' => array()));
+    $this->assertRequest('post', '/lists/list-id/items/batch');
+  }
+
+  public function testGetListItem()
+  {
+    Castle_RequestTransport::setResponse(200, '{ "id": "item-id" }');
+    Castle::getListItem('list-id', 'item-id');
+    $this->assertRequest('get', '/lists/list-id/items/item-id');
+  }
+
+  public function testUpdateListItem()
+  {
+    Castle_RequestTransport::setResponse(200, '{ "id": "item-id" }');
+    Castle::updateListItem('list-id', 'item-id', array('comment' => 'note'));
+    $this->assertRequest('put', '/lists/list-id/items/item-id');
+  }
+
+  public function testQueryListItems()
+  {
+    Castle_RequestTransport::setResponse(200, '{ "total_count": 0, "items": [] }');
+    Castle::queryListItems('list-id', array('filters' => array()));
+    $this->assertRequest('post', '/lists/list-id/items/query');
+  }
+
+  public function testCountListItems()
+  {
+    Castle_RequestTransport::setResponse(200, '{ "count": 0 }');
+    Castle::countListItems('list-id', array('filters' => array()));
+    $this->assertRequest('post', '/lists/list-id/items/count');
+  }
+
+  public function testArchiveListItem()
+  {
+    Castle_RequestTransport::setResponse(204, '');
+    Castle::archiveListItem('list-id', 'item-id');
+    $this->assertRequest('delete', '/lists/list-id/items/item-id/archive');
+  }
+
+  public function testUnarchiveListItem()
+  {
+    Castle_RequestTransport::setResponse(204, '');
+    Castle::unarchiveListItem('list-id', 'item-id');
+    $this->assertRequest('put', '/lists/list-id/items/item-id/unarchive');
+  }
+
+  public function testRequestUserData()
+  {
+    Castle_RequestTransport::setResponse(200, '{ "id": "req-id" }');
+    Castle::requestUserData(array(
+      'identifier' => 'user@example.com',
+      'identifier_type' => '$email'
+    ));
+    $this->assertRequest('post', '/privacy/users');
+  }
+
+  public function testDeleteUserData()
+  {
+    Castle_RequestTransport::setResponse(200, '{ "id": "req-id" }');
+    Castle::deleteUserData(array(
+      'identifier' => 'user@example.com',
+      'identifier_type' => '$email'
+    ));
+    $this->assertRequest('delete', '/privacy/users');
+  }
 }

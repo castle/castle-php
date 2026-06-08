@@ -1,4 +1,11 @@
 # Changelog
+## 3.3.0
+* added the Lists API: `Castle::createList`, `Castle::getAllLists`, `Castle::getList`, `Castle::updateList`, `Castle::deleteList`, `Castle::queryList`
+* added the List Items API: `Castle::createListItem`, `Castle::createListItems`, `Castle::getListItem`, `Castle::updateListItem`, `Castle::queryListItems`, `Castle::countListItems`, `Castle::archiveListItem`, `Castle::unarchiveListItem`
+* added the Privacy API: `Castle::requestUserData`, `Castle::deleteUserData`
+* added webhook signature verification: `Castle_Webhook::verify` and the `Castle_WebhookVerificationError` exception
+* the request context is now attached automatically to `risk`, `filter` and `log` requests
+
 ## 3.2.0 (2022-03-28)
 * updated ca-certs file
 

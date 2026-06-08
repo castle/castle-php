@@ -59,3 +59,8 @@ class Castle_InvalidRequestTokenError extends Castle_InvalidParametersError
 {
 
 }
+
+class Castle_WebhookVerificationError extends Castle_Error
+{
+
+}

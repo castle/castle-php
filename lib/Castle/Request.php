@@ -15,8 +15,9 @@ class Castle_Request
 
   public function handleApiError($response, $status)
   {
-    $type = $response['type'];
-    $msg  = $response['message'];
+    $response = is_array($response) ? $response : array();
+    $type = isset($response['type']) ? $response['type'] : null;
+    $msg  = isset($response['message']) ? $response['message'] : null;
     switch ($status) {
       case 400:
         throw new Castle_BadRequest($msg, $type, $status);
@@ -70,7 +71,11 @@ class Castle_Request
     }
   }
 
-  public function send($method, $url, $payload = 's') {
+  public function send($method, $url, $payload = array()) {
+    if (!is_array($payload)) {
+      $payload = array();
+    }
+
     if ( self::shouldHaveContext($url) && !array_key_exists('context', $payload)) {
       $payload['context'] = Castle_RequestContext::extract();
     }
@@ -79,7 +84,7 @@ class Castle_Request
   }
 
   private function shouldHaveContext($url) {
-    $WITH_CONTEXT = ['/track', '/authenticate', '/impersonate'];
+    $WITH_CONTEXT = ['/track', '/authenticate', '/impersonate', '/risk', '/filter', '/log'];
 
     return in_array($url, $WITH_CONTEXT);
   }
