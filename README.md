@@ -18,7 +18,7 @@ against PHP 7.4 through 8.4.
 
 ## Getting started
 
-Install the latest version with [Composer](https://getcomposer.org):
+Install the latest version with Composer:
 
 ```bash
 composer require castle/castle-php
@@ -188,7 +188,7 @@ Castle_Webhook::verify($rawBody, $signatureHeader);
 ```
 
 ## Errors
-Whenever something unexpected happens, an [exception](/lib/Castle/Errors.php) is thrown to indicate what went wrong.
+Whenever something unexpected happens, an [exception](lib/Castle/Errors.php) is thrown to indicate what went wrong.
 
 | Name                             | Description     |
 |:---------------------------------|:----------------|
