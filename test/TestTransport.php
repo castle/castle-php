@@ -1,6 +1,8 @@
 <?php
 
-class Castle_RequestTransport
+namespace Castle;
+
+class RequestTransport
 {
   public $rBody;
   public $rHeaders;

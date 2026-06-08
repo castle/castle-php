@@ -2,28 +2,36 @@
 
 class AliasesTest extends Castle_TestCase
 {
-  public function testNamespacedClassesResolveToLegacyClasses()
+  public function testLegacyAndNamespacedNamesResolveToTheSameClass()
   {
     $map = castle_legacy_alias_map();
-    foreach ($map as $namespaced => $legacy) {
+    foreach ($map as $legacy => $namespaced) {
       $this->assertTrue(
         class_exists($namespaced) || interface_exists($namespaced),
         "Expected {$namespaced} to be available"
       );
+      $this->assertTrue(
+        class_exists($legacy) || interface_exists($legacy),
+        "Expected legacy {$legacy} to be available"
+      );
+      $this->assertTrue(
+        is_a($legacy, $namespaced, true),
+        "Expected {$legacy} to be an alias of {$namespaced}"
+      );
     }
   }
 
-  public function testNamespacedFacadeSharesLegacyDefinition()
+  public function testLegacyFacadeSharesNamespacedDefinition()
   {
-    $this->assertSame(Castle::VERSION, \Castle\Castle::VERSION);
-    $this->assertTrue(is_a('Castle\\Castle', 'Castle', true));
+    $this->assertSame(\Castle\Castle::VERSION, Castle::VERSION);
+    $this->assertTrue(is_a('Castle', 'Castle\\Castle', true));
   }
 
-  public function testNamespacedExceptionsAreLegacyExceptions()
+  public function testLegacyExceptionsAreNamespacedExceptions()
   {
-    $error = new \Castle\WebhookVerificationError('boom');
-    $this->assertInstanceOf('Castle_WebhookVerificationError', $error);
-    $this->assertInstanceOf('Castle_Error', $error);
+    $error = new Castle_WebhookVerificationError('boom');
+    $this->assertInstanceOf('Castle\\WebhookVerificationError', $error);
+    $this->assertInstanceOf('Castle\\Error', $error);
     $this->assertEquals('boom', $error->getMessage());
   }
 

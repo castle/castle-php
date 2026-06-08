@@ -1,6 +1,8 @@
 <?php
 
-class Castle_RequestTransport
+namespace Castle;
+
+class RequestTransport
 {
   public $rBody;
   public $rHeaders;
@@ -59,7 +61,7 @@ class Castle_RequestTransport
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "DELETE");
         break;
       default:
-        throw new Castle_RequestError();
+        throw new RequestError();
     }
     $curlOptions = array();
 

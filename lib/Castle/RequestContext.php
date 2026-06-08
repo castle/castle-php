@@ -1,6 +1,8 @@
 <?php
 
-class Castle_RequestContext
+namespace Castle;
+
+class RequestContext
 {
   # Extract a request context from the $Server environment.
   public static function extract() {

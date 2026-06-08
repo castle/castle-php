@@ -1,5 +1,8 @@
 <?php
-interface Castle_iCookieStore
+
+namespace Castle;
+
+interface CookieStoreInterface
 {
   public function destroy($key);
   public function hasKey($key);
@@ -10,7 +13,7 @@ interface Castle_iCookieStore
 /**
  * By default the session token is persisted in a cookie
  */
-class Castle_CookieStore implements Castle_iCookieStore
+class CookieStore implements CookieStoreInterface
 {
   public function destroy($key)
   {

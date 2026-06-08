@@ -1,6 +1,8 @@
 <?php
 
-class Castle_Request
+namespace Castle;
+
+class Request
 {
   public static function apiUrl($url='')
   {
@@ -20,29 +22,29 @@ class Castle_Request
     $msg  = isset($response['message']) ? $response['message'] : null;
     switch ($status) {
       case 400:
-        throw new Castle_BadRequest($msg, $type, $status);
+        throw new BadRequest($msg, $type, $status);
       case 401:
-        throw new Castle_UnauthorizedError($msg, $type, $status);
+        throw new UnauthorizedError($msg, $type, $status);
       case 403:
-        throw new Castle_ForbiddenError($msg, $type, $status);
+        throw new ForbiddenError($msg, $type, $status);
       case 404:
-        throw new Castle_NotFoundError($msg, $type, $status);
+        throw new NotFoundError($msg, $type, $status);
       case 422:
         // Handle subtype errors
         switch($type) {
           case 'invalid_request_token':
-            throw new Castle_InvalidRequestTokenError($msg, $type, $status);
+            throw new InvalidRequestTokenError($msg, $type, $status);
           default:
-            throw new Castle_InvalidParametersError($msg, $type, $status);
+            throw new InvalidParametersError($msg, $type, $status);
         }
       default:
-        throw new Castle_ApiError($msg, $type, $status);
+        throw new ApiError($msg, $type, $status);
     }
   }
 
   public function handleRequestError($request)
   {
-    throw new Castle_RequestError("$request->rError: $request->rMessage");
+    throw new RequestError("$request->rError: $request->rMessage");
   }
 
   public function handleResponse($request)
@@ -51,9 +53,9 @@ class Castle_Request
       $this->handleRequestError($request);
     }
 
-    $response = json_decode($request->rBody, true);
+    $response = json_decode($request->rBody === null ? '' : $request->rBody, true);
     if (!empty($request->rBody) && $response === null) {
-      throw new Castle_ApiError('Invalid response from API', 'api_error', $request->rStatus);
+      throw new ApiError('Invalid response from API', 'api_error', $request->rStatus);
     }
 
     if ($request->rStatus < 200 || $request->rStatus >= 300) {
@@ -67,7 +69,7 @@ class Castle_Request
   {
     $key = Castle::getApiKey();
     if (empty($key)) {
-      throw new Castle_ConfigurationError();
+      throw new ConfigurationError();
     }
   }
 
@@ -77,7 +79,7 @@ class Castle_Request
     }
 
     if ( self::shouldHaveContext($url) && !array_key_exists('context', $payload)) {
-      $payload['context'] = Castle_RequestContext::extract();
+      $payload['context'] = RequestContext::extract();
     }
 
     if ( self::shouldHaveSentAt($url) && !array_key_exists('sent_at', $payload)) {
@@ -101,7 +103,7 @@ class Castle_Request
 
   // ISO8601 timestamp (millisecond precision, UTC) marking when the request was sent.
   public static function generateTimestamp() {
-    $date = new DateTime('now', new DateTimeZone('UTC'));
+    $date = new \DateTime('now', new \DateTimeZone('UTC'));
     return $date->format('Y-m-d\TH:i:s.v\Z');
   }
 
@@ -110,7 +112,7 @@ class Castle_Request
     $this->preFlightCheck();
 
 
-    $request = new Castle_RequestTransport();
+    $request = new RequestTransport();
     $request->send($method, self::apiUrl($url), $payload);
 
     return $this->handleResponse($request);

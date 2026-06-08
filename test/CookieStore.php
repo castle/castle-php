@@ -1,5 +1,8 @@
 <?php
-interface Castle_iCookieStore
+
+namespace Castle;
+
+interface CookieStoreInterface
 {
   public function destroy($key);
   public function read($key);
@@ -7,7 +10,7 @@ interface Castle_iCookieStore
   public function write($key, $data);
 }
 
-class Castle_CookieStore implements Castle_iCookieStore
+class CookieStore implements CookieStoreInterface
 {
   public function destroy($key)
   {

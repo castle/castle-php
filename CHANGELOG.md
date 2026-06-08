@@ -1,4 +1,15 @@
 # Changelog
+## 4.0.0
+**BREAKING CHANGES:**
+
+* the library is now defined under the `Castle\` namespace (`Castle\Castle`, `Castle\Webhook`, `Castle\RequestContext`, `Castle\ApiError`, ...), which is the canonical API ([#40](https://github.com/castle/castle-php/issues/40))
+* the minimum supported PHP version is now 7.4
+
+Other changes:
+
+* the historic global class names (`Castle`, `Castle_*`, `RestModel`) are retained as aliases of their namespaced counterparts, so existing integrations keep working without changes; `catch` and `instanceof` work with either name
+* additional PHP 8 compatibility fixes: declared `Castle_Resource::$model`, and avoided passing `null` to `Exception` and `json_decode`
+
 ## 3.3.0
 * added the Lists API: `Castle::createList`, `Castle::getAllLists`, `Castle::getList`, `Castle::updateList`, `Castle::deleteList`, `Castle::queryList`
 * added the List Items API: `Castle::createListItem`, `Castle::createListItems`, `Castle::getListItem`, `Castle::updateListItem`, `Castle::queryListItems`, `Castle::countListItems`, `Castle::archiveListItem`, `Castle::unarchiveListItem`
@@ -6,8 +17,7 @@
 * added webhook signature verification: `Castle_Webhook::verify` and the `Castle_WebhookVerificationError` exception
 * the request context is now attached automatically to `risk`, `filter` and `log` requests
 * a `sent_at` timestamp is now attached automatically to `risk`, `filter` and `log` requests ([#23](https://github.com/castle/castle-php/issues/23))
-* the whole library is now available under the `Castle\` namespace (`Castle\Castle`, `Castle\Webhook`, `Castle\ApiError`, ...) while the historic global class names (`Castle`, `Castle_*`, `RestModel`) continue to work unchanged ([#40](https://github.com/castle/castle-php/issues/40))
-* improved PHP 8 compatibility: declared the `Castle_ApiError` and `Castle_Resource` properties, avoided passing `null` to `Exception`, and made API error handling tolerant of empty response bodies
+* improved PHP 8 compatibility: declared the `Castle_ApiError` properties and made API error handling tolerant of empty response bodies
 * migrated CI to GitHub Actions and now test against PHP 7.4 through 8.4
 
 ## 3.2.0 (2022-03-28)

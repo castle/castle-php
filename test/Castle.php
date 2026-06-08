@@ -22,15 +22,15 @@ abstract class Castle_TestCase extends \PHPUnit\Framework\TestCase
   }
 }
 
-require(dirname(__FILE__) . '/../lib/Castle/Castle.php');
-require(dirname(__FILE__) . '/../lib/Castle/Errors.php');
-require(dirname(__FILE__) . '/CookieStore.php');
-require(dirname(__FILE__) . '/../lib/RestModel/Resource.php');
-require(dirname(__FILE__) . '/../lib/RestModel/Model.php');
-require(dirname(__FILE__) . '/../lib/Castle/Models/Authenticate.php');
-require(dirname(__FILE__) . '/../lib/Castle/Models/Context.php');
-require(dirname(__FILE__) . '/TestTransport.php');
-require(dirname(__FILE__) . '/../lib/Castle/RequestContext.php');
-require(dirname(__FILE__) . '/../lib/Castle/Request.php');
-require(dirname(__FILE__) . '/../lib/Castle/Webhook.php');
-require(dirname(__FILE__) . '/../lib/aliases.php');
+require_once(dirname(__FILE__) . '/../lib/Castle/Castle.php');
+require_once(dirname(__FILE__) . '/../lib/Castle/Errors.php');
+require_once(dirname(__FILE__) . '/CookieStore.php');
+require_once(dirname(__FILE__) . '/../lib/RestModel/Resource.php');
+require_once(dirname(__FILE__) . '/../lib/RestModel/Model.php');
+require_once(dirname(__FILE__) . '/../lib/Castle/Authenticate.php');
+require_once(dirname(__FILE__) . '/../lib/Castle/Context.php');
+require_once(dirname(__FILE__) . '/TestTransport.php');
+require_once(dirname(__FILE__) . '/../lib/Castle/RequestContext.php');
+require_once(dirname(__FILE__) . '/../lib/Castle/Request.php');
+require_once(dirname(__FILE__) . '/../lib/Castle/Webhook.php');
+require_once(dirname(__FILE__) . '/../lib/aliases.php');

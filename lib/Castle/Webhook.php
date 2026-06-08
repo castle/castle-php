@@ -1,6 +1,8 @@
 <?php
 
-class Castle_Webhook
+namespace Castle;
+
+class Webhook
 {
   const SIGNATURE_HEADER = 'HTTP_X_CASTLE_SIGNATURE';
 
@@ -11,8 +13,8 @@ class Castle_Webhook
    * @param  String $signature   The signature to compare against. Defaults to
    *                             the X-Castle-Signature request header.
    * @return Boolean
-   * @throws Castle_WebhookVerificationError
-   * @throws Castle_ConfigurationError
+   * @throws WebhookVerificationError
+   * @throws ConfigurationError
    */
   public static function verify($requestBody = null, $signature = null)
   {
@@ -25,13 +27,13 @@ class Castle_Webhook
     }
 
     if ($requestBody === null || $requestBody === '') {
-      throw new Castle_WebhookVerificationError('Invalid webhook from Castle API');
+      throw new WebhookVerificationError('Invalid webhook from Castle API');
     }
 
     $expectedSignature = self::computeSignature($requestBody);
 
     if (!is_string($signature) || !hash_equals($expectedSignature, $signature)) {
-      throw new Castle_WebhookVerificationError('Signature not matching the expected signature');
+      throw new WebhookVerificationError('Signature not matching the expected signature');
     }
 
     return true;
@@ -41,7 +43,7 @@ class Castle_Webhook
   {
     $key = Castle::getApiKey();
     if (empty($key)) {
-      throw new Castle_ConfigurationError();
+      throw new ConfigurationError();
     }
     return base64_encode(hash_hmac('sha256', $requestBody, $key, true));
   }

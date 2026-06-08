@@ -1,26 +1,28 @@
 <?php
 
-class Castle_Error extends Exception
+namespace Castle;
+
+class Error extends \Exception
 {
 
 }
 
-class Castle_RequestError extends Castle_Error
+class RequestError extends Error
 {
 
 }
 
-class Castle_ConfigurationError extends Castle_Error
+class ConfigurationError extends Error
 {
 
 }
 
-class Castle_CurlOptionError extends Castle_Error
+class CurlOptionError extends Error
 {
 
 }
 
-class Castle_ApiError extends Castle_Error
+class ApiError extends Error
 {
   public $type;
   public $httpStatus;
@@ -33,37 +35,37 @@ class Castle_ApiError extends Castle_Error
   }
 }
 
-class Castle_BadRequest extends Castle_ApiError
+class BadRequest extends ApiError
 {
 
 }
 
-class Castle_UnauthorizedError extends Castle_ApiError
+class UnauthorizedError extends ApiError
 {
 
 }
 
-class Castle_ForbiddenError extends Castle_ApiError
+class ForbiddenError extends ApiError
 {
 
 }
 
-class Castle_NotFoundError extends Castle_ApiError
+class NotFoundError extends ApiError
 {
 
 }
 
-class Castle_InvalidParametersError extends Castle_ApiError
+class InvalidParametersError extends ApiError
 {
 
 }
 
-class Castle_InvalidRequestTokenError extends Castle_InvalidParametersError
+class InvalidRequestTokenError extends InvalidParametersError
 {
 
 }
 
-class Castle_WebhookVerificationError extends Castle_Error
+class WebhookVerificationError extends Error
 {
 
 }

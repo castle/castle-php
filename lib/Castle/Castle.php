@@ -1,8 +1,10 @@
 <?php
 
+namespace Castle;
+
 abstract class Castle
 {
-  const VERSION = '3.3.0';
+  const VERSION = '4.0.0';
 
   const HEADER_COOKIE = 'Cookie';
   const HEADER_USER_AGENT = 'User-Agent';
@@ -15,7 +17,7 @@ abstract class Castle
 
   public static $tokenStore = 'Castle_TokenStore';
 
-  public static $cookieStore = 'Castle_CookieStore';
+  public static $cookieStore = 'Castle\\CookieStore';
 
   public static $scrubHeaders = array(self::HEADER_COOKIE);
 
@@ -44,8 +46,8 @@ abstract class Castle
     // If any options are invalid.
     if (count($invalidOpts)) {
       // Throw an exception listing all invalid options.
-      throw new Castle_CurlOptionError('These cURL options are not allowed:' .
-                                       join(',', $invalidOpts));
+      throw new CurlOptionError('These cURL options are not allowed:' .
+                                join(',', $invalidOpts));
     }
     // May seem odd, but one may want the option of stripping them out, and so
     // would probably simply use error_log instead of throw.
@@ -100,17 +102,17 @@ abstract class Castle
   /**
    * Authenticate an action
    * @param  String $attributes 'user_id' and 'event' are required
-   * @return Castle_Authenticate
+   * @return Authenticate
    */
-  public static function authenticate(Array $attributes)
+  public static function authenticate(array $attributes)
   {
-    $auth = new Castle_Authenticate($attributes);
+    $auth = new Authenticate($attributes);
     $auth->save();
     return $auth;
   }
 
   public static function impersonate($attributes) {
-      $request = new Castle_Request();
+      $request = new Request();
       if(isset($attributes['reset'])) {
         $request->send('delete', '/impersonate', $attributes);
       } else {
@@ -124,9 +126,9 @@ abstract class Castle
    *                            is required
    * @return None
    */
-  public static function track(Array $attributes)
+  public static function track(array $attributes)
   {
-    $request = new Castle_Request();
+    $request = new Request();
     $request->send('post', '/track', $attributes);
   }
 
@@ -134,11 +136,11 @@ abstract class Castle
   /**
    * Filter an action
    * @param  String $attributes 'request_token', 'event', 'context' are required, 'user' with 'id' and 'properties' are optional
-   * @return Castle_Log
+   * @return RestModel
    */
-  public static function filter(Array $attributes)
+  public static function filter(array $attributes)
   {
-    $request = new Castle_Request();
+    $request = new Request();
     list($response, $request) = $request->send('post', '/filter', $attributes);
     if ($request->rStatus == 204) {
       $response = array();
@@ -149,22 +151,22 @@ abstract class Castle
   /**
    * Log events
    * @param  String $attributes 'request_token', 'event', 'status' and 'user' object with 'id' are required
-   * @return Castle_Log
+   * @return None
    */
-  public static function log(Array $attributes)
+  public static function log(array $attributes)
   {
-    $request = new Castle_Request();
+    $request = new Request();
     $request->send('post', '/log', $attributes);
   }
 
   /**
    * Risk
    * @param  String $attributes 'request_token', 'event', 'context', 'user' with 'id' are required, 'status', 'properties' are optional
-   * @return Castle_Risk
+   * @return RestModel
    */
-  public static function risk(Array $attributes)
+  public static function risk(array $attributes)
   {
-    $request = new Castle_Request();
+    $request = new Request();
     list($response, $request) = $request->send('post', '/risk', $attributes);
     if ($request->rStatus == 204) {
       $response = array();
@@ -181,7 +183,7 @@ abstract class Castle
    * @param  Array $attributes 'name', 'color' and 'primary_field' are required
    * @return Array
    */
-  public static function createList(Array $attributes)
+  public static function createList(array $attributes)
   {
     return self::sendRequest('post', '/lists', $attributes);
   }
@@ -211,7 +213,7 @@ abstract class Castle
    * @param  Array  $attributes
    * @return Array
    */
-  public static function updateList($listId, Array $attributes)
+  public static function updateList($listId, array $attributes)
   {
     return self::sendRequest('put', self::listPath($listId), $attributes);
   }
@@ -231,7 +233,7 @@ abstract class Castle
    * @param  Array $attributes
    * @return Array
    */
-  public static function queryList(Array $attributes = array())
+  public static function queryList(array $attributes = array())
   {
     return self::sendRequest('post', '/lists/query', $attributes);
   }
@@ -246,7 +248,7 @@ abstract class Castle
    * @param  Array  $attributes 'author' and 'primary_value' are required
    * @return Array
    */
-  public static function createListItem($listId, Array $attributes)
+  public static function createListItem($listId, array $attributes)
   {
     return self::sendRequest('post', self::listItemsPath($listId), $attributes);
   }
@@ -257,7 +259,7 @@ abstract class Castle
    * @param  Array  $attributes 'items' is required
    * @return Array
    */
-  public static function createListItems($listId, Array $attributes)
+  public static function createListItems($listId, array $attributes)
   {
     return self::sendRequest('post', self::listItemsPath($listId) . '/batch', $attributes);
   }
@@ -280,7 +282,7 @@ abstract class Castle
    * @param  Array  $attributes 'comment' is required
    * @return Array
    */
-  public static function updateListItem($listId, $itemId, Array $attributes)
+  public static function updateListItem($listId, $itemId, array $attributes)
   {
     return self::sendRequest('put', self::listItemPath($listId, $itemId), $attributes);
   }
@@ -291,7 +293,7 @@ abstract class Castle
    * @param  Array  $attributes
    * @return Array
    */
-  public static function queryListItems($listId, Array $attributes = array())
+  public static function queryListItems($listId, array $attributes = array())
   {
     return self::sendRequest('post', self::listItemsPath($listId) . '/query', $attributes);
   }
@@ -302,7 +304,7 @@ abstract class Castle
    * @param  Array  $attributes
    * @return Array
    */
-  public static function countListItems($listId, Array $attributes = array())
+  public static function countListItems($listId, array $attributes = array())
   {
     return self::sendRequest('post', self::listItemsPath($listId) . '/count', $attributes);
   }
@@ -338,7 +340,7 @@ abstract class Castle
    * @param  Array $attributes 'identifier' and 'identifier_type' are required
    * @return Array
    */
-  public static function requestUserData(Array $attributes)
+  public static function requestUserData(array $attributes)
   {
     return self::sendRequest('post', '/privacy/users', $attributes);
   }
@@ -348,14 +350,14 @@ abstract class Castle
    * @param  Array $attributes 'identifier' and 'identifier_type' are required
    * @return Array
    */
-  public static function deleteUserData(Array $attributes)
+  public static function deleteUserData(array $attributes)
   {
     return self::sendRequest('delete', '/privacy/users', $attributes);
   }
 
   private static function sendRequest($method, $path, $attributes = null)
   {
-    $request = new Castle_Request();
+    $request = new Request();
     list($response, $request) = $request->send($method, $path, $attributes);
     if ($request->rStatus == 204) {
       $response = array();

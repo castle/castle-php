@@ -14,7 +14,7 @@ See the [documentation](https://docs.castle.io) for how to use this SDK with the
 
 ## Requirements
 
-PHP 7.2 or newer, with the `curl` and `json` extensions. The library is tested
+PHP 7.4 or newer, with the `curl` and `json` extensions. The library is tested
 against PHP 7.4 through 8.4.
 
 ## Getting started
@@ -36,9 +36,9 @@ Castle::setApiKey('YOUR_API_SECRET');
 
 ## Namespaces
 
-The library is available under the `Castle\` namespace. The historic global
-class names (`Castle`, `Castle_*`, `RestModel`) remain available and behave
-identically, so existing integrations keep working without changes.
+As of 4.0 the library lives under the `Castle\` namespace, e.g. `Castle\Castle`,
+`Castle\Webhook`, `Castle\RequestContext`, `Castle\ApiError`. This is the
+canonical API:
 
 ```php
 use Castle\Castle;
@@ -60,9 +60,23 @@ try {
 }
 ```
 
-The two styles are interchangeable — `Castle\ApiError` and `Castle_ApiError`
-refer to the same class, so `instanceof` checks and `catch` blocks work with
-either name.
+### Backward compatibility
+
+The historic global class names (`Castle`, `Castle_*`, `RestModel`) are kept as
+aliases of their namespaced counterparts, so existing integrations keep working
+without changes. `Castle_ApiError` and `Castle\ApiError` are the same class, so
+`instanceof` checks and `catch` blocks work with either name:
+
+```php
+try {
+  Castle::risk([/* ... */]);
+} catch (Castle_ApiError $e) {
+  // still catches the namespaced Castle\ApiError thrown by the library
+}
+```
+
+New code should prefer the namespaced names; the global aliases are retained for
+compatibility.
 
 ## Optional Configurations
 
