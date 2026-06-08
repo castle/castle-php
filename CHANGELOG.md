@@ -3,7 +3,6 @@
 **BREAKING CHANGES:**
 
 * the library is now defined under the `Castle\` namespace (`Castle\Castle`, `Castle\Webhook`, `Castle\RequestContext`, `Castle\ApiError`, ...), which is the canonical API ([#40](https://github.com/castle/castle-php/issues/40))
-* the minimum supported PHP version is now 7.4
 
 Other changes:
 
@@ -18,7 +17,7 @@ Other changes:
 * the request context is now attached automatically to `risk`, `filter` and `log` requests
 * a `sent_at` timestamp is now attached automatically to `risk`, `filter` and `log` requests ([#23](https://github.com/castle/castle-php/issues/23))
 * improved PHP 8 compatibility: declared the `Castle_ApiError` properties and made API error handling tolerant of empty response bodies
-* migrated CI to GitHub Actions and now test against PHP 7.4 through 8.4
+* migrated CI to GitHub Actions and now test against PHP 7.2 through 8.5
 
 ## 3.2.0 (2022-03-28)
 * updated ca-certs file

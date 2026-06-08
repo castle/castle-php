@@ -13,8 +13,8 @@ See the [documentation](https://docs.castle.io) for how to use this SDK with the
 
 ## Requirements
 
-PHP 7.4 or newer, with the `curl` and `json` extensions. The library is tested
-against PHP 7.4 through 8.4.
+PHP 7.2 or newer, with the `curl` and `json` extensions. The library is tested
+against PHP 7.2 through 8.5.
 
 ## Getting started
 

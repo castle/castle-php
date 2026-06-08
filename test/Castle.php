@@ -1,5 +1,12 @@
 <?php
 
+// PHPUnit 8.5 (used on PHP 7.2) relies on php-timer, which throws
+// "Cannot determine time at which the request started" when REQUEST_TIME_FLOAT
+// is absent from the CLI environment. Seed it so the timer can compute.
+if (!isset($_SERVER['REQUEST_TIME_FLOAT'])) {
+  $_SERVER['REQUEST_TIME_FLOAT'] = microtime(true);
+}
+
 abstract class Castle_TestCase extends \PHPUnit\Framework\TestCase
 {
   public function setUp(): void
