@@ -8,9 +8,7 @@ class Request
   {
     $apiEndpoint = getenv('CASTLE_API_ENDPOINT');
     if ( !$apiEndpoint ) {
-      $apiBase    = Castle::$apiBase;
-      $apiVersion = Castle::getApiVersion();
-      $apiEndpoint = $apiBase.'/'.$apiVersion;
+      $apiEndpoint = Castle::$baseUrl;
     }
     return $apiEndpoint.$url;
   }

@@ -32,7 +32,6 @@ abstract class Castle_TestCase extends \PHPUnit\Framework\TestCase
 require_once(dirname(__FILE__) . '/../lib/Castle/Castle.php');
 require_once(dirname(__FILE__) . '/../lib/Castle/Errors.php');
 require_once(dirname(__FILE__) . '/../lib/Castle/Failover.php');
-require_once(dirname(__FILE__) . '/CookieStore.php');
 require_once(dirname(__FILE__) . '/../lib/RestModel/Resource.php');
 require_once(dirname(__FILE__) . '/../lib/RestModel/Model.php');
 require_once(dirname(__FILE__) . '/../lib/Castle/Context.php');

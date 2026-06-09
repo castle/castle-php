@@ -16,7 +16,6 @@ if (!function_exists('lcfirst'))
 }
 
 require(dirname(__FILE__) . '/Castle/Castle.php');
-require(dirname(__FILE__) . '/Castle/CookieStore.php');
 require(dirname(__FILE__) . '/Castle/Errors.php');
 require(dirname(__FILE__) . '/Castle/Failover.php');
 require(dirname(__FILE__) . '/RestModel/Resource.php');

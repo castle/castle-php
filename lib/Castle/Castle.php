@@ -11,13 +11,7 @@ abstract class Castle
 
   public static $apiKey;
 
-  public static $apiBase = 'https://api.castle.io';
-
-  public static $apiVersion = 'v1';
-
-  public static $tokenStore = 'Castle_TokenStore';
-
-  public static $cookieStore = 'Castle\\CookieStore';
+  public static $baseUrl = 'https://api.castle.io/v1';
 
   public static $scrubHeaders = array(self::HEADER_COOKIE);
 
@@ -60,6 +54,16 @@ abstract class Castle
     self::$apiKey = $apiKey;
   }
 
+  public static function getBaseUrl()
+  {
+    return self::$baseUrl;
+  }
+
+  public static function setBaseUrl($baseUrl)
+  {
+    self::$baseUrl = $baseUrl;
+  }
+
   public static function setCurlOpts($curlOpts)
   {
     $invalidOpts = array_diff(array_keys($curlOpts), self::$validCurlOpts);
@@ -92,32 +96,6 @@ abstract class Castle
     }
     self::$useAllowlist = $use;
   }
-
-  public static function getApiVersion()
-  {
-    return self::$apiVersion;
-  }
-
-  public static function setApiVersion($apiVersion)
-  {
-    self::$apiVersion = $apiVersion;
-  }
-
-  public static function getCookieStore()
-  {
-    return new self::$cookieStore;
-  }
-
-  public static function getTokenStore()
-  {
-    return new self::$tokenStore(self::getCookieStore());
-  }
-
-  public static function setTokenStore($serializerClass)
-  {
-    self::$tokenStore = $serializerClass;
-  }
-
 
   /**
    * Filter an action

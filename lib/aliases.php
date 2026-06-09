@@ -25,8 +25,6 @@ if (!function_exists('castle_legacy_alias_map')) {
       'Castle_Request' => 'Castle\\Request',
       'Castle_RequestContext' => 'Castle\\RequestContext',
       'Castle_RequestTransport' => 'Castle\\RequestTransport',
-      'Castle_CookieStore' => 'Castle\\CookieStore',
-      'Castle_iCookieStore' => 'Castle\\CookieStoreInterface',
       'Castle_Webhook' => 'Castle\\Webhook',
       'Castle_Context' => 'Castle\\Context',
       'Castle_Failover' => 'Castle\\Failover',
