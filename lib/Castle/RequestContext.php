@@ -7,10 +7,8 @@ class RequestContext
   # Extract a request context from the $Server environment.
   public static function extract() {
     return array(
-      'client_id' => self::extractClientId(),
       'ip' => self::extractIp(),
       'headers' => self::extractHeaders(),
-      'user_agent' => self::extractUserAgent(),
       'library' => array(
         'name' => 'castle-php',
         'version' => Castle::VERSION
@@ -60,37 +58,5 @@ class RequestContext
       return $_SERVER['REMOTE_ADDR'];
     }
     return null;
-  }
-
-  public static function extractUserAgent()
-  {
-    if (array_key_exists('HTTP_USER_AGENT', $_SERVER)) {
-      return $_SERVER['HTTP_USER_AGENT'];
-    }
-    return null;
-  }
-
-  public static function extractClientId()
-  {
-    if (array_key_exists('HTTP_X_CASTLE_CLIENT_ID', $_SERVER)) {
-      return self::normalize($_SERVER['HTTP_X_CASTLE_CLIENT_ID']);
-    } else if (Castle::getCookieStore()->hasKey('__cid')) {
-      return self::normalize(Castle::getCookieStore()->read('__cid'));
-    } else {
-      // If the client_id is neither send in the header nor cookie
-      // we'll return the special value '?'. This doesn't have any effect on
-      // functionality. This is to prevent curl from removing empty headers
-      return '?';
-    }
-  }
-
-  public static function normalize($cid)
-  {
-    $cid = preg_replace("/[[:cntrl:][:space:]]/", '', $cid);
-
-    // If we end up with an empty/invalid cid, we'll set it to the special
-    // value '_' to indicate there was a value but it was not valid.
-    // This is to prevent curl from removing empty headers
-    return empty($cid) ? '_' : $cid;
   }
 }

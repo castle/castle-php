@@ -9,6 +9,7 @@
 
 Other changes:
 
+* slimmed the default request context built by `Castle\RequestContext::extract` down to `ip`, `headers` and `library`; the `client_id` and `user_agent` fields (and the `RequestContext::extractClientId`, `extractUserAgent` and `normalize` helpers) are removed, as the client id is carried by the `X-Castle-Client-Id` header / `__cid` cookie and resolved server-side
 * added a configurable failover strategy (`Castle::setFailoverStrategy` with `Castle\Failover::ALLOW`/`DENY`/`CHALLENGE`/`THROW`) and the `Castle\InternalServerError` exception for `5xx` responses
 * added do-not-track support: `Castle::disableTracking`, `Castle::enableTracking` and `Castle::tracked`
 * added the Events API: `Castle::eventsSchema`, `Castle::queryEvents`, `Castle::groupEvents`
