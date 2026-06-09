@@ -86,16 +86,6 @@ transfer). Defaults to `1000`:
 Castle::setRequestTimeout(1500);
 ```
 
-For finer-grained control, set cURL options directly. Valid options are:
-- `CURLOPT_CONNECTTIMEOUT`
-- `CURLOPT_CONNECTTIMEOUT_MS`
-- `CURLOPT_TIMEOUT`
-- `CURLOPT_TIMEOUT_MS`
-
-```php
-Castle::setCurlOpts($curlOpts)
-```
-
 Set the failover strategy used when a `risk` or `filter` request cannot be
 completed (see [Failover](#failover)):
 

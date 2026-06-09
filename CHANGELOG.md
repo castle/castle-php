@@ -6,6 +6,7 @@
 * removed the legacy `Castle::track`, `Castle::authenticate` and `Castle::impersonate` endpoints (and the `Castle_Authenticate` model); use `Castle::risk`, `Castle::filter` and `Castle::log` instead
 * `Castle::risk` and `Castle::filter` now fail over to a configurable decision instead of throwing on network errors, timeouts and `5xx` responses; `Castle::log` returns the same response shape. `Castle::risk`/`filter`/`log` responses now include `failover` and `failover_reason`
 * the default request timeout is now 1000 ms (previously 10 s), applied to both connection and transfer; configure it with `Castle::setRequestTimeout`
+* removed `Castle::setCurlOpts` / `Castle::getCurlOpts` (and the `Castle\CurlOptionError` exception with its `Castle_CurlOptionError` alias); use `Castle::setRequestTimeout` to configure the connection and transfer timeout
 * replaced the separate `Castle::$apiBase` / `Castle::$apiVersion` (and `Castle::getApiVersion` / `setApiVersion`) with a single `Castle::$baseUrl` (default `https://api.castle.io/v1`), configurable via `Castle::getBaseUrl` / `Castle::setBaseUrl`
 * removed the configurable token/cookie store (`Castle::$tokenStore`, `Castle::$cookieStore`, `Castle::getTokenStore` / `getCookieStore` / `setTokenStore`) and the `Castle\CookieStore` class (with its `Castle_CookieStore` / `Castle_iCookieStore` aliases); these read the client id from the `__cid` cookie, which the slimmed request context no longer does
 

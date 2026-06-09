@@ -17,11 +17,6 @@ class ConfigurationError extends Error
 
 }
 
-class CurlOptionError extends Error
-{
-
-}
-
 class ApiError extends Error
 {
   public $type;

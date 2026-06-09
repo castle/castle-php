@@ -82,18 +82,9 @@ class RequestTransport
     );
     $curlOptions[CURLOPT_HEADER] = true;
 
-    // Apply the configured request timeout to both connect and overall transfer
-    // unless the caller pinned any timeout option via setCurlOpts().
-    $userOptions = Castle::getCurlOpts();
-    $timeoutOpts = array(CURLOPT_CONNECTTIMEOUT, CURLOPT_CONNECTTIMEOUT_MS,
-                         CURLOPT_TIMEOUT, CURLOPT_TIMEOUT_MS);
-    if (!array_intersect(array_keys($userOptions), $timeoutOpts)) {
-      $curlOptions[CURLOPT_CONNECTTIMEOUT_MS] = Castle::getRequestTimeout();
-      $curlOptions[CURLOPT_TIMEOUT_MS] = Castle::getRequestTimeout();
-    }
-
-    // Merge user defined options.
-    $curlOptions = $userOptions + $curlOptions;
+    // Apply the configured request timeout to both connect and overall transfer.
+    $curlOptions[CURLOPT_CONNECTTIMEOUT_MS] = Castle::getRequestTimeout();
+    $curlOptions[CURLOPT_TIMEOUT_MS] = Castle::getRequestTimeout();
 
     curl_setopt_array($curl, $curlOptions);
     $this->setResponse($curl);

@@ -29,7 +29,7 @@ abstract class Castle
   );
 
   // Per-request timeout in milliseconds, applied to both connect and overall
-  // transfer, unless overridden via setCurlOpts().
+  // transfer.
   public static $requestTimeout = 1000;
 
   // Decision returned when a request fails over. One of the Castle\Failover
@@ -37,12 +37,6 @@ abstract class Castle
   public static $failoverStrategy = 'allow';
 
   private static $doNotTrack = false;
-
-  private static $curlOpts = array();
-  private static $validCurlOpts = array(CURLOPT_CONNECTTIMEOUT,
-                                        CURLOPT_CONNECTTIMEOUT_MS,
-                                        CURLOPT_TIMEOUT,
-                                        CURLOPT_TIMEOUT_MS);
 
   public static function getApiKey()
   {
@@ -62,25 +56,6 @@ abstract class Castle
   public static function setBaseUrl($baseUrl)
   {
     self::$baseUrl = $baseUrl;
-  }
-
-  public static function setCurlOpts($curlOpts)
-  {
-    $invalidOpts = array_diff(array_keys($curlOpts), self::$validCurlOpts);
-    // If any options are invalid.
-    if (count($invalidOpts)) {
-      // Throw an exception listing all invalid options.
-      throw new CurlOptionError('These cURL options are not allowed:' .
-                                join(',', $invalidOpts));
-    }
-    // May seem odd, but one may want the option of stripping them out, and so
-    // would probably simply use error_log instead of throw.
-    self::$curlOpts = array_diff($curlOpts, array_flip($invalidOpts));
-  }
-
-  public static function getCurlOpts()
-  {
-    return self::$curlOpts;
   }
 
   public static function getUseAllowlist()
