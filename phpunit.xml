@@ -1,21 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit colors="true" bootstrap="test/Castle.php">
+<phpunit bootstrap="test/Castle.php" colors="true">
   <testsuites>
     <testsuite name="Test Suite">
       <directory>./test</directory>
     </testsuite>
   </testsuites>
-  <logging>
-      <log type="coverage-clover" target="build/logs/clover.xml"/>
-  </logging>
-  <filter>
-      <whitelist processUncoveredFilesFromWhitelist="true">
-          <directory suffix=".php">./lib/Castle</directory>
-          <directory suffix=".php">./lib/RestModel</directory>
-          <exclude>
-            <file>./lib/Castle/CookieStore.php</file>
-            <file>./lib/Castle/CurlTransport.php</file>
-          </exclude>
-      </whitelist>
-  </filter>
 </phpunit>

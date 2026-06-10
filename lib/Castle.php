@@ -16,12 +16,13 @@ if (!function_exists('lcfirst'))
 }
 
 require(dirname(__FILE__) . '/Castle/Castle.php');
-require(dirname(__FILE__) . '/Castle/CookieStore.php');
 require(dirname(__FILE__) . '/Castle/Errors.php');
+require(dirname(__FILE__) . '/Castle/Failover.php');
 require(dirname(__FILE__) . '/RestModel/Resource.php');
 require(dirname(__FILE__) . '/RestModel/Model.php');
-require(dirname(__FILE__) . '/Castle/Models/Context.php');
-require(dirname(__FILE__) . '/Castle/Models/Authenticate.php');
+require(dirname(__FILE__) . '/Castle/Context.php');
 require(dirname(__FILE__) . '/Castle/CurlTransport.php');
 require(dirname(__FILE__) . '/Castle/RequestContext.php');
 require(dirname(__FILE__) . '/Castle/Request.php');
+require(dirname(__FILE__) . '/Castle/Webhook.php');
+require(dirname(__FILE__) . '/aliases.php');
