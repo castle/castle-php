@@ -1,10 +1,14 @@
 <?php
 
-class Castle_Resource
+namespace Castle;
+
+class Resource
 {
   protected $parent = null;
 
   protected $items  = null;
+
+  protected $model  = null;
 
   public function __construct($model, $items=null)
   {

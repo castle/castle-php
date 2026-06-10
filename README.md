@@ -1,9 +1,8 @@
-[![Latest Stable Version](https://poser.pugx.org/castle/castle-php/v/stable.svg)](https://packagist.org/packages/castle/castle-php) [![Total Downloads](https://poser.pugx.org/castle/castle-php/downloads.svg)](https://packagist.org/packages/castle/castle-php) [![License](https://poser.pugx.org/castle/castle-php/license.svg)](https://packagist.org/packages/castle/castle-php)
-
-[![Code Climate](https://codeclimate.com/github/castle/castle-php.png)](https://codeclimate.com/github/castle/castle-php)
-[![Coverage Status](https://coveralls.io/repos/github/castle/castle-php/badge.svg?branch=fix%2Fcode-coverage)](https://coveralls.io/github/castle/castle-php?branch=fix%2Fcode-coverage)
-
 # PHP SDK for Castle
+
+[![Specs](https://github.com/castle/castle-php/actions/workflows/specs.yml/badge.svg)](https://github.com/castle/castle-php/actions/workflows/specs.yml)
+[![Lint](https://github.com/castle/castle-php/actions/workflows/lint.yml/badge.svg)](https://github.com/castle/castle-php/actions/workflows/lint.yml)
+[![Latest Stable Version](https://poser.pugx.org/castle/castle-php/v/stable.svg)](https://packagist.org/packages/castle/castle-php)
 
 **[Castle](https://castle.io) analyzes user behavior in web and mobile apps to stop fraud before it happens.**
 
@@ -12,37 +11,86 @@
 
 See the [documentation](https://docs.castle.io) for how to use this SDK with the Castle APIs
 
+## Requirements
+
+PHP 7.2 or newer, with the `curl` and `json` extensions. The library is tested
+against PHP 7.2 through 8.5.
+
 ## Getting started
 
-Obtain the latest version of the Castle PHP bindings with:
+Install the latest version with Composer:
 
 ```bash
-git clone --single-branch --branch master https://github.com/castle/castle-php
+composer require castle/castle-php
 ```
 
-To get started, add the following to your PHP script:
+Then load Composer's autoloader and configure the library with your Castle API
+secret:
 
 ```php
-require_once("/path/to/castle-php/lib/Castle.php");
-```
+require_once 'vendor/autoload.php';
 
-Configure the library with your Castle API secret.
-
-```php
 Castle::setApiKey('YOUR_API_SECRET');
 ```
 
-## Optional Configurations
+## Namespaces
 
-Set preferred connection and request timeouts:
-valid options for setting are:
-- `CURLOPT_CONNECTTIMEOUT`
-- `CURLOPT_CONNECTTIMEOUT_MS`
-- `CURLOPT_TIMEOUT`
-- `CURLOPT_TIMEOUT_MS`
+As of 4.0 the library lives under the `Castle\` namespace, e.g. `Castle\Castle`,
+`Castle\Webhook`, `Castle\RequestContext`, `Castle\ApiError`. This is the
+canonical API:
 
 ```php
-Castle::setCurlOpts($curlOpts)
+use Castle\Castle;
+use Castle\Webhook;
+use Castle\WebhookVerificationError;
+
+Castle::setApiKey('YOUR_API_SECRET');
+
+$verdict = Castle::filter([
+  'request_token' => $requestToken,
+  'name' => '$registration',
+  'user' => ['id' => '1234'],
+]);
+
+try {
+  Webhook::verify();
+} catch (WebhookVerificationError $e) {
+  // reject the request
+}
+```
+
+### Backward compatibility
+
+The historic global class names (`Castle`, `Castle_*`, `RestModel`) are kept as
+aliases of their namespaced counterparts, so existing integrations keep working
+without changes. `Castle_ApiError` and `Castle\ApiError` are the same class, so
+`instanceof` checks and `catch` blocks work with either name:
+
+```php
+try {
+  Castle::risk([/* ... */]);
+} catch (Castle_ApiError $e) {
+  // still catches the namespaced Castle\ApiError thrown by the library
+}
+```
+
+New code should prefer the namespaced names; the global aliases are retained for
+compatibility.
+
+## Optional Configurations
+
+Set the per-request timeout in milliseconds (applied to both connection and
+transfer). Defaults to `1000`:
+
+```php
+Castle::setRequestTimeout(1500);
+```
+
+Set the failover strategy used when a `risk` or `filter` request cannot be
+completed (see [Failover](#failover)):
+
+```php
+Castle::setFailoverStrategy(Castle\Failover::ALLOW);
 ```
 
 Set a specified list of request headers to include with event context (optional, not recommended):
@@ -71,14 +119,139 @@ Castle_RequestContext['ip'] = '1.1.1.1'
 $context = Castle_RequestContext::extractJson();
 ```
 
+## Lists
+
+Manage [lists](https://docs.castle.io) and their items:
+
+```php
+$list = Castle::createList([
+  'name' => 'Blocklist',
+  'color' => '$red',
+  'primary_field' => 'user.email',
+]);
+
+$lists = Castle::getAllLists();
+$list  = Castle::getList($list['id']);
+Castle::updateList($list['id'], ['name' => 'Renamed']);
+Castle::deleteList($list['id']);
+Castle::queryList(['filters' => [['field' => 'name', 'op' => '$eq', 'value' => 'Blocklist']]]);
+```
+
+List items:
+
+```php
+$item = Castle::createListItem($list['id'], [
+  'author' => 'user:123',
+  'primary_value' => 'user@example.com',
+]);
+
+Castle::getListItem($list['id'], $item['id']);
+Castle::updateListItem($list['id'], $item['id'], ['comment' => 'Flagged for review']);
+Castle::queryListItems($list['id'], ['filters' => []]);
+Castle::countListItems($list['id'], ['filters' => []]);
+Castle::archiveListItem($list['id'], $item['id']);
+Castle::unarchiveListItem($list['id'], $item['id']);
+Castle::createListItems($list['id'], ['items' => [/* ... */]]);
+```
+
+## Privacy
+
+Request or delete the data Castle stores for a user:
+
+```php
+Castle::requestUserData([
+  'identifier' => 'user@example.com',
+  'identifier_type' => '$email',
+]);
+
+Castle::deleteUserData([
+  'identifier' => 'user@example.com',
+  'identifier_type' => '$email',
+]);
+```
+
+## Failover
+
+When a `risk` or `filter` request cannot be completed because of a network
+error, timeout or a `5xx` response from the Castle API, the SDK returns a
+synthetic decision instead of throwing, so your authentication flow keeps
+working. The decision is controlled by the failover strategy:
+
+```php
+Castle::setFailoverStrategy(Castle\Failover::ALLOW); // default
+// Castle\Failover::DENY
+// Castle\Failover::CHALLENGE
+// Castle\Failover::THROW  -- re-raise the underlying exception instead
+```
+
+A failed-over response carries `failover => true` and a `failover_reason`:
+
+```php
+$verdict = Castle::risk([
+  'request_token' => $requestToken,
+  'name' => '$login',
+  'user' => ['id' => '1234'],
+]);
+
+$verdict->failover;        // true when the request failed over
+$verdict->action;          // 'allow', 'deny' or 'challenge'
+$verdict->policy['action'];
+```
+
+Successful responses include `failover => false`. Client errors (`4xx`, such as
+`422 invalid_request_token`) are never failed over and always raise.
+
+## Do-not-track
+
+Disable outbound tracking calls, for example in staging or test environments.
+While disabled, `risk`, `filter` and `log` return an `allow` response without
+contacting the API:
+
+```php
+Castle::disableTracking();
+Castle::tracked();        // false
+Castle::enableTracking();
+```
+
+## Events (enterprise)
+
+Query event data:
+
+```php
+Castle::eventsSchema();
+Castle::queryEvents(['filters' => [['field' => 'name', 'op' => '$eq', 'value' => '$login']]]);
+Castle::groupEvents(['filters' => [], 'group_by' => 'name']);
+```
+
+## Webhooks
+
+Verify the authenticity of incoming Castle webhooks. By default the raw body is
+read from `php://input` and the signature from the `X-Castle-Signature` header:
+
+```php
+try {
+  Castle_Webhook::verify();
+  // handle the webhook payload
+} catch (Castle_WebhookVerificationError $e) {
+  http_response_code(404);
+}
+```
+
+The body and signature can also be passed explicitly:
+
+```php
+Castle_Webhook::verify($rawBody, $signatureHeader);
+```
+
 ## Errors
-Whenever something unexpected happens, an [exception](/lib/Castle/Errors.php) is thrown to indicate what went wrong.
+Whenever something unexpected happens, an [exception](lib/Castle/Errors.php) is thrown to indicate what went wrong.
 
 | Name                             | Description     |
 |:---------------------------------|:----------------|
 | `Castle_Error`                  | A generic error |
 | `Castle_RequestError`           | A request failed. Probably due to a network error |
 | `Castle_ApiError`               | An unexpected error for the Castle API |
+| `Castle_InternalServerError`    | The Castle API returned a `5xx` response (triggers failover) |
 | `Castle_ConfigurationError`     | The Castle secret API key has not been set |
 | `Castle_UnauthorizedError`      | Wrong Castle API secret key |
 | `Castle_BadRequest`             | The request was invalid. For example if a challenge is created without the user having MFA enabled. |
@@ -86,6 +259,13 @@ Whenever something unexpected happens, an [exception](/lib/Castle/Errors.php) is
 | `Castle_NotFoundError`          | The resource requestd was not found. For example if a session has been revoked. |
 | `Castle_InvalidParametersError` | One or more of the supplied parameters are incorrect. Check the response for more information. |
 | `Castle_InvalidRequestTokenError` | The request token parameter is missing or invalid |
+| `Castle_WebhookVerificationError` | An incoming webhook could not be verified against the `X-Castle-Signature` header |
 
 ## Running test suite
-Execute `vendor/bin/phpunit test` to run the full test suite
+
+Install the dev dependencies and run the suite with:
+
+```bash
+composer install
+composer test
+```

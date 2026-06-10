@@ -1,6 +1,8 @@
 <?php
 
-class Castle_RequestTransport
+namespace Castle;
+
+class RequestTransport
 {
   public $rBody;
   public $rHeaders;
@@ -59,7 +61,7 @@ class Castle_RequestTransport
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "DELETE");
         break;
       default:
-        throw new Castle_RequestError();
+        throw new RequestError();
     }
     $curlOptions = array();
 
@@ -74,17 +76,15 @@ class Castle_RequestTransport
     $curlOptions[CURLOPT_URL] = $url;
     $curlOptions[CURLOPT_USERPWD] = ":" . Castle::getApiKey();
     $curlOptions[CURLOPT_RETURNTRANSFER] = true;
-    $curlOptions[CURLOPT_CONNECTTIMEOUT] = 3;
-    $curlOptions[CURLOPT_TIMEOUT] = 10;
     $curlOptions[CURLOPT_HTTPHEADER] = array(
       'Content-Type: application/json',
       'Content-Length: ' . strlen($body)
     );
     $curlOptions[CURLOPT_HEADER] = true;
 
-    // Merge user defined options.
-    $userOptions = Castle::getCurlOpts();
-    $curlOptions = $userOptions + $curlOptions;
+    // Apply the configured request timeout to both connect and overall transfer.
+    $curlOptions[CURLOPT_CONNECTTIMEOUT_MS] = Castle::getRequestTimeout();
+    $curlOptions[CURLOPT_TIMEOUT_MS] = Castle::getRequestTimeout();
 
     curl_setopt_array($curl, $curlOptions);
     $this->setResponse($curl);

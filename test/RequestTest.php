@@ -8,7 +8,6 @@ class CastleRequestTest extends \Castle_TestCase
     $_SERVER['HTTP_USER_AGENT'] = 'TestAgent';
     $_SERVER['REMOTE_ADDR'] = '8.8.8.8';
     Castle::setApiKey('secretkey');
-    Castle::setCurlOpts(array());
     Castle::setUseAllowlist(false);
   }
 
@@ -21,18 +20,6 @@ class CastleRequestTest extends \Castle_TestCase
   public function tearDown(): void
   {
     Castle_RequestTransport::setResponse();
-  }
-
-  public function testCastleCurlOptions()
-  {
-    // Will not throw.
-    Castle::setCurlOpts(array(CURLOPT_CONNECTTIMEOUT => 1,
-                              CURLOPT_CONNECTTIMEOUT_MS => 1000,
-                              CURLOPT_TIMEOUT => 1,
-                              CURLOPT_TIMEOUT_MS => 1000));
-    // Will throw.
-    $this->expectException(Castle_CurlOptionError::class);
-    Castle::setCurlOpts(array(CURLOPT_USERAGENT => "BadBrowser/6.6.6b"));
   }
 
   public function testInvalidResponse()
