@@ -1,0 +1,13 @@
+api:
+  specs:
+    - openapi: ./openapi/openapi.yml
+groups:
+  php-sdk:
+    generators:
+      - name: fernapi/fern-php-sdk
+        version: 2.10.10
+        output:
+          location: local-file-system
+          path: ../generated/php
+        github:
+          repository: castle/castle-php
