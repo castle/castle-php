@@ -23,6 +23,8 @@ class Request
         throw new BadRequest($msg, $type, $status);
       case 401:
         throw new UnauthorizedError($msg, $type, $status);
+      case 402:
+        throw new PaymentRequiredError($msg, $type, $status);
       case 403:
         throw new ForbiddenError($msg, $type, $status);
       case 404:
