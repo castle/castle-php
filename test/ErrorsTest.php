@@ -27,6 +27,14 @@ class CastleErrorTest extends Castle_TestCase
     $this->request->send('GET', '/test');
   }
 
+  public function testPaymentRequired()
+  {
+    Castle_RequestTransport::setResponse(402);
+
+    $this->expectException(Castle_PaymentRequiredError::class);
+    $this->request->send('GET', '/test');
+  }
+
   public function testForbidden()
   {
     Castle_RequestTransport::setResponse(403);

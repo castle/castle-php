@@ -4,7 +4,7 @@ namespace Castle;
 
 abstract class Castle
 {
-  const VERSION = '4.0.0';
+  const VERSION = '4.0.1';
 
   const HEADER_COOKIE = 'Cookie';
   const HEADER_USER_AGENT = 'User-Agent';

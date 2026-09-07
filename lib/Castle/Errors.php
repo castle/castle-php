@@ -65,6 +65,11 @@ class InvalidRequestTokenError extends InvalidParametersError
 
 }
 
+class PaymentRequiredError extends ApiError
+{
+
+}
+
 class WebhookVerificationError extends Error
 {
 

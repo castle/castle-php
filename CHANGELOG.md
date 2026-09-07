@@ -1,4 +1,7 @@
 # Changelog
+## 4.0.1
+* added `Castle\PaymentRequiredError` (`Castle_PaymentRequiredError`) for HTTP 402 responses
+
 ## 4.0.0
 **BREAKING CHANGES:**
 

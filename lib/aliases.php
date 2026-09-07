@@ -41,6 +41,7 @@ if (!function_exists('castle_legacy_alias_map')) {
       'Castle_NotFoundError' => 'Castle\\NotFoundError',
       'Castle_InvalidParametersError' => 'Castle\\InvalidParametersError',
       'Castle_InvalidRequestTokenError' => 'Castle\\InvalidRequestTokenError',
+      'Castle_PaymentRequiredError' => 'Castle\\PaymentRequiredError',
       'Castle_WebhookVerificationError' => 'Castle\\WebhookVerificationError',
     );
   }
@@ -82,6 +83,7 @@ call_user_func(function () {
     'Castle\\NotFoundError',
     'Castle\\InvalidParametersError',
     'Castle\\InvalidRequestTokenError',
+    'Castle\\PaymentRequiredError',
     'Castle\\WebhookVerificationError',
   );
 

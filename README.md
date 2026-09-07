@@ -254,6 +254,7 @@ Whenever something unexpected happens, an [exception](lib/Castle/Errors.php) is 
 | `Castle_InternalServerError`    | The Castle API returned a `5xx` response (triggers failover) |
 | `Castle_ConfigurationError`     | The Castle secret API key has not been set |
 | `Castle_UnauthorizedError`      | Wrong Castle API secret key |
+| `Castle_PaymentRequiredError`   | HTTP 402 response |
 | `Castle_BadRequest`             | The request was invalid. For example if a challenge is created without the user having MFA enabled. |
 | `Castle_ForbiddenError`         | The user has entered the wrong code too many times and a new challenge has to be requested. |
 | `Castle_NotFoundError`          | The resource requestd was not found. For example if a session has been revoked. |
