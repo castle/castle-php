@@ -28,7 +28,8 @@ class CastleRequestContextTest extends \Castle_TestCase
   }
 
   public function contextJsonProvider() {
-    return array(array('{"ip":"8.8.8.8","headers":{"User-Agent":"TestAgent","X-Castle-Client-Id":"1ccf8dee-904b-4d20-8a88-55ded468bcc5"},"library":{"name":"castle-php","version":"4.1.0"}}'));
+    $contexts = $this->contextProvider();
+    return array(array(json_encode($contexts[0][0])));
   }
 
   /**
